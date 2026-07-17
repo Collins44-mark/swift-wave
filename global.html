@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Swift Wave Group global presence — Tanzania, Dubai, India, China, and beyond.">
+  <title>Global Presence — Swift Wave Group</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <link rel="icon" type="image/svg+xml" href="assets/images/logo.svg">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="min-h-screen w-full overflow-x-hidden">
+
+  <nav id="navbar" class="fixed top-0 w-full z-50 nav-blur">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2">
+        <img src="assets/images/logo.svg" alt="Swift Wave Group" class="site-logo w-10 h-10 rounded-xl">
+        <span class="brand-name text-base md:text-lg hidden sm:block truncate max-w-[9.5rem] md:max-w-none">Swift Wave Group</span>
+      </a>
+      <div class="hidden lg:flex items-center gap-6">
+        <a href="index.html" class="nav-link text-sm font-medium">Home</a>
+        <a href="about.html" class="nav-link text-sm font-medium">About</a>
+        <a href="companies.html" class="nav-link text-sm font-medium">Companies</a>
+        <a href="leadership.html" class="nav-link text-sm font-medium">Leadership</a>
+        <a href="global.html" class="nav-link active text-sm font-medium">Global</a>
+        <a href="news.html" class="nav-link text-sm font-medium">News</a>
+        <a href="contact.html" class="nav-link text-sm font-medium">Contact</a>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="contact.html" class="hidden sm:inline-flex px-5 py-2.5 text-sm btn-primary">Get in Touch</a>
+        <button id="mobile-toggle" class="lg:hidden" aria-label="Toggle menu">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-menu" class="hidden lg:hidden border-t px-4 py-4">
+      <div class="flex flex-col gap-2">
+        <a href="index.html" class="py-2 text-sm font-medium">Home</a>
+        <a href="about.html" class="py-2 text-sm font-medium">About</a>
+        <a href="companies.html" class="py-2 text-sm font-medium">Companies</a>
+        <a href="leadership.html" class="py-2 text-sm font-medium">Leadership</a>
+        <a href="global.html" class="py-2 text-sm font-medium" style="color:var(--royal)">Global</a>
+        <a href="news.html" class="py-2 text-sm font-medium">News</a>
+        <a href="contact.html" class="py-2 text-sm font-medium">Contact</a>
+        <a href="contact.html" class="mt-2 py-3 text-center text-sm btn-primary">Get in Touch</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="page-hero" data-slideshow data-interval="5500">
+    <div class="slideshow-track" aria-hidden="true">
+      <div class="slideshow-slide is-active" style="background-image:url('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=2000&q=80')"></div>
+      <div class="slideshow-slide" style="background-image:url('https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=2000&q=80')"></div>
+      <div class="slideshow-slide" style="background-image:url('https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=2000&q=80')"></div>
+    </div>
+    <div class="slideshow-overlay"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 text-center">
+      <span class="eyebrow">Worldwide Reach</span>
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold mt-3">Our Global Presence</h1>
+      <p class="mt-4 max-w-2xl mx-auto text-sm sm:text-base">From our headquarters in Dar es Salaam, we connect partners and clients across Africa, the Middle East, and Asia.</p>
+    </div>
+  </header>
+
+  <section class="section-light py-16 px-4 sm:px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="mb-16 fade-up">
+        <div class="earth-globe-wrap">
+          <div class="earth-globe" data-earth-globe aria-label="Spinning Earth showing Swift Wave locations"></div>
+        </div>
+        <div class="earth-legend">
+          <span class="earth-legend-item"><span class="earth-legend-dot hq"></span> Tanzania · Dubai</span>
+          <span class="earth-legend-item"><span class="earth-legend-dot hub"></span> India · China</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 fade-up">
+        <div class="glass-card">
+          <img src="https://images.unsplash.com/photo-1611348524140-53c9a25263d6?auto=format&fit=crop&w=800&q=80" alt="Dar es Salaam skyline" class="card-media-sm" loading="lazy">
+          <div class="p-5">
+            <div class="icon-box mb-3"><i data-lucide="building-2" class="w-5 h-5"></i></div>
+            <h3 class="font-bold">Dar es Salaam</h3>
+            <p class="text-xs font-semibold mt-1 uppercase tracking-wider" style="color:var(--gold)">Headquarters</p>
+            <p class="text-sm text-muted mt-3">Home base for group leadership and all six operating divisions.</p>
+          </div>
+        </div>
+        <div class="glass-card">
+          <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=800&q=80" alt="Dubai cityscape" class="card-media-sm" loading="lazy">
+          <div class="p-5">
+            <div class="icon-box mb-3"><i data-lucide="plane" class="w-5 h-5"></i></div>
+            <h3 class="font-bold">Dubai, UAE</h3>
+            <p class="text-xs font-semibold mt-1 uppercase tracking-wider" style="color:var(--royal)">Regional Hub</p>
+            <p class="text-sm text-muted mt-3">Freight corridors, travel partnerships, and Middle East trade links.</p>
+          </div>
+        </div>
+        <div class="glass-card">
+          <img src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=800&q=80" alt="India landmarks" class="card-media-sm" loading="lazy">
+          <div class="p-5">
+            <div class="icon-box mb-3"><i data-lucide="graduation-cap" class="w-5 h-5"></i></div>
+            <h3 class="font-bold">India</h3>
+            <p class="text-xs font-semibold mt-1 uppercase tracking-wider" style="color:var(--royal)">Education Hub</p>
+            <p class="text-sm text-muted mt-3">Scholarship pathways and university partnerships for international students.</p>
+          </div>
+        </div>
+        <div class="glass-card">
+          <img src="https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?auto=format&fit=crop&w=800&q=80" alt="China skyline" class="card-media-sm" loading="lazy">
+          <div class="p-5">
+            <div class="icon-box mb-3"><i data-lucide="package" class="w-5 h-5"></i></div>
+            <h3 class="font-bold">China</h3>
+            <p class="text-xs font-semibold mt-1 uppercase tracking-wider" style="color:var(--royal)">Trade Hub</p>
+            <p class="text-sm text-muted mt-3">Sourcing, supply chain, and import partnerships for African markets.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+    <footer class="site-footer py-12 sm:py-16 px-4 sm:px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 mb-12">
+        <div class="col-span-2 lg:col-span-1">
+          <div class="flex items-center gap-2 mb-4">
+            <img src="assets/images/logo.svg" alt="Swift Wave Group" class="site-logo w-8 h-8 rounded-lg">
+            <span class="footer-brand">Swift Wave Group</span>
+          </div>
+          <p class="text-sm footer-desc leading-relaxed">International multi-division organization delivering world-class solutions across industries.</p>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Quick Links</h4>
+          <div class="space-y-2 text-sm">
+            <a href="about.html" class="block">About Us</a>
+            <a href="companies.html" class="block">Our Companies</a>
+            <a href="contact.html" class="block">Contact</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Companies</h4>
+          <div class="space-y-2 text-sm">
+            <a data-coming-soon href="#" class="block">Swift Wave Scholarship</a>
+            <a data-coming-soon href="#" class="block">Swift Wave Freight</a>
+            <a data-coming-soon href="#" class="block">Swift Wave Travels</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Connect</h4>
+          <div class="flex gap-3">
+            <a data-coming-soon href="#" aria-label="LinkedIn" class="social-btn"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+            <a data-coming-soon href="#" aria-label="Twitter" class="social-btn"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+            <a data-coming-soon href="#" aria-label="Instagram" class="social-btn"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-white/10 pt-8 text-center">
+        <p class="text-sm footer-copy">&copy; Swift Wave Group. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/globe.gl@2.33.1/dist/globe.gl.min.js"></script>
+  <script src="js/globe.js"></script>
+  <script src="js/slideshow.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
