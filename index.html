@@ -10,47 +10,75 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
-  <link rel="icon" type="image/svg+xml" href="assets/images/logo.svg">
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" type="image/png" href="assets/images/logo.png?v=6">
+  <link rel="stylesheet" href="css/styles.css?v=8">
 </head>
 <body class="min-h-screen w-full overflow-x-hidden">
 
   <!-- Navigation -->
-  <nav id="navbar" class="fixed top-0 w-full z-50 nav-blur">
+  <nav id="navbar" class="fixed top-0 w-full nav-blur">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
-      <a href="index.html" class="flex items-center gap-2">
-        <img src="assets/images/logo.svg" alt="Swift Wave Group" class="site-logo w-10 h-10 rounded-xl">
-        <span class="brand-name text-base md:text-lg hidden sm:block truncate max-w-[9.5rem] md:max-w-none">Swift Wave Group</span>
+      <a href="index.html" class="nav-brand">
+        <span class="logo-box">
+          <img src="assets/images/logo.png?v=6" alt="Swift Wave Group" class="site-logo">
+        </span>
       </a>
       <div class="hidden lg:flex items-center gap-6">
         <a href="index.html" class="nav-link active text-sm font-medium">Home</a>
         <a href="about.html" class="nav-link text-sm font-medium">About</a>
         <a href="companies.html" class="nav-link text-sm font-medium">Companies</a>
-        <a href="leadership.html" class="nav-link text-sm font-medium">Leadership</a>
         <a href="global.html" class="nav-link text-sm font-medium">Global</a>
-        <a href="news.html" class="nav-link text-sm font-medium">News</a>
         <a href="contact.html" class="nav-link text-sm font-medium">Contact</a>
       </div>
       <div class="flex items-center gap-3">
         <a href="contact.html" class="hidden sm:inline-flex px-5 py-2.5 text-sm btn-primary">Get in Touch</a>
-        <button id="mobile-toggle" class="lg:hidden" aria-label="Toggle menu">
-          <i data-lucide="menu" class="w-6 h-6"></i>
+        <button id="mobile-toggle" class="mobile-toggle lg:hidden" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+          <span class="hamburger" aria-hidden="true"><span></span><span></span><span></span></span>
         </button>
       </div>
     </div>
-    <div id="mobile-menu" class="hidden lg:hidden border-t px-4 py-4">
-      <div class="flex flex-col gap-2">
-        <a href="index.html" class="py-2 text-sm font-medium" style="color:var(--royal)">Home</a>
-        <a href="about.html" class="py-2 text-sm font-medium">About</a>
-        <a href="companies.html" class="py-2 text-sm font-medium">Companies</a>
-        <a href="leadership.html" class="py-2 text-sm font-medium">Leadership</a>
-        <a href="global.html" class="py-2 text-sm font-medium">Global</a>
-        <a href="news.html" class="py-2 text-sm font-medium">News</a>
-        <a href="contact.html" class="py-2 text-sm font-medium">Contact</a>
-        <a href="contact.html" class="mt-2 py-3 text-center text-sm btn-primary">Get in Touch</a>
+  </nav>
+
+    <div id="mobile-menu" class="mobile-menu" aria-hidden="true">
+      <button type="button" class="mobile-menu-backdrop" tabindex="-1" aria-label="Close menu"></button>
+      <div class="mobile-menu-sheet" role="dialog" aria-modal="true" aria-label="Site menu">
+        <div class="mobile-menu-top">
+          <span class="mobile-menu-eyebrow">Navigate</span>
+          <span class="mobile-menu-rule" aria-hidden="true"></span>
+        </div>
+        <nav class="mobile-nav" aria-label="Mobile">
+          <a href="index.html" class="mobile-nav-link is-active">
+            <span class="mobile-nav-index">01</span>
+            <span class="mobile-nav-text">Home</span>
+            <span class="mobile-nav-chevron" aria-hidden="true"></span>
+          </a>
+          <a href="about.html" class="mobile-nav-link">
+            <span class="mobile-nav-index">02</span>
+            <span class="mobile-nav-text">About</span>
+            <span class="mobile-nav-chevron" aria-hidden="true"></span>
+          </a>
+          <a href="companies.html" class="mobile-nav-link">
+            <span class="mobile-nav-index">03</span>
+            <span class="mobile-nav-text">Companies</span>
+            <span class="mobile-nav-chevron" aria-hidden="true"></span>
+          </a>
+          <a href="global.html" class="mobile-nav-link">
+            <span class="mobile-nav-index">04</span>
+            <span class="mobile-nav-text">Global</span>
+            <span class="mobile-nav-chevron" aria-hidden="true"></span>
+          </a>
+          <a href="contact.html" class="mobile-nav-link">
+            <span class="mobile-nav-index">05</span>
+            <span class="mobile-nav-text">Contact</span>
+            <span class="mobile-nav-chevron" aria-hidden="true"></span>
+          </a>
+        </nav>
+        <div class="mobile-menu-bottom">
+          <a href="contact.html" class="mobile-menu-cta">Get in Touch</a>
+          <p class="mobile-menu-meta">Swift Wave Group · Dar es Salaam</p>
+        </div>
       </div>
     </div>
-  </nav>
 
   <!-- Hero -->
   <section class="hero-slideshow" data-slideshow data-interval="5500">
@@ -82,62 +110,31 @@
   <!-- Why Choose Us -->
   <section class="section-white py-12 sm:py-16 lg:py-20 px-4 sm:px-6">
     <div class="max-w-7xl mx-auto">
-      <div class="text-center mb-12 fade-up">
+      <div class="text-center mb-8 sm:mb-10 fade-up">
         <span class="eyebrow">Our Values</span>
         <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mt-3">Why Choose Swift Wave</h2>
       </div>
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 fade-up">
-        <div class="glass-card text-center">
-          <img src="https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=700&q=80" alt="Global reach" class="card-media-sm" loading="lazy">
-          <div class="p-4 sm:p-5">
-            <div class="icon-box mx-auto mb-3"><i data-lucide="globe" class="w-6 h-6"></i></div>
-            <h4 class="font-semibold text-sm sm:text-base">Global Reach</h4>
-            <p class="text-xs sm:text-sm text-muted mt-2 hidden sm:block">Operations spanning Africa, Asia, and the Middle East</p>
-          </div>
-        </div>
-        <div class="glass-card text-center">
-          <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=700&q=80" alt="Innovation driven" class="card-media-sm" loading="lazy">
-          <div class="p-4 sm:p-5">
-            <div class="icon-box mx-auto mb-3"><i data-lucide="lightbulb" class="w-6 h-6"></i></div>
-            <h4 class="font-semibold text-sm sm:text-base">Innovation Driven</h4>
-            <p class="text-xs sm:text-sm text-muted mt-2 hidden sm:block">Modern systems that keep every division ahead</p>
-          </div>
-        </div>
-        <div class="glass-card text-center">
-          <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=700&q=80" alt="Trusted integrity" class="card-media-sm" loading="lazy">
-          <div class="p-4 sm:p-5">
-            <div class="icon-box mx-auto mb-3"><i data-lucide="shield-check" class="w-6 h-6"></i></div>
-            <h4 class="font-semibold text-sm sm:text-base">Trusted Integrity</h4>
-            <p class="text-xs sm:text-sm text-muted mt-2 hidden sm:block">Transparent partnerships built on lasting trust</p>
-          </div>
-        </div>
-        <div class="glass-card text-center">
-          <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=700&q=80" alt="Sustainable growth" class="card-media-sm" loading="lazy">
-          <div class="p-4 sm:p-5">
-            <div class="icon-box mx-auto mb-3"><i data-lucide="trending-up" class="w-6 h-6"></i></div>
-            <h4 class="font-semibold text-sm sm:text-base">Sustainable Growth</h4>
-            <p class="text-xs sm:text-sm text-muted mt-2 hidden sm:block">Long-term value for communities and clients</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Careers CTA -->
-  <section class="premium-band py-14 sm:py-16 lg:py-20 px-4 sm:px-6">
-    <div class="band-glow left" aria-hidden="true"></div>
-    <div class="band-glow right" aria-hidden="true"></div>
-    <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 lg:gap-12 items-center fade-up">
-      <div class="rounded-3xl overflow-hidden shadow-lg order-2 lg:order-1">
-        <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1400&q=80" alt="Swift Wave team collaborating" class="w-full h-64 sm:h-80 object-cover" loading="lazy">
-      </div>
-      <div class="text-center lg:text-left order-1 lg:order-2">
-        <span class="eyebrow">Join Our Team</span>
-        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mt-3 mb-4">Shape Your Future With Us</h2>
-        <p class="body-text mb-8 text-sm sm:text-base max-w-xl mx-auto lg:mx-0">
-          Join a dynamic team driving impact across continents and industries. At Swift Wave, ambition meets opportunity.
-        </p>
-        <a href="contact.html" class="inline-flex px-8 py-4 text-sm btn-primary">View Opportunities</a>
+      <div class="values-grid fade-up">
+        <article class="values-card">
+          <span class="values-icon" aria-hidden="true"><i data-lucide="globe" class="w-5 h-5"></i></span>
+          <h4>Global Reach</h4>
+          <p>Operations spanning Africa, Asia, and the Middle East</p>
+        </article>
+        <article class="values-card">
+          <span class="values-icon" aria-hidden="true"><i data-lucide="lightbulb" class="w-5 h-5"></i></span>
+          <h4>Innovation Driven</h4>
+          <p>Modern systems that keep every division ahead</p>
+        </article>
+        <article class="values-card">
+          <span class="values-icon" aria-hidden="true"><i data-lucide="shield-check" class="w-5 h-5"></i></span>
+          <h4>Trusted Integrity</h4>
+          <p>Transparent partnerships built on lasting trust</p>
+        </article>
+        <article class="values-card">
+          <span class="values-icon" aria-hidden="true"><i data-lucide="trending-up" class="w-5 h-5"></i></span>
+          <h4>Sustainable Growth</h4>
+          <p>Long-term value for communities and clients</p>
+        </article>
       </div>
     </div>
   </section>
@@ -158,50 +155,15 @@
     </div>
   </section>
 
-  <!-- Latest News -->
-  <section class="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 section-premium">
-    <div class="max-w-7xl mx-auto">
-      <div class="text-center mb-12 fade-up">
-        <span class="eyebrow">Latest Updates</span>
-        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mt-3">News & Insights</h2>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 fade-up">
-        <article class="news-card overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&q=80" alt="Scholarship program launch" class="w-full h-40 sm:h-48 object-cover" loading="lazy">
-          <div class="p-5 sm:p-6">
-            <span class="text-xs text-muted">June</span>
-            <h3 class="font-bold mt-2 text-sm sm:text-base">Swift Wave Scholarship expands to 5 new universities</h3>
-          </div>
-        </article>
-        <article class="news-card overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&q=80" alt="Freight logistics hub" class="w-full h-40 sm:h-48 object-cover" loading="lazy">
-          <div class="p-5 sm:p-6">
-            <span class="text-xs text-muted">May</span>
-            <h3 class="font-bold mt-2 text-sm sm:text-base">New freight corridor opens between Dar es Salaam & Dubai</h3>
-          </div>
-        </article>
-        <article class="news-card overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&q=80" alt="Medical outreach" class="w-full h-40 sm:h-48 object-cover" loading="lazy">
-          <div class="p-5 sm:p-6">
-            <span class="text-xs text-muted">April</span>
-            <h3 class="font-bold mt-2 text-sm sm:text-base">Medical division launches community health outreach</h3>
-          </div>
-        </article>
-      </div>
-      <div class="text-center mt-10 fade-up">
-        <a href="news.html" class="inline-flex px-6 py-3 text-sm btn-secondary">All News</a>
-      </div>
-    </div>
-  </section>
-
   <!-- Footer -->
-    <footer class="site-footer py-12 sm:py-16 px-4 sm:px-6">
+  <footer class="site-footer py-12 sm:py-16 px-4 sm:px-6">
     <div class="max-w-7xl mx-auto">
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 mb-12">
         <div class="col-span-2 lg:col-span-1">
-          <div class="flex items-center gap-2 mb-4">
-            <img src="assets/images/logo.svg" alt="Swift Wave Group" class="site-logo w-8 h-8 rounded-lg">
-            <span class="footer-brand">Swift Wave Group</span>
+          <div class="mb-4">
+            <span class="logo-box logo-box--footer">
+              <img src="assets/images/logo.png?v=6" alt="Swift Wave Group" class="site-logo">
+            </span>
           </div>
           <p class="text-sm footer-desc leading-relaxed">International multi-division organization delivering world-class solutions across industries.</p>
         </div>
@@ -239,6 +201,6 @@
   <script src="https://unpkg.com/globe.gl@2.33.1/dist/globe.gl.min.js"></script>
   <script src="js/globe.js"></script>
   <script src="js/slideshow.js"></script>
-  <script src="js/main.js"></script>
+  <script src="js/main.js?v=8"></script>
 </body>
 </html>

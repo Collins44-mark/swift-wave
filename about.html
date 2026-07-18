@@ -10,46 +10,74 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
-  <link rel="icon" type="image/svg+xml" href="assets/images/logo.svg">
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" type="image/png" href="assets/images/logo.png?v=6">
+  <link rel="stylesheet" href="css/styles.css?v=9">
 </head>
 <body class="min-h-screen w-full overflow-x-hidden">
 
-  <nav id="navbar" class="fixed top-0 w-full z-50 nav-blur">
+  <nav id="navbar" class="fixed top-0 w-full nav-blur">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
-      <a href="index.html" class="flex items-center gap-2">
-        <img src="assets/images/logo.svg" alt="Swift Wave Group" class="site-logo w-10 h-10 rounded-xl">
-        <span class="brand-name text-base md:text-lg hidden sm:block truncate max-w-[9.5rem] md:max-w-none">Swift Wave Group</span>
+      <a href="index.html" class="nav-brand">
+        <span class="logo-box">
+          <img src="assets/images/logo.png?v=6" alt="Swift Wave Group" class="site-logo">
+        </span>
       </a>
       <div class="hidden lg:flex items-center gap-6">
         <a href="index.html" class="nav-link text-sm font-medium">Home</a>
         <a href="about.html" class="nav-link active text-sm font-medium">About</a>
         <a href="companies.html" class="nav-link text-sm font-medium">Companies</a>
-        <a href="leadership.html" class="nav-link text-sm font-medium">Leadership</a>
         <a href="global.html" class="nav-link text-sm font-medium">Global</a>
-        <a href="news.html" class="nav-link text-sm font-medium">News</a>
         <a href="contact.html" class="nav-link text-sm font-medium">Contact</a>
       </div>
       <div class="flex items-center gap-3">
         <a href="contact.html" class="hidden sm:inline-flex px-5 py-2.5 text-sm btn-primary">Get in Touch</a>
-        <button id="mobile-toggle" class="lg:hidden" aria-label="Toggle menu">
-          <i data-lucide="menu" class="w-6 h-6"></i>
+        <button id="mobile-toggle" class="mobile-toggle lg:hidden" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+          <span class="hamburger" aria-hidden="true"><span></span><span></span><span></span></span>
         </button>
       </div>
     </div>
-    <div id="mobile-menu" class="hidden lg:hidden border-t px-4 py-4">
-      <div class="flex flex-col gap-2">
-        <a href="index.html" class="py-2 text-sm font-medium">Home</a>
-        <a href="about.html" class="py-2 text-sm font-medium" style="color:var(--royal)">About</a>
-        <a href="companies.html" class="py-2 text-sm font-medium">Companies</a>
-        <a href="leadership.html" class="py-2 text-sm font-medium">Leadership</a>
-        <a href="global.html" class="py-2 text-sm font-medium">Global</a>
-        <a href="news.html" class="py-2 text-sm font-medium">News</a>
-        <a href="contact.html" class="py-2 text-sm font-medium">Contact</a>
-        <a href="contact.html" class="mt-2 py-3 text-center text-sm btn-primary">Get in Touch</a>
+  </nav>
+
+    <div id="mobile-menu" class="mobile-menu" aria-hidden="true">
+      <button type="button" class="mobile-menu-backdrop" tabindex="-1" aria-label="Close menu"></button>
+      <div class="mobile-menu-sheet" role="dialog" aria-modal="true" aria-label="Site menu">
+        <div class="mobile-menu-top">
+          <span class="mobile-menu-eyebrow">Navigate</span>
+          <span class="mobile-menu-rule" aria-hidden="true"></span>
+        </div>
+        <nav class="mobile-nav" aria-label="Mobile">
+          <a href="index.html" class="mobile-nav-link">
+            <span class="mobile-nav-index">01</span>
+            <span class="mobile-nav-text">Home</span>
+            <span class="mobile-nav-chevron" aria-hidden="true"></span>
+          </a>
+          <a href="about.html" class="mobile-nav-link is-active">
+            <span class="mobile-nav-index">02</span>
+            <span class="mobile-nav-text">About</span>
+            <span class="mobile-nav-chevron" aria-hidden="true"></span>
+          </a>
+          <a href="companies.html" class="mobile-nav-link">
+            <span class="mobile-nav-index">03</span>
+            <span class="mobile-nav-text">Companies</span>
+            <span class="mobile-nav-chevron" aria-hidden="true"></span>
+          </a>
+          <a href="global.html" class="mobile-nav-link">
+            <span class="mobile-nav-index">04</span>
+            <span class="mobile-nav-text">Global</span>
+            <span class="mobile-nav-chevron" aria-hidden="true"></span>
+          </a>
+          <a href="contact.html" class="mobile-nav-link">
+            <span class="mobile-nav-index">05</span>
+            <span class="mobile-nav-text">Contact</span>
+            <span class="mobile-nav-chevron" aria-hidden="true"></span>
+          </a>
+        </nav>
+        <div class="mobile-menu-bottom">
+          <a href="contact.html" class="mobile-menu-cta">Get in Touch</a>
+          <p class="mobile-menu-meta">Swift Wave Group · Dar es Salaam</p>
+        </div>
       </div>
     </div>
-  </nav>
 
   <header class="page-hero" data-slideshow data-interval="5500">
     <div class="slideshow-track" aria-hidden="true">
@@ -102,56 +130,51 @@
         </div>
       </div>
 
-      <!-- Timeline -->
-      <div class="mt-20">
+      <!-- Leadership -->
+      <div id="leadership" class="mt-20 pt-4">
         <div class="text-center mb-12 fade-up">
-          <span class="eyebrow">Our Journey</span>
-          <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mt-3">Milestones That Define Us</h2>
+          <span class="eyebrow">Executive Team</span>
+          <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mt-3">Leadership</h2>
+          <p class="body-text mt-4 max-w-2xl mx-auto text-sm sm:text-base">Experienced leaders guiding Swift Wave Group with vision, integrity, and a commitment to excellence.</p>
         </div>
-        <div class="timeline relative fade-up max-w-4xl mx-auto">
-          <div class="timeline-line hidden md:block"></div>
-          <div class="space-y-6 sm:space-y-12">
-            <div class="md:flex md:justify-end md:pr-[55%]">
-              <div class="glass-white p-4 sm:p-6 w-full">
-                <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80" alt="Company founding office" class="timeline-media" loading="lazy">
-                <span class="text-sm font-bold" style="color:var(--gold)">2018</span>
-                <h4 class="font-semibold mt-1 text-sm sm:text-base">Founded in Dar es Salaam with a vision for multi-sector growth</h4>
-              </div>
-            </div>
-            <div class="md:flex md:justify-start md:pl-[55%]">
-              <div class="glass-white p-4 sm:p-6 w-full">
-                <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80" alt="Freight and scholarship launch" class="timeline-media" loading="lazy">
-                <span class="text-sm font-bold" style="color:var(--gold)">2020</span>
-                <h4 class="font-semibold mt-1 text-sm sm:text-base">Launched Freight & Scholarship divisions across East Africa</h4>
-              </div>
-            </div>
-            <div class="md:flex md:justify-end md:pr-[55%]">
-              <div class="glass-white p-4 sm:p-6 w-full">
-                <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80" alt="Medical and hospitality expansion" class="timeline-media" loading="lazy">
-                <span class="text-sm font-bold" style="color:var(--gold)">2022</span>
-                <h4 class="font-semibold mt-1 text-sm sm:text-base">Expanded into Medical, Outfit, Travels & Catering</h4>
-              </div>
-            </div>
-            <div class="md:flex md:justify-start md:pl-[55%]">
-              <div class="glass-white p-4 sm:p-6 w-full">
-                <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=800&q=80" alt="International hubs expansion" class="timeline-media" loading="lazy">
-                <span class="text-sm font-bold" style="color:var(--gold)">2024</span>
-                <h4 class="font-semibold mt-1 text-sm sm:text-base">Opened international hubs in Dubai, India & China</h4>
-              </div>
-            </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 max-w-4xl mx-auto fade-up">
+          <div class="glass-white p-6 text-center">
+            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80" alt="Chief Executive Officer" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover mx-auto mb-4 ring-4 ring-[rgba(11,46,109,0.12)]" loading="lazy">
+            <h3 class="font-bold">James Mwangi</h3>
+            <p class="text-sm mt-1" style="color:var(--royal)">Chief Executive Officer</p>
+            <p class="text-xs text-muted mt-3 leading-relaxed">Leads group strategy and international expansion across all six divisions.</p>
           </div>
+          <div class="glass-white p-6 text-center">
+            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80" alt="Chief Operating Officer" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover mx-auto mb-4 ring-4 ring-[rgba(11,46,109,0.12)]" loading="lazy">
+            <h3 class="font-bold">Amina Hassan</h3>
+            <p class="text-sm mt-1" style="color:var(--royal)">Chief Operating Officer</p>
+            <p class="text-xs text-muted mt-3 leading-relaxed">Oversees day-to-day operations, quality standards, and cross-division collaboration.</p>
+          </div>
+          <div class="glass-white p-6 text-center">
+            <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&q=80" alt="Chief Commercial Officer" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover mx-auto mb-4 ring-4 ring-[rgba(11,46,109,0.12)]" loading="lazy">
+            <h3 class="font-bold">David Okello</h3>
+            <p class="text-sm mt-1" style="color:var(--royal)">Chief Commercial Officer</p>
+            <p class="text-xs text-muted mt-3 leading-relaxed">Drives partnerships, client relations, and growth across freight, travel, and education.</p>
+          </div>
+        </div>
+        <div class="mt-12 max-w-3xl mx-auto text-center fade-up">
+          <h3 class="text-xl sm:text-2xl font-bold mb-4">Guided by Shared Principles</h3>
+          <p class="body-text text-sm sm:text-base leading-relaxed">
+            Our leadership team brings together decades of experience in logistics, education, hospitality, and healthcare. Together, they ensure every Swift Wave company operates with accountability, innovation, and a people-first mindset.
+          </p>
         </div>
       </div>
     </div>
   </section>
 
-    <footer class="site-footer py-12 sm:py-16 px-4 sm:px-6">
+  <footer class="site-footer py-12 sm:py-16 px-4 sm:px-6">
     <div class="max-w-7xl mx-auto">
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 mb-12">
         <div class="col-span-2 lg:col-span-1">
-          <div class="flex items-center gap-2 mb-4">
-            <img src="assets/images/logo.svg" alt="Swift Wave Group" class="site-logo w-8 h-8 rounded-lg">
-            <span class="footer-brand">Swift Wave Group</span>
+          <div class="mb-4">
+            <span class="logo-box logo-box--footer">
+              <img src="assets/images/logo.png?v=6" alt="Swift Wave Group" class="site-logo">
+            </span>
           </div>
           <p class="text-sm footer-desc leading-relaxed">International multi-division organization delivering world-class solutions across industries.</p>
         </div>
@@ -187,6 +210,6 @@
   </footer>
 
   <script src="js/slideshow.js"></script>
-  <script src="js/main.js"></script>
+  <script src="js/main.js?v=8"></script>
 </body>
 </html>

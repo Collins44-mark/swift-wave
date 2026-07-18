@@ -7,17 +7,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const mobileToggle = document.getElementById("mobile-toggle");
   const mobileMenu = document.getElementById("mobile-menu");
+  const mobileBackdrop = mobileMenu
+    ? mobileMenu.querySelector(".mobile-menu-backdrop")
+    : null;
 
   function setMenuOpen(open) {
     if (!mobileMenu || !mobileToggle) return;
-    mobileMenu.classList.toggle("hidden", !open);
+    mobileMenu.classList.toggle("is-open", open);
+    mobileToggle.classList.toggle("is-open", open);
     mobileToggle.setAttribute("aria-expanded", open ? "true" : "false");
-    const icon = mobileToggle.querySelector("[data-lucide]");
-    if (icon) {
-      icon.setAttribute("data-lucide", open ? "x" : "menu");
-      if (typeof lucide !== "undefined") lucide.createIcons();
-    }
-    document.body.style.overflow = open ? "hidden" : "";
+    mobileToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    mobileMenu.setAttribute("aria-hidden", open ? "false" : "true");
+    document.body.classList.toggle("menu-open", open);
   }
 
   if (mobileToggle && mobileMenu) {
@@ -25,8 +26,12 @@ document.addEventListener("DOMContentLoaded", () => {
     mobileToggle.setAttribute("aria-controls", "mobile-menu");
 
     mobileToggle.addEventListener("click", () => {
-      setMenuOpen(mobileMenu.classList.contains("hidden"));
+      setMenuOpen(!mobileMenu.classList.contains("is-open"));
     });
+
+    if (mobileBackdrop) {
+      mobileBackdrop.addEventListener("click", () => setMenuOpen(false));
+    }
 
     mobileMenu.querySelectorAll("a").forEach((link) => {
       link.addEventListener("click", () => setMenuOpen(false));
@@ -36,7 +41,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (e.key === "Escape") setMenuOpen(false);
     });
 
-    // Close mobile menu when switching to desktop
     window.addEventListener("resize", () => {
       if (window.matchMedia("(min-width: 1024px)").matches) {
         setMenuOpen(false);
