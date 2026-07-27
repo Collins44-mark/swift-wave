@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="Swift Wave Medical — healthcare services, medical supplies, and community wellness programs.">
+  <meta name="description" content="Swift Wave Medical — medical supplies and healthcare services catalog.">
   <title>Swift Wave Medical — Swift Wave Group</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,9 +11,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
   <link rel="icon" type="image/png" href="../assets/images/logo.png?v=6">
-  <link rel="stylesheet" href="../css/styles.css?v=11">
+  <link rel="stylesheet" href="../css/styles.css?v=12">
 </head>
-<body class="min-h-screen w-full overflow-x-hidden company-page">
+<body class="min-h-screen w-full overflow-x-hidden company-page" data-company-mode="ecommerce">
 
   <nav id="navbar" class="fixed top-0 w-full nav-blur">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
@@ -46,31 +46,11 @@
           <span class="mobile-menu-rule" aria-hidden="true"></span>
         </div>
         <nav class="mobile-nav" aria-label="Mobile">
-          <a href="../index.html" class="mobile-nav-link">
-            <span class="mobile-nav-index">01</span>
-            <span class="mobile-nav-text">Home</span>
-            <span class="mobile-nav-chevron" aria-hidden="true"></span>
-          </a>
-          <a href="../about.html" class="mobile-nav-link">
-            <span class="mobile-nav-index">02</span>
-            <span class="mobile-nav-text">About</span>
-            <span class="mobile-nav-chevron" aria-hidden="true"></span>
-          </a>
-          <a href="../companies.html" class="mobile-nav-link is-active">
-            <span class="mobile-nav-index">03</span>
-            <span class="mobile-nav-text">Companies</span>
-            <span class="mobile-nav-chevron" aria-hidden="true"></span>
-          </a>
-          <a href="../global.html" class="mobile-nav-link">
-            <span class="mobile-nav-index">04</span>
-            <span class="mobile-nav-text">Global</span>
-            <span class="mobile-nav-chevron" aria-hidden="true"></span>
-          </a>
-          <a href="../contact.html" class="mobile-nav-link">
-            <span class="mobile-nav-index">05</span>
-            <span class="mobile-nav-text">Contact</span>
-            <span class="mobile-nav-chevron" aria-hidden="true"></span>
-          </a>
+          <a href="../index.html" class="mobile-nav-link"><span class="mobile-nav-index">01</span><span class="mobile-nav-text">Home</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
+          <a href="../about.html" class="mobile-nav-link"><span class="mobile-nav-index">02</span><span class="mobile-nav-text">About</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
+          <a href="../companies.html" class="mobile-nav-link is-active"><span class="mobile-nav-index">03</span><span class="mobile-nav-text">Companies</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
+          <a href="../global.html" class="mobile-nav-link"><span class="mobile-nav-index">04</span><span class="mobile-nav-text">Global</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
+          <a href="../contact.html" class="mobile-nav-link"><span class="mobile-nav-index">05</span><span class="mobile-nav-text">Contact</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
         </nav>
         <div class="mobile-menu-bottom">
           <a href="../contact.html" class="mobile-menu-cta">Get in Touch</a>
@@ -79,200 +59,164 @@
       </div>
     </div>
 
-  <header class="co-hero page-hero" data-slideshow data-interval="5500">
-    <div class="slideshow-track" aria-hidden="true">
-      <div class="slideshow-slide is-active" style="background-image:url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=2000&q=80')"></div>
-      <div class="slideshow-slide" style="background-image:url('https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=2000&q=80')"></div>
-      <div class="slideshow-slide" style="background-image:url('https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?auto=format&fit=crop&w=2000&q=80')"></div>
-    </div>
-    <div class="slideshow-overlay"></div>
-    <div class="co-hero-inner max-w-7xl mx-auto px-4 sm:px-6">
-      <nav class="co-breadcrumb fade-up" aria-label="Breadcrumb">
+  <header class="co-shop-hero">
+    <div class="co-shop-hero-bg" style="background-image:url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=2000&q=80')" aria-hidden="true"></div>
+    <div class="co-shop-hero-overlay" aria-hidden="true"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 co-shop-hero-inner">
+      <nav class="co-breadcrumb" aria-label="Breadcrumb">
         <a href="../companies.html">Companies</a>
         <span aria-hidden="true">/</span>
         <span>Medical</span>
       </nav>
-      <div class="co-hero-panel glass-panel fade-up">
-        <div class="co-hero-badge">
-          <span class="icon-box"><i data-lucide="heart-pulse" class="w-5 h-5"></i></span>
-          <span class="eyebrow">Healthcare Division</span>
+      <div class="co-shop-title-row">
+        <div>
+          <div class="co-shop-badge"><i data-lucide="heart-pulse" class="w-4 h-4"></i><span>Shop</span></div>
+          <h1>Swift Wave Medical</h1>
+          <p class="co-shop-hint">Browse products & packages</p>
         </div>
-        <h1>Swift Wave Medical</h1>
-        <p class="co-tagline">Care That Reaches Communities</p>
-        <p class="co-lead">Healthcare services, medical supplies, and wellness programs designed to improve access and outcomes across the region.</p>
-        <div class="co-hero-actions">
-          <a href="../contact.html" class="btn-primary px-6 py-3 text-sm">Enquire Now</a>
-          <a href="#services" class="btn-outline px-6 py-3 text-sm">Explore Services</a>
-        </div>
+        <a href="../contact.html" class="btn-primary px-5 py-2.5 text-sm co-shop-contact">Contact</a>
       </div>
     </div>
   </header>
 
-  <section class="co-stats-section px-4 sm:px-6">
-    <div class="max-w-7xl mx-auto co-stats-grid">
-          <div class="co-stat glass-white fade-up">
-            <div class="co-stat-value">30+</div>
-            <div class="co-stat-label">Clinic Partners</div>
-          </div>
-          <div class="co-stat glass-white fade-up">
-            <div class="co-stat-value">10k+</div>
-            <div class="co-stat-label">Patients Reached</div>
-          </div>
-          <div class="co-stat glass-white fade-up">
-            <div class="co-stat-value">200+</div>
-            <div class="co-stat-label">Supply SKUs</div>
-          </div>
-          <div class="co-stat glass-white fade-up">
-            <div class="co-stat-value">24/7</div>
-            <div class="co-stat-label">Emergency Desk</div>
-          </div>
-    </div>
-  </section>
-
-  <section class="section-white py-14 sm:py-20 px-4 sm:px-6">
-    <div class="max-w-7xl mx-auto co-about-grid">
-      <div class="fade-up">
-        <span class="eyebrow">About the Division</span>
-        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mt-3 mb-5">Health Access, Elevated</h2>
-        <p class="body-text text-sm sm:text-base leading-relaxed mb-6">Swift Wave Medical supports clinics, institutions, and communities with dependable medical supplies, wellness outreach, and coordinated care pathways.</p>
-        <ul class="co-checklist">
-            <li class="fade-up"><i data-lucide="check" class="w-4 h-4"></i><span>Trusted by regional clinics</span></li>
-            <li class="fade-up"><i data-lucide="check" class="w-4 h-4"></i><span>Compliant sourcing standards</span></li>
-            <li class="fade-up"><i data-lucide="check" class="w-4 h-4"></i><span>Responsive replenishment cycles</span></li>
-            <li class="fade-up"><i data-lucide="check" class="w-4 h-4"></i><span>Community-first wellness programs</span></li>
-        </ul>
-      </div>
-      <div class="co-about-media fade-up">
-        <div class="co-about-frame glass-card">
-          <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1200&q=80" alt="Swift Wave Medical" loading="lazy">
-        </div>
-        <div class="co-float-chip glass-white">
-          <i data-lucide="heart-pulse" class="w-4 h-4"></i>
-          <span>Part of Swift Wave Group</span>
+  <section class="co-catalog section-premium px-4 sm:px-6 py-8 sm:py-12">
+    <div class="max-w-7xl mx-auto">
+      <div class="co-catalog-bar fade-up">
+        <h2 class="co-catalog-heading">Products & Services</h2>
+        <div class="co-filters" role="tablist" aria-label="Filter">
+          <button type="button" class="co-filter is-active" data-filter="All">All</button>
+          <button type="button" class="co-filter" data-filter="Supplies">Supplies</button>
+          <button type="button" class="co-filter" data-filter="Equipment">Equipment</button>
+          <button type="button" class="co-filter" data-filter="Wellness">Wellness</button>
+          <button type="button" class="co-filter" data-filter="Contracts">Contracts</button>
         </div>
       </div>
+      <div class="co-product-grid" id="product-grid">
+          <article class="co-product glass-card fade-up" data-category="Supplies">
+            <div class="co-product-media">
+              <img src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=800&q=80" alt="PPE Kit (Box of 50)" loading="lazy">
+              <span class="co-product-tag">Supplies</span>
+            </div>
+            <div class="co-product-body">
+              <h3 class="co-product-title">PPE Kit (Box of 50)</h3>
+              <p class="co-product-meta">Masks · Gloves · Gowns</p>
+              <div class="co-product-row">
+                <span class="co-product-price">TZS 95,000</span>
+                <a href="../contact.html" class="co-product-cta">Order</a>
+              </div>
+            </div>
+          </article>
+          <article class="co-product glass-card fade-up" data-category="Supplies">
+            <div class="co-product-media">
+              <img src="https://images.unsplash.com/photo-1603398938378-e54eab446dde?auto=format&fit=crop&w=800&q=80" alt="First Aid Station Pack" loading="lazy">
+              <span class="co-product-tag">Supplies</span>
+            </div>
+            <div class="co-product-body">
+              <h3 class="co-product-title">First Aid Station Pack</h3>
+              <p class="co-product-meta">Clinic ready</p>
+              <div class="co-product-row">
+                <span class="co-product-price">TZS 180,000</span>
+                <a href="../contact.html" class="co-product-cta">Order</a>
+              </div>
+            </div>
+          </article>
+          <article class="co-product glass-card fade-up" data-category="Equipment">
+            <div class="co-product-media">
+              <img src="https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?auto=format&fit=crop&w=800&q=80" alt="Digital BP Monitor" loading="lazy">
+              <span class="co-product-tag">Equipment</span>
+            </div>
+            <div class="co-product-body">
+              <h3 class="co-product-title">Digital BP Monitor</h3>
+              <p class="co-product-meta">Diagnostic</p>
+              <div class="co-product-row">
+                <span class="co-product-price">TZS 210,000</span>
+                <a href="../contact.html" class="co-product-cta">Order</a>
+              </div>
+            </div>
+          </article>
+          <article class="co-product glass-card fade-up" data-category="Equipment">
+            <div class="co-product-media">
+              <img src="https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?auto=format&fit=crop&w=800&q=80" alt="Pulse Oximeter" loading="lazy">
+              <span class="co-product-tag">Equipment</span>
+            </div>
+            <div class="co-product-body">
+              <h3 class="co-product-title">Pulse Oximeter</h3>
+              <p class="co-product-meta">Diagnostic</p>
+              <div class="co-product-row">
+                <span class="co-product-price">TZS 65,000</span>
+                <a href="../contact.html" class="co-product-cta">Order</a>
+              </div>
+            </div>
+          </article>
+          <article class="co-product glass-card fade-up" data-category="Wellness">
+            <div class="co-product-media">
+              <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=800&q=80" alt="Community Wellness Day" loading="lazy">
+              <span class="co-product-tag">Wellness</span>
+            </div>
+            <div class="co-product-body">
+              <h3 class="co-product-title">Community Wellness Day</h3>
+              <p class="co-product-meta">Outreach program</p>
+              <div class="co-product-row">
+                <span class="co-product-price">Enquire</span>
+                <a href="../contact.html" class="co-product-cta">Enquire</a>
+              </div>
+            </div>
+          </article>
+          <article class="co-product glass-card fade-up" data-category="Contracts">
+            <div class="co-product-media">
+              <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800&q=80" alt="Clinic Supply Contract" loading="lazy">
+              <span class="co-product-tag">Contracts</span>
+            </div>
+            <div class="co-product-body">
+              <h3 class="co-product-title">Clinic Supply Contract</h3>
+              <p class="co-product-meta">Monthly replenishment</p>
+              <div class="co-product-row">
+                <span class="co-product-price">Enquire</span>
+                <a href="../contact.html" class="co-product-cta">Enquire</a>
+              </div>
+            </div>
+          </article>
+          <article class="co-product glass-card fade-up" data-category="Supplies">
+            <div class="co-product-media">
+              <img src="https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?auto=format&fit=crop&w=800&q=80" alt="Hospital Consumables" loading="lazy">
+              <span class="co-product-tag">Supplies</span>
+            </div>
+            <div class="co-product-body">
+              <h3 class="co-product-title">Hospital Consumables</h3>
+              <p class="co-product-meta">Bulk order</p>
+              <div class="co-product-row">
+                <span class="co-product-price">Get Quote</span>
+                <a href="../contact.html" class="co-product-cta">Get Quote</a>
+              </div>
+            </div>
+          </article>
+          <article class="co-product glass-card fade-up" data-category="Contracts">
+            <div class="co-product-media">
+              <img src="https://images.unsplash.com/photo-1631815589968-fdb8192b2a47?auto=format&fit=crop&w=800&q=80" alt="Emergency Restock" loading="lazy">
+              <span class="co-product-tag">Contracts</span>
+            </div>
+            <div class="co-product-body">
+              <h3 class="co-product-title">Emergency Restock</h3>
+              <p class="co-product-meta">Critical items</p>
+              <div class="co-product-row">
+                <span class="co-product-price">24/7 Order</span>
+                <a href="../contact.html" class="co-product-cta">Order</a>
+              </div>
+            </div>
+          </article>
+      </div>
     </div>
   </section>
 
-  <section id="services" class="section-premium py-14 sm:py-20 px-4 sm:px-6">
+  <section class="section-white py-10 sm:py-12 px-4 sm:px-6">
     <div class="max-w-7xl mx-auto">
-      <div class="text-center mb-10 sm:mb-12 fade-up">
-        <span class="eyebrow">What We Offer</span>
-        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mt-3">Services</h2>
-        <p class="body-text mt-3 max-w-2xl mx-auto text-sm sm:text-base">Purpose-built capabilities delivered with the Swift Wave standard of clarity, care, and craft.</p>
-      </div>
-      <div class="co-services-grid">
-          <article class="co-service glass-card fade-up">
-            <span class="icon-box co-service-icon"><i data-lucide="pill" class="w-5 h-5"></i></span>
-            <h3>Medical Supplies</h3>
-            <p>Sourced pharmaceuticals and consumables for clinics and hospitals.</p>
-          </article>
-          <article class="co-service glass-card fade-up">
-            <span class="icon-box co-service-icon"><i data-lucide="stethoscope" class="w-5 h-5"></i></span>
-            <h3>Clinical Support</h3>
-            <p>Operational support that helps facilities run smoothly.</p>
-          </article>
-          <article class="co-service glass-card fade-up">
-            <span class="icon-box co-service-icon"><i data-lucide="heart-handshake" class="w-5 h-5"></i></span>
-            <h3>Community Wellness</h3>
-            <p>Outreach programs focused on prevention and education.</p>
-          </article>
-          <article class="co-service glass-card fade-up">
-            <span class="icon-box co-service-icon"><i data-lucide="ambulance" class="w-5 h-5"></i></span>
-            <h3>Emergency Logistics</h3>
-            <p>Rapid movement of critical medical materials.</p>
-          </article>
-          <article class="co-service glass-card fade-up">
-            <span class="icon-box co-service-icon"><i data-lucide="shield-plus" class="w-5 h-5"></i></span>
-            <h3>Quality Assurance</h3>
-            <p>Traceable sourcing and storage standards.</p>
-          </article>
-          <article class="co-service glass-card fade-up">
-            <span class="icon-box co-service-icon"><i data-lucide="users" class="w-5 h-5"></i></span>
-            <h3>Institutional Contracts</h3>
-            <p>Long-term supply agreements for trusted partners.</p>
-          </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="section-white py-14 sm:py-20 px-4 sm:px-6">
-    <div class="max-w-7xl mx-auto">
-      <div class="text-center mb-10 sm:mb-12 fade-up">
-        <span class="eyebrow">How It Works</span>
-        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mt-3">Our Process</h2>
-      </div>
-      <div class="co-process-grid">
-          <div class="co-step glass-white fade-up">
-            <span class="co-step-num">01</span>
-            <h3>Assess</h3>
-            <p>Needs analysis with clinical stakeholders.</p>
-          </div>
-          <div class="co-step glass-white fade-up">
-            <span class="co-step-num">02</span>
-            <h3>Source</h3>
-            <p>Verified suppliers and compliance checks.</p>
-          </div>
-          <div class="co-step glass-white fade-up">
-            <span class="co-step-num">03</span>
-            <h3>Deliver</h3>
-            <p>Scheduled fulfilment and cold-chain where needed.</p>
-          </div>
-          <div class="co-step glass-white fade-up">
-            <span class="co-step-num">04</span>
-            <h3>Support</h3>
-            <p>Ongoing replenishment and reporting.</p>
-          </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="co-cta-band px-4 sm:px-6 py-14 sm:py-16">
-    <div class="max-w-5xl mx-auto co-cta glass-panel fade-up">
-      <div>
-        <span class="eyebrow">Ready to begin?</span>
-        <h2 class="text-2xl sm:text-3xl font-bold mt-2">Partner with Medical</h2>
-        <p class="body-text mt-3 text-sm sm:text-base">Tell us what you need — our team in Dar es Salaam will respond with a clear next step.</p>
-      </div>
-      <div class="co-cta-actions">
-        <a href="../contact.html" class="btn-primary px-6 py-3 text-sm">Contact Us</a>
-        <a href="../companies.html" class="btn-secondary px-6 py-3 text-sm">All Companies</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="section-premium py-14 sm:py-16 px-4 sm:px-6">
-    <div class="max-w-7xl mx-auto">
-      <div class="mb-8 fade-up">
-        <span class="eyebrow">Explore More</span>
-        <h2 class="text-xl sm:text-2xl font-bold mt-2">Sister Companies</h2>
-      </div>
+      <h2 class="text-lg sm:text-xl font-bold mb-5">More companies</h2>
       <div class="co-sister-grid">
-          <a href="scholarship.html" class="co-sister glass-card fade-up">
-            <span class="icon-box"><i data-lucide="graduation-cap" class="w-4 h-4"></i></span>
-            <span class="co-sister-name">Scholarship</span>
-            <i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i>
-          </a>
-          <a href="freight.html" class="co-sister glass-card fade-up">
-            <span class="icon-box"><i data-lucide="truck" class="w-4 h-4"></i></span>
-            <span class="co-sister-name">Freight</span>
-            <i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i>
-          </a>
-          <a href="outfit.html" class="co-sister glass-card fade-up">
-            <span class="icon-box"><i data-lucide="shirt" class="w-4 h-4"></i></span>
-            <span class="co-sister-name">Outfit</span>
-            <i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i>
-          </a>
-          <a href="travels.html" class="co-sister glass-card fade-up">
-            <span class="icon-box"><i data-lucide="plane" class="w-4 h-4"></i></span>
-            <span class="co-sister-name">Travels</span>
-            <i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i>
-          </a>
-          <a href="catering.html" class="co-sister glass-card fade-up">
-            <span class="icon-box"><i data-lucide="utensils" class="w-4 h-4"></i></span>
-            <span class="co-sister-name">Catering</span>
-            <i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i>
-          </a>
+          <a href="scholarship.html" class="co-sister glass-card"><span class="icon-box"><i data-lucide="graduation-cap" class="w-4 h-4"></i></span><span class="co-sister-name">Scholarship</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
+          <a href="freight.html" class="co-sister glass-card"><span class="icon-box"><i data-lucide="truck" class="w-4 h-4"></i></span><span class="co-sister-name">Freight</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
+          <a href="outfit.html" class="co-sister glass-card"><span class="icon-box"><i data-lucide="shirt" class="w-4 h-4"></i></span><span class="co-sister-name">Outfit</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
+          <a href="travels.html" class="co-sister glass-card"><span class="icon-box"><i data-lucide="plane" class="w-4 h-4"></i></span><span class="co-sister-name">Travels</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
+          <a href="catering.html" class="co-sister glass-card"><span class="icon-box"><i data-lucide="utensils" class="w-4 h-4"></i></span><span class="co-sister-name">Catering</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
       </div>
     </div>
   </section>
@@ -319,7 +263,24 @@
     </div>
   </footer>
 
-  <script src="../js/slideshow.js"></script>
-  <script src="../js/main.js?v=11"></script>
+  <script src="../js/main.js?v=12"></script>
+  <script>
+    (function () {
+      const buttons = document.querySelectorAll(".co-filter");
+      const cards = document.querySelectorAll(".co-product");
+      buttons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const filter = btn.getAttribute("data-filter");
+          buttons.forEach((b) => b.classList.remove("is-active"));
+          btn.classList.add("is-active");
+          cards.forEach((card) => {
+            const cat = card.getAttribute("data-category");
+            const show = filter === "All" || cat === filter;
+            card.hidden = !show;
+          });
+        });
+      });
+    })();
+  </script>
 </body>
 </html>

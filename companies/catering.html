@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="Swift Wave Catering — premium catering for corporate events, celebrations, and hospitality.">
+  <meta name="description" content="Swift Wave Catering — event menus and catering packages.">
   <title>Swift Wave Catering — Swift Wave Group</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,9 +11,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
   <link rel="icon" type="image/png" href="../assets/images/logo.png?v=6">
-  <link rel="stylesheet" href="../css/styles.css?v=11">
+  <link rel="stylesheet" href="../css/styles.css?v=12">
 </head>
-<body class="min-h-screen w-full overflow-x-hidden company-page">
+<body class="min-h-screen w-full overflow-x-hidden company-page" data-company-mode="ecommerce">
 
   <nav id="navbar" class="fixed top-0 w-full nav-blur">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
@@ -46,31 +46,11 @@
           <span class="mobile-menu-rule" aria-hidden="true"></span>
         </div>
         <nav class="mobile-nav" aria-label="Mobile">
-          <a href="../index.html" class="mobile-nav-link">
-            <span class="mobile-nav-index">01</span>
-            <span class="mobile-nav-text">Home</span>
-            <span class="mobile-nav-chevron" aria-hidden="true"></span>
-          </a>
-          <a href="../about.html" class="mobile-nav-link">
-            <span class="mobile-nav-index">02</span>
-            <span class="mobile-nav-text">About</span>
-            <span class="mobile-nav-chevron" aria-hidden="true"></span>
-          </a>
-          <a href="../companies.html" class="mobile-nav-link is-active">
-            <span class="mobile-nav-index">03</span>
-            <span class="mobile-nav-text">Companies</span>
-            <span class="mobile-nav-chevron" aria-hidden="true"></span>
-          </a>
-          <a href="../global.html" class="mobile-nav-link">
-            <span class="mobile-nav-index">04</span>
-            <span class="mobile-nav-text">Global</span>
-            <span class="mobile-nav-chevron" aria-hidden="true"></span>
-          </a>
-          <a href="../contact.html" class="mobile-nav-link">
-            <span class="mobile-nav-index">05</span>
-            <span class="mobile-nav-text">Contact</span>
-            <span class="mobile-nav-chevron" aria-hidden="true"></span>
-          </a>
+          <a href="../index.html" class="mobile-nav-link"><span class="mobile-nav-index">01</span><span class="mobile-nav-text">Home</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
+          <a href="../about.html" class="mobile-nav-link"><span class="mobile-nav-index">02</span><span class="mobile-nav-text">About</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
+          <a href="../companies.html" class="mobile-nav-link is-active"><span class="mobile-nav-index">03</span><span class="mobile-nav-text">Companies</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
+          <a href="../global.html" class="mobile-nav-link"><span class="mobile-nav-index">04</span><span class="mobile-nav-text">Global</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
+          <a href="../contact.html" class="mobile-nav-link"><span class="mobile-nav-index">05</span><span class="mobile-nav-text">Contact</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
         </nav>
         <div class="mobile-menu-bottom">
           <a href="../contact.html" class="mobile-menu-cta">Get in Touch</a>
@@ -79,200 +59,164 @@
       </div>
     </div>
 
-  <header class="co-hero page-hero" data-slideshow data-interval="5500">
-    <div class="slideshow-track" aria-hidden="true">
-      <div class="slideshow-slide is-active" style="background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=2000&q=80')"></div>
-      <div class="slideshow-slide" style="background-image:url('https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&w=2000&q=80')"></div>
-      <div class="slideshow-slide" style="background-image:url('https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=2000&q=80')"></div>
-    </div>
-    <div class="slideshow-overlay"></div>
-    <div class="co-hero-inner max-w-7xl mx-auto px-4 sm:px-6">
-      <nav class="co-breadcrumb fade-up" aria-label="Breadcrumb">
+  <header class="co-shop-hero">
+    <div class="co-shop-hero-bg" style="background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=2000&q=80')" aria-hidden="true"></div>
+    <div class="co-shop-hero-overlay" aria-hidden="true"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 co-shop-hero-inner">
+      <nav class="co-breadcrumb" aria-label="Breadcrumb">
         <a href="../companies.html">Companies</a>
         <span aria-hidden="true">/</span>
         <span>Catering</span>
       </nav>
-      <div class="co-hero-panel glass-panel fade-up">
-        <div class="co-hero-badge">
-          <span class="icon-box"><i data-lucide="utensils" class="w-5 h-5"></i></span>
-          <span class="eyebrow">Hospitality Division</span>
+      <div class="co-shop-title-row">
+        <div>
+          <div class="co-shop-badge"><i data-lucide="utensils" class="w-4 h-4"></i><span>Shop</span></div>
+          <h1>Swift Wave Catering</h1>
+          <p class="co-shop-hint">Browse products & packages</p>
         </div>
-        <h1>Swift Wave Catering</h1>
-        <p class="co-tagline">Hospitality Worth Remembering</p>
-        <p class="co-lead">Premium catering for corporate events, celebrations, and hospitality experiences that leave a lasting impression.</p>
-        <div class="co-hero-actions">
-          <a href="../contact.html" class="btn-primary px-6 py-3 text-sm">Enquire Now</a>
-          <a href="#services" class="btn-outline px-6 py-3 text-sm">Explore Services</a>
-        </div>
+        <a href="../contact.html" class="btn-primary px-5 py-2.5 text-sm co-shop-contact">Contact</a>
       </div>
     </div>
   </header>
 
-  <section class="co-stats-section px-4 sm:px-6">
-    <div class="max-w-7xl mx-auto co-stats-grid">
-          <div class="co-stat glass-white fade-up">
-            <div class="co-stat-value">400+</div>
-            <div class="co-stat-label">Events Served</div>
-          </div>
-          <div class="co-stat glass-white fade-up">
-            <div class="co-stat-value">50+</div>
-            <div class="co-stat-label">Menu Concepts</div>
-          </div>
-          <div class="co-stat glass-white fade-up">
-            <div class="co-stat-value">2k+</div>
-            <div class="co-stat-label">Guests / Month</div>
-          </div>
-          <div class="co-stat glass-white fade-up">
-            <div class="co-stat-value">5★</div>
-            <div class="co-stat-label">Service Standard</div>
-          </div>
-    </div>
-  </section>
-
-  <section class="section-white py-14 sm:py-20 px-4 sm:px-6">
-    <div class="max-w-7xl mx-auto co-about-grid">
-      <div class="fade-up">
-        <span class="eyebrow">About the Division</span>
-        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mt-3 mb-5">Flavour, Service, Atmosphere</h2>
-        <p class="body-text text-sm sm:text-base leading-relaxed mb-6">Swift Wave Catering crafts menus and service experiences for boardrooms, weddings, and large gatherings — from intimate plated dinners to full-service outdoor events.</p>
-        <ul class="co-checklist">
-            <li class="fade-up"><i data-lucide="check" class="w-4 h-4"></i><span>Chef-led seasonal menus</span></li>
-            <li class="fade-up"><i data-lucide="check" class="w-4 h-4"></i><span>Impeccable on-site presentation</span></li>
-            <li class="fade-up"><i data-lucide="check" class="w-4 h-4"></i><span>Scales from 20 to 2,000 guests</span></li>
-            <li class="fade-up"><i data-lucide="check" class="w-4 h-4"></i><span>Reliable corporate retainers</span></li>
-        </ul>
-      </div>
-      <div class="co-about-media fade-up">
-        <div class="co-about-frame glass-card">
-          <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1200&q=80" alt="Swift Wave Catering" loading="lazy">
-        </div>
-        <div class="co-float-chip glass-white">
-          <i data-lucide="utensils" class="w-4 h-4"></i>
-          <span>Part of Swift Wave Group</span>
+  <section class="co-catalog section-premium px-4 sm:px-6 py-8 sm:py-12">
+    <div class="max-w-7xl mx-auto">
+      <div class="co-catalog-bar fade-up">
+        <h2 class="co-catalog-heading">Menus & Packages</h2>
+        <div class="co-filters" role="tablist" aria-label="Filter">
+          <button type="button" class="co-filter is-active" data-filter="All">All</button>
+          <button type="button" class="co-filter" data-filter="Corporate">Corporate</button>
+          <button type="button" class="co-filter" data-filter="Weddings">Weddings</button>
+          <button type="button" class="co-filter" data-filter="Buffet">Buffet</button>
+          <button type="button" class="co-filter" data-filter="Drinks">Drinks</button>
         </div>
       </div>
+      <div class="co-product-grid" id="product-grid">
+          <article class="co-product glass-card fade-up" data-category="Corporate">
+            <div class="co-product-media">
+              <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80" alt="Executive Lunch Box" loading="lazy">
+              <span class="co-product-tag">Corporate</span>
+            </div>
+            <div class="co-product-body">
+              <h3 class="co-product-title">Executive Lunch Box</h3>
+              <p class="co-product-meta">Per person</p>
+              <div class="co-product-row">
+                <span class="co-product-price">TZS 25,000</span>
+                <a href="../contact.html" class="co-product-cta">Order</a>
+              </div>
+            </div>
+          </article>
+          <article class="co-product glass-card fade-up" data-category="Corporate">
+            <div class="co-product-media">
+              <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=800&q=80" alt="Boardroom Plated Set" loading="lazy">
+              <span class="co-product-tag">Corporate</span>
+            </div>
+            <div class="co-product-body">
+              <h3 class="co-product-title">Boardroom Plated Set</h3>
+              <p class="co-product-meta">Per person</p>
+              <div class="co-product-row">
+                <span class="co-product-price">TZS 55,000</span>
+                <a href="../contact.html" class="co-product-cta">Order</a>
+              </div>
+            </div>
+          </article>
+          <article class="co-product glass-card fade-up" data-category="Weddings">
+            <div class="co-product-media">
+              <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=80" alt="Wedding Buffet Gold" loading="lazy">
+              <span class="co-product-tag">Weddings</span>
+            </div>
+            <div class="co-product-body">
+              <h3 class="co-product-title">Wedding Buffet Gold</h3>
+              <p class="co-product-meta">Per guest</p>
+              <div class="co-product-row">
+                <span class="co-product-price">From TZS 45,000</span>
+                <a href="../contact.html" class="co-product-cta">Order</a>
+              </div>
+            </div>
+          </article>
+          <article class="co-product glass-card fade-up" data-category="Weddings">
+            <div class="co-product-media">
+              <img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=800&q=80" alt="Wedding Cocktail Hour" loading="lazy">
+              <span class="co-product-tag">Weddings</span>
+            </div>
+            <div class="co-product-body">
+              <h3 class="co-product-title">Wedding Cocktail Hour</h3>
+              <p class="co-product-meta">Per guest</p>
+              <div class="co-product-row">
+                <span class="co-product-price">From TZS 28,000</span>
+                <a href="../contact.html" class="co-product-cta">Order</a>
+              </div>
+            </div>
+          </article>
+          <article class="co-product glass-card fade-up" data-category="Buffet">
+            <div class="co-product-media">
+              <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=800&q=80" alt="Garden BBQ Buffet" loading="lazy">
+              <span class="co-product-tag">Buffet</span>
+            </div>
+            <div class="co-product-body">
+              <h3 class="co-product-title">Garden BBQ Buffet</h3>
+              <p class="co-product-meta">Per person</p>
+              <div class="co-product-row">
+                <span class="co-product-price">TZS 38,000</span>
+                <a href="../contact.html" class="co-product-cta">Order</a>
+              </div>
+            </div>
+          </article>
+          <article class="co-product glass-card fade-up" data-category="Buffet">
+            <div class="co-product-media">
+              <img src="https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&w=800&q=80" alt="International Buffet" loading="lazy">
+              <span class="co-product-tag">Buffet</span>
+            </div>
+            <div class="co-product-body">
+              <h3 class="co-product-title">International Buffet</h3>
+              <p class="co-product-meta">Per person</p>
+              <div class="co-product-row">
+                <span class="co-product-price">TZS 48,000</span>
+                <a href="../contact.html" class="co-product-cta">Order</a>
+              </div>
+            </div>
+          </article>
+          <article class="co-product glass-card fade-up" data-category="Drinks">
+            <div class="co-product-media">
+              <img src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=800&q=80" alt="Signature Mocktail Bar" loading="lazy">
+              <span class="co-product-tag">Drinks</span>
+            </div>
+            <div class="co-product-body">
+              <h3 class="co-product-title">Signature Mocktail Bar</h3>
+              <p class="co-product-meta">Per person</p>
+              <div class="co-product-row">
+                <span class="co-product-price">TZS 18,000</span>
+                <a href="../contact.html" class="co-product-cta">Order</a>
+              </div>
+            </div>
+          </article>
+          <article class="co-product glass-card fade-up" data-category="Drinks">
+            <div class="co-product-media">
+              <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800&q=80" alt="Coffee & Pastry Station" loading="lazy">
+              <span class="co-product-tag">Drinks</span>
+            </div>
+            <div class="co-product-body">
+              <h3 class="co-product-title">Coffee & Pastry Station</h3>
+              <p class="co-product-meta">Per person</p>
+              <div class="co-product-row">
+                <span class="co-product-price">TZS 15,000</span>
+                <a href="../contact.html" class="co-product-cta">Order</a>
+              </div>
+            </div>
+          </article>
+      </div>
     </div>
   </section>
 
-  <section id="services" class="section-premium py-14 sm:py-20 px-4 sm:px-6">
+  <section class="section-white py-10 sm:py-12 px-4 sm:px-6">
     <div class="max-w-7xl mx-auto">
-      <div class="text-center mb-10 sm:mb-12 fade-up">
-        <span class="eyebrow">What We Offer</span>
-        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mt-3">Services</h2>
-        <p class="body-text mt-3 max-w-2xl mx-auto text-sm sm:text-base">Purpose-built capabilities delivered with the Swift Wave standard of clarity, care, and craft.</p>
-      </div>
-      <div class="co-services-grid">
-          <article class="co-service glass-card fade-up">
-            <span class="icon-box co-service-icon"><i data-lucide="cooking-pot" class="w-5 h-5"></i></span>
-            <h3>Corporate Catering</h3>
-            <p>Board lunches, launch events, and office hospitality.</p>
-          </article>
-          <article class="co-service glass-card fade-up">
-            <span class="icon-box co-service-icon"><i data-lucide="cake-slice" class="w-5 h-5"></i></span>
-            <h3>Celebrations</h3>
-            <p>Weddings, birthdays, and milestone events with style.</p>
-          </article>
-          <article class="co-service glass-card fade-up">
-            <span class="icon-box co-service-icon"><i data-lucide="soup" class="w-5 h-5"></i></span>
-            <h3>Buffet & Plated</h3>
-            <p>Flexible service styles matched to your venue.</p>
-          </article>
-          <article class="co-service glass-card fade-up">
-            <span class="icon-box co-service-icon"><i data-lucide="leaf" class="w-5 h-5"></i></span>
-            <h3>Dietary Menus</h3>
-            <p>Halal, vegetarian, and allergen-aware options.</p>
-          </article>
-          <article class="co-service glass-card fade-up">
-            <span class="icon-box co-service-icon"><i data-lucide="wine" class="w-5 h-5"></i></span>
-            <h3>Bar & Beverage</h3>
-            <p>Signature drinks and professional service teams.</p>
-          </article>
-          <article class="co-service glass-card fade-up">
-            <span class="icon-box co-service-icon"><i data-lucide="sparkle" class="w-5 h-5"></i></span>
-            <h3>Full Event Staffing</h3>
-            <p>Chefs, servers, and coordinators on site.</p>
-          </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="section-white py-14 sm:py-20 px-4 sm:px-6">
-    <div class="max-w-7xl mx-auto">
-      <div class="text-center mb-10 sm:mb-12 fade-up">
-        <span class="eyebrow">How It Works</span>
-        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mt-3">Our Process</h2>
-      </div>
-      <div class="co-process-grid">
-          <div class="co-step glass-white fade-up">
-            <span class="co-step-num">01</span>
-            <h3>Consult</h3>
-            <p>Guest count, theme, and tasting plan.</p>
-          </div>
-          <div class="co-step glass-white fade-up">
-            <span class="co-step-num">02</span>
-            <h3>Design</h3>
-            <p>Menu, décor accents, and service flow.</p>
-          </div>
-          <div class="co-step glass-white fade-up">
-            <span class="co-step-num">03</span>
-            <h3>Prep</h3>
-            <p>Sourcing, kitchen prep, and logistics.</p>
-          </div>
-          <div class="co-step glass-white fade-up">
-            <span class="co-step-num">04</span>
-            <h3>Serve</h3>
-            <p>On-site excellence from first pour to last plate.</p>
-          </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="co-cta-band px-4 sm:px-6 py-14 sm:py-16">
-    <div class="max-w-5xl mx-auto co-cta glass-panel fade-up">
-      <div>
-        <span class="eyebrow">Ready to begin?</span>
-        <h2 class="text-2xl sm:text-3xl font-bold mt-2">Partner with Catering</h2>
-        <p class="body-text mt-3 text-sm sm:text-base">Tell us what you need — our team in Dar es Salaam will respond with a clear next step.</p>
-      </div>
-      <div class="co-cta-actions">
-        <a href="../contact.html" class="btn-primary px-6 py-3 text-sm">Contact Us</a>
-        <a href="../companies.html" class="btn-secondary px-6 py-3 text-sm">All Companies</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="section-premium py-14 sm:py-16 px-4 sm:px-6">
-    <div class="max-w-7xl mx-auto">
-      <div class="mb-8 fade-up">
-        <span class="eyebrow">Explore More</span>
-        <h2 class="text-xl sm:text-2xl font-bold mt-2">Sister Companies</h2>
-      </div>
+      <h2 class="text-lg sm:text-xl font-bold mb-5">More companies</h2>
       <div class="co-sister-grid">
-          <a href="scholarship.html" class="co-sister glass-card fade-up">
-            <span class="icon-box"><i data-lucide="graduation-cap" class="w-4 h-4"></i></span>
-            <span class="co-sister-name">Scholarship</span>
-            <i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i>
-          </a>
-          <a href="freight.html" class="co-sister glass-card fade-up">
-            <span class="icon-box"><i data-lucide="truck" class="w-4 h-4"></i></span>
-            <span class="co-sister-name">Freight</span>
-            <i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i>
-          </a>
-          <a href="outfit.html" class="co-sister glass-card fade-up">
-            <span class="icon-box"><i data-lucide="shirt" class="w-4 h-4"></i></span>
-            <span class="co-sister-name">Outfit</span>
-            <i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i>
-          </a>
-          <a href="medical.html" class="co-sister glass-card fade-up">
-            <span class="icon-box"><i data-lucide="heart-pulse" class="w-4 h-4"></i></span>
-            <span class="co-sister-name">Medical</span>
-            <i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i>
-          </a>
-          <a href="travels.html" class="co-sister glass-card fade-up">
-            <span class="icon-box"><i data-lucide="plane" class="w-4 h-4"></i></span>
-            <span class="co-sister-name">Travels</span>
-            <i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i>
-          </a>
+          <a href="scholarship.html" class="co-sister glass-card"><span class="icon-box"><i data-lucide="graduation-cap" class="w-4 h-4"></i></span><span class="co-sister-name">Scholarship</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
+          <a href="freight.html" class="co-sister glass-card"><span class="icon-box"><i data-lucide="truck" class="w-4 h-4"></i></span><span class="co-sister-name">Freight</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
+          <a href="outfit.html" class="co-sister glass-card"><span class="icon-box"><i data-lucide="shirt" class="w-4 h-4"></i></span><span class="co-sister-name">Outfit</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
+          <a href="medical.html" class="co-sister glass-card"><span class="icon-box"><i data-lucide="heart-pulse" class="w-4 h-4"></i></span><span class="co-sister-name">Medical</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
+          <a href="travels.html" class="co-sister glass-card"><span class="icon-box"><i data-lucide="plane" class="w-4 h-4"></i></span><span class="co-sister-name">Travels</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
       </div>
     </div>
   </section>
@@ -319,7 +263,24 @@
     </div>
   </footer>
 
-  <script src="../js/slideshow.js"></script>
-  <script src="../js/main.js?v=11"></script>
+  <script src="../js/main.js?v=12"></script>
+  <script>
+    (function () {
+      const buttons = document.querySelectorAll(".co-filter");
+      const cards = document.querySelectorAll(".co-product");
+      buttons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const filter = btn.getAttribute("data-filter");
+          buttons.forEach((b) => b.classList.remove("is-active"));
+          btn.classList.add("is-active");
+          cards.forEach((card) => {
+            const cat = card.getAttribute("data-category");
+            const show = filter === "All" || cat === filter;
+            card.hidden = !show;
+          });
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
