@@ -1634,6 +1634,214 @@ a:hover .icon,
   color: #fff;
 }
 
+.co-subfilters {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.4rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  margin: -0.35rem 0 1.1rem;
+  padding-bottom: 0.15rem;
+}
+
+.co-subfilters::-webkit-scrollbar {
+  display: none;
+}
+
+.co-subfilters[hidden] {
+  display: none !important;
+}
+
+.co-subfilter {
+  flex-shrink: 0;
+  border: 1px solid rgba(11, 46, 109, 0.14);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--text-heading);
+  border-radius: 10px;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.74rem;
+  font-weight: 650;
+  cursor: pointer;
+  transition: background var(--ease), color var(--ease), border-color var(--ease);
+}
+
+.co-subfilter.is-active,
+.co-subfilter:hover {
+  background: var(--bg-premium);
+  border-color: rgba(212, 175, 55, 0.55);
+  color: var(--royal);
+}
+
+.co-catalog-empty {
+  text-align: center;
+  color: var(--text-light);
+  padding: 2.5rem 1rem;
+  font-size: 0.9rem;
+}
+
+/* Amazon-style product detail */
+.co-pdp[hidden],
+#catalog-view[hidden] {
+  display: none !important;
+}
+
+.co-pdp-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 1.1rem;
+  border: 0;
+  background: transparent;
+  color: var(--royal);
+  font-size: 0.875rem;
+  font-weight: 650;
+  cursor: pointer;
+  padding: 0.25rem 0;
+}
+
+.co-pdp-back:hover {
+  color: var(--gold);
+}
+
+.co-pdp-main {
+  display: grid;
+  gap: 1.25rem;
+  padding: 0.85rem;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.co-pdp-gallery {
+  border-radius: 14px;
+  overflow: hidden;
+  background: #f1f5f9;
+  min-height: 16rem;
+}
+
+.co-pdp-gallery img {
+  width: 100%;
+  height: min(70vw, 26rem);
+  object-fit: cover;
+}
+
+.co-pdp-info {
+  padding: 0.35rem 0.25rem 0.5rem;
+}
+
+.co-pdp-path {
+  margin: 0 0 0.45rem;
+  font-size: 0.75rem;
+  font-weight: 650;
+  color: var(--text-light);
+  letter-spacing: 0.02em;
+}
+
+.co-pdp-info h2 {
+  margin: 0;
+  font-size: clamp(1.35rem, 3.5vw, 1.85rem);
+  line-height: 1.2;
+}
+
+.co-pdp-rating {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.55rem;
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.co-pdp-stars {
+  color: #d97706;
+  letter-spacing: 0.05em;
+}
+
+.co-pdp-price {
+  margin: 0.85rem 0 0;
+  font-size: clamp(1.35rem, 3vw, 1.75rem);
+  font-weight: 800;
+  color: var(--royal);
+  letter-spacing: -0.03em;
+}
+
+.co-pdp-desc {
+  margin: 0.85rem 0 0;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.co-pdp-bullets {
+  margin: 0.9rem 0 0;
+  padding-left: 1.1rem;
+  color: var(--text);
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
+.co-pdp-bullets li {
+  margin-bottom: 0.3rem;
+}
+
+.co-pdp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1.25rem;
+}
+
+.co-pdp-note {
+  margin: 0.9rem 0 0;
+  font-size: 0.75rem;
+  color: var(--text-light);
+}
+
+.co-related {
+  margin-top: 2.25rem;
+}
+
+.co-related-title {
+  margin: 0 0 1rem;
+  font-size: 1.15rem;
+}
+
+.co-breadcrumb .hidden,
+.hidden {
+  display: none !important;
+}
+
+.co-breadcrumb a#crumb-shop {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+@media (min-width: 768px) {
+  .co-pdp-main {
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 1.75rem;
+    padding: 1.25rem;
+    border-radius: 22px;
+  }
+
+  .co-pdp-gallery {
+    border-radius: 16px;
+    min-height: 100%;
+  }
+
+  .co-pdp-gallery img {
+    height: 100%;
+    min-height: 28rem;
+    max-height: 34rem;
+  }
+
+  .co-pdp-info {
+    padding: 0.5rem 0.75rem 0.75rem 0;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
 .co-product-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1647,6 +1855,18 @@ a:hover .icon,
   border-radius: 16px;
   overflow: hidden;
   height: 100%;
+  cursor: pointer;
+  text-align: left;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  width: 100%;
+  font: inherit;
+  padding: 0;
+}
+
+.co-product:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
 }
 
 .co-product[hidden] {
