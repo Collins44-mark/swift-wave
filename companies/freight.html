@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Swift Wave Freight — freight forwarding, clearing, and logistics across East Africa and global markets.">
+  <title>Swift Wave Freight — Swift Wave Group</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <link rel="icon" type="image/png" href="../assets/images/logo.png?v=6">
+  <link rel="stylesheet" href="../css/styles.css?v=11">
+</head>
+<body class="min-h-screen w-full overflow-x-hidden company-page">
+
+  <nav id="navbar" class="fixed top-0 w-full nav-blur">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+      <a href="../index.html" class="nav-brand">
+        <span class="logo-box">
+          <img src="../assets/images/logo.png?v=6" alt="Swift Wave Group" class="site-logo">
+        </span>
+      </a>
+      <div class="hidden lg:flex items-center gap-6">
+        <a href="../index.html" class="nav-link text-sm font-medium">Home</a>
+        <a href="../about.html" class="nav-link text-sm font-medium">About</a>
+        <a href="../companies.html" class="nav-link active text-sm font-medium">Companies</a>
+        <a href="../global.html" class="nav-link text-sm font-medium">Global</a>
+        <a href="../contact.html" class="nav-link text-sm font-medium">Contact</a>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="../contact.html" class="hidden sm:inline-flex px-5 py-2.5 text-sm btn-primary">Get in Touch</a>
+        <button id="mobile-toggle" class="mobile-toggle lg:hidden" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+          <span class="hamburger" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+    <div id="mobile-menu" class="mobile-menu" aria-hidden="true">
+      <button type="button" class="mobile-menu-backdrop" tabindex="-1" aria-label="Close menu"></button>
+      <div class="mobile-menu-sheet" role="dialog" aria-modal="true" aria-label="Site menu">
+        <div class="mobile-menu-top">
+          <span class="mobile-menu-eyebrow">Navigate</span>
+          <span class="mobile-menu-rule" aria-hidden="true"></span>
+        </div>
+        <nav class="mobile-nav" aria-label="Mobile">
+          <a href="../index.html" class="mobile-nav-link">
+            <span class="mobile-nav-index">01</span>
+            <span class="mobile-nav-text">Home</span>
+            <span class="mobile-nav-chevron" aria-hidden="true"></span>
+          </a>
+          <a href="../about.html" class="mobile-nav-link">
+            <span class="mobile-nav-index">02</span>
+            <span class="mobile-nav-text">About</span>
+            <span class="mobile-nav-chevron" aria-hidden="true"></span>
+          </a>
+          <a href="../companies.html" class="mobile-nav-link is-active">
+            <span class="mobile-nav-index">03</span>
+            <span class="mobile-nav-text">Companies</span>
+            <span class="mobile-nav-chevron" aria-hidden="true"></span>
+          </a>
+          <a href="../global.html" class="mobile-nav-link">
+            <span class="mobile-nav-index">04</span>
+            <span class="mobile-nav-text">Global</span>
+            <span class="mobile-nav-chevron" aria-hidden="true"></span>
+          </a>
+          <a href="../contact.html" class="mobile-nav-link">
+            <span class="mobile-nav-index">05</span>
+            <span class="mobile-nav-text">Contact</span>
+            <span class="mobile-nav-chevron" aria-hidden="true"></span>
+          </a>
+        </nav>
+        <div class="mobile-menu-bottom">
+          <a href="../contact.html" class="mobile-menu-cta">Get in Touch</a>
+          <p class="mobile-menu-meta">Swift Wave Group · Dar es Salaam</p>
+        </div>
+      </div>
+    </div>
+
+  <header class="co-hero page-hero" data-slideshow data-interval="5500">
+    <div class="slideshow-track" aria-hidden="true">
+      <div class="slideshow-slide is-active" style="background-image:url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=2000&q=80')"></div>
+      <div class="slideshow-slide" style="background-image:url('https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=2000&q=80')"></div>
+      <div class="slideshow-slide" style="background-image:url('https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=2000&q=80')"></div>
+    </div>
+    <div class="slideshow-overlay"></div>
+    <div class="co-hero-inner max-w-7xl mx-auto px-4 sm:px-6">
+      <nav class="co-breadcrumb fade-up" aria-label="Breadcrumb">
+        <a href="../companies.html">Companies</a>
+        <span aria-hidden="true">/</span>
+        <span>Freight</span>
+      </nav>
+      <div class="co-hero-panel glass-panel fade-up">
+        <div class="co-hero-badge">
+          <span class="icon-box"><i data-lucide="truck" class="w-5 h-5"></i></span>
+          <span class="eyebrow">Logistics Division</span>
+        </div>
+        <h1>Swift Wave Freight</h1>
+        <p class="co-tagline">Logistics That Move Markets</p>
+        <p class="co-lead">End-to-end freight forwarding, clearing, and supply-chain solutions linking East Africa with Dubai, India, China, and global trade lanes.</p>
+        <div class="co-hero-actions">
+          <a href="../contact.html" class="btn-primary px-6 py-3 text-sm">Enquire Now</a>
+          <a href="#services" class="btn-outline px-6 py-3 text-sm">Explore Services</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="co-stats-section px-4 sm:px-6">
+    <div class="max-w-7xl mx-auto co-stats-grid">
+          <div class="co-stat glass-white fade-up">
+            <div class="co-stat-value">24/7</div>
+            <div class="co-stat-label">Operations Desk</div>
+          </div>
+          <div class="co-stat glass-white fade-up">
+            <div class="co-stat-value">4</div>
+            <div class="co-stat-label">Trade Hubs</div>
+          </div>
+          <div class="co-stat glass-white fade-up">
+            <div class="co-stat-value">1,200+</div>
+            <div class="co-stat-label">Shipments / Year</div>
+          </div>
+          <div class="co-stat glass-white fade-up">
+            <div class="co-stat-value">99%</div>
+            <div class="co-stat-label">On-Time Rate</div>
+          </div>
+    </div>
+  </section>
+
+  <section class="section-white py-14 sm:py-20 px-4 sm:px-6">
+    <div class="max-w-7xl mx-auto co-about-grid">
+      <div class="fade-up">
+        <span class="eyebrow">About the Division</span>
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mt-3 mb-5">Reliable Trade Corridors</h2>
+        <p class="body-text text-sm sm:text-base leading-relaxed mb-6">From ocean and air freight to customs clearing and last-mile coordination, Swift Wave Freight keeps cargo moving with visibility, compliance, and speed — built for importers, exporters, and growing brands.</p>
+        <ul class="co-checklist">
+            <li class="fade-up"><i data-lucide="check" class="w-4 h-4"></i><span>Dar es Salaam hub with regional reach</span></li>
+            <li class="fade-up"><i data-lucide="check" class="w-4 h-4"></i><span>Trade expertise for Dubai, India & China</span></li>
+            <li class="fade-up"><i data-lucide="check" class="w-4 h-4"></i><span>Dedicated account managers</span></li>
+            <li class="fade-up"><i data-lucide="check" class="w-4 h-4"></i><span>Compliance-first documentation</span></li>
+        </ul>
+      </div>
+      <div class="co-about-media fade-up">
+        <div class="co-about-frame glass-card">
+          <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1200&q=80" alt="Swift Wave Freight" loading="lazy">
+        </div>
+        <div class="co-float-chip glass-white">
+          <i data-lucide="truck" class="w-4 h-4"></i>
+          <span>Part of Swift Wave Group</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="services" class="section-premium py-14 sm:py-20 px-4 sm:px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-10 sm:mb-12 fade-up">
+        <span class="eyebrow">What We Offer</span>
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mt-3">Services</h2>
+        <p class="body-text mt-3 max-w-2xl mx-auto text-sm sm:text-base">Purpose-built capabilities delivered with the Swift Wave standard of clarity, care, and craft.</p>
+      </div>
+      <div class="co-services-grid">
+          <article class="co-service glass-card fade-up">
+            <span class="icon-box co-service-icon"><i data-lucide="ship" class="w-5 h-5"></i></span>
+            <h3>Ocean Freight</h3>
+            <p>FCL and LCL lanes with competitive rates and reliable schedules.</p>
+          </article>
+          <article class="co-service glass-card fade-up">
+            <span class="icon-box co-service-icon"><i data-lucide="plane" class="w-5 h-5"></i></span>
+            <h3>Air Freight</h3>
+            <p>Time-critical cargo with priority handling and tracking.</p>
+          </article>
+          <article class="co-service glass-card fade-up">
+            <span class="icon-box co-service-icon"><i data-lucide="clipboard-check" class="w-5 h-5"></i></span>
+            <h3>Customs Clearing</h3>
+            <p>Compliant documentation and faster port-to-warehouse cycles.</p>
+          </article>
+          <article class="co-service glass-card fade-up">
+            <span class="icon-box co-service-icon"><i data-lucide="warehouse" class="w-5 h-5"></i></span>
+            <h3>Warehousing</h3>
+            <p>Secure storage, inventory visibility, and distribution support.</p>
+          </article>
+          <article class="co-service glass-card fade-up">
+            <span class="icon-box co-service-icon"><i data-lucide="route" class="w-5 h-5"></i></span>
+            <h3>Door-to-Door</h3>
+            <p>Origin pickup through final delivery with single-point coordination.</p>
+          </article>
+          <article class="co-service glass-card fade-up">
+            <span class="icon-box co-service-icon"><i data-lucide="radar" class="w-5 h-5"></i></span>
+            <h3>Shipment Tracking</h3>
+            <p>Real-time status updates for operations and finance teams.</p>
+          </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-white py-14 sm:py-20 px-4 sm:px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-10 sm:mb-12 fade-up">
+        <span class="eyebrow">How It Works</span>
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mt-3">Our Process</h2>
+      </div>
+      <div class="co-process-grid">
+          <div class="co-step glass-white fade-up">
+            <span class="co-step-num">01</span>
+            <h3>Quote</h3>
+            <p>Route, mode, and timeline recommendation.</p>
+          </div>
+          <div class="co-step glass-white fade-up">
+            <span class="co-step-num">02</span>
+            <h3>Book</h3>
+            <p>Carrier booking and documentation pack.</p>
+          </div>
+          <div class="co-step glass-white fade-up">
+            <span class="co-step-num">03</span>
+            <h3>Move</h3>
+            <p>Transit with proactive milestone alerts.</p>
+          </div>
+          <div class="co-step glass-white fade-up">
+            <span class="co-step-num">04</span>
+            <h3>Clear</h3>
+            <p>Customs, delivery, and proof of delivery.</p>
+          </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="co-cta-band px-4 sm:px-6 py-14 sm:py-16">
+    <div class="max-w-5xl mx-auto co-cta glass-panel fade-up">
+      <div>
+        <span class="eyebrow">Ready to begin?</span>
+        <h2 class="text-2xl sm:text-3xl font-bold mt-2">Partner with Freight</h2>
+        <p class="body-text mt-3 text-sm sm:text-base">Tell us what you need — our team in Dar es Salaam will respond with a clear next step.</p>
+      </div>
+      <div class="co-cta-actions">
+        <a href="../contact.html" class="btn-primary px-6 py-3 text-sm">Contact Us</a>
+        <a href="../companies.html" class="btn-secondary px-6 py-3 text-sm">All Companies</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-premium py-14 sm:py-16 px-4 sm:px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="mb-8 fade-up">
+        <span class="eyebrow">Explore More</span>
+        <h2 class="text-xl sm:text-2xl font-bold mt-2">Sister Companies</h2>
+      </div>
+      <div class="co-sister-grid">
+          <a href="scholarship.html" class="co-sister glass-card fade-up">
+            <span class="icon-box"><i data-lucide="graduation-cap" class="w-4 h-4"></i></span>
+            <span class="co-sister-name">Scholarship</span>
+            <i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i>
+          </a>
+          <a href="outfit.html" class="co-sister glass-card fade-up">
+            <span class="icon-box"><i data-lucide="shirt" class="w-4 h-4"></i></span>
+            <span class="co-sister-name">Outfit</span>
+            <i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i>
+          </a>
+          <a href="medical.html" class="co-sister glass-card fade-up">
+            <span class="icon-box"><i data-lucide="heart-pulse" class="w-4 h-4"></i></span>
+            <span class="co-sister-name">Medical</span>
+            <i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i>
+          </a>
+          <a href="travels.html" class="co-sister glass-card fade-up">
+            <span class="icon-box"><i data-lucide="plane" class="w-4 h-4"></i></span>
+            <span class="co-sister-name">Travels</span>
+            <i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i>
+          </a>
+          <a href="catering.html" class="co-sister glass-card fade-up">
+            <span class="icon-box"><i data-lucide="utensils" class="w-4 h-4"></i></span>
+            <span class="co-sister-name">Catering</span>
+            <i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i>
+          </a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer py-12 sm:py-16 px-4 sm:px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 mb-12">
+        <div class="col-span-2 lg:col-span-1">
+          <div class="mb-4">
+            <span class="logo-box logo-box--footer">
+              <img src="../assets/images/logo.png?v=6" alt="Swift Wave Group" class="site-logo">
+            </span>
+          </div>
+          <p class="text-sm footer-desc leading-relaxed">International multi-division organization delivering world-class solutions across industries.</p>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Quick Links</h4>
+          <div class="space-y-2 text-sm">
+            <a href="../about.html" class="block">About Us</a>
+            <a href="../companies.html" class="block">Our Companies</a>
+            <a href="../contact.html" class="block">Contact</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Companies</h4>
+          <div class="space-y-2 text-sm">
+            <a href="scholarship.html" class="block">Scholarship</a>
+            <a href="freight.html" class="block">Freight</a>
+            <a href="travels.html" class="block">Travels</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Connect</h4>
+          <div class="flex gap-3">
+            <a data-coming-soon href="#" aria-label="LinkedIn" class="social-btn"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+            <a data-coming-soon href="#" aria-label="Twitter" class="social-btn"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+            <a data-coming-soon href="#" aria-label="Instagram" class="social-btn"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-white/10 pt-8 text-center">
+        <p class="text-sm footer-copy">&copy; Swift Wave Group. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/slideshow.js"></script>
+  <script src="../js/main.js?v=11"></script>
+</body>
+</html>
