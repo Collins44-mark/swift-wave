@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="Swift Wave Outfit shop — men, women, footwear, and accessories.">
+  <meta name="description" content="Swift Wave Outfit shop — men, women, footwear, and accessories with WhatsApp checkout.">
   <title>Swift Wave Outfit — Swift Wave Group</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,7 +11,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
   <link rel="icon" type="image/png" href="../assets/images/logo.png?v=6">
-  <link rel="stylesheet" href="../css/styles.css?v=13">
+  <link rel="stylesheet" href="../css/styles.css?v=17">
 </head>
 <body class="min-h-screen w-full overflow-x-hidden company-page" data-company-mode="ecommerce">
 
@@ -30,6 +30,10 @@
         <a href="../contact.html" class="nav-link text-sm font-medium">Contact</a>
       </div>
       <div class="flex items-center gap-3">
+        <button type="button" class="med-cart-btn" id="cart-toggle" aria-label="Open cart">
+          <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+          <span class="med-cart-count" id="cart-count" hidden>0</span>
+        </button>
         <a href="../contact.html" class="hidden sm:inline-flex px-5 py-2.5 text-sm btn-primary">Get in Touch</a>
         <button id="mobile-toggle" class="mobile-toggle lg:hidden" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
           <span class="hamburger" aria-hidden="true"><span></span><span></span><span></span></span>
@@ -76,7 +80,7 @@
           <h1>Swift Wave Outfit</h1>
           <p class="co-shop-hint">Men · Women · Footwear · Accessories</p>
         </div>
-        <a href="../contact.html" class="btn-primary px-5 py-2.5 text-sm co-shop-contact">Contact</a>
+        <button type="button" class="btn-primary px-5 py-2.5 text-sm co-shop-contact" id="hero-cart-btn">View cart</button>
       </div>
     </div>
   </header>
@@ -117,9 +121,10 @@
           <p class="co-pdp-desc" id="pdp-desc"></p>
           <ul class="co-pdp-bullets" id="pdp-bullets"></ul>
           <div class="co-pdp-actions">
-            <a href="../contact.html" class="btn-primary px-6 py-3 text-sm" id="pdp-order">Order now</a>
-            <button type="button" class="btn-secondary px-6 py-3 text-sm" id="pdp-enquire">Enquire</button>
+            <button type="button" class="btn-primary px-6 py-3 text-sm" id="pdp-add">Add to cart</button>
+            <button type="button" class="btn-secondary px-6 py-3 text-sm" id="pdp-checkout-now">Checkout</button>
           </div>
+          <p class="co-pdp-note" id="pdp-toast" hidden>Added to cart</p>
           <p class="co-pdp-note">Ships from Dar es Salaam · Swift Wave Outfit</p>
         </div>
       </div>
@@ -130,6 +135,60 @@
       </div>
     </div>
   </section>
+
+  <!-- Cart drawer -->
+  <div id="cart-drawer" class="med-cart" aria-hidden="true">
+    <button type="button" class="med-cart-backdrop" id="cart-backdrop" aria-label="Close cart"></button>
+    <aside class="med-cart-panel" role="dialog" aria-modal="true" aria-label="Shopping cart">
+      <div class="med-cart-head">
+        <h2>Your cart</h2>
+        <button type="button" class="med-cart-close" id="cart-close" aria-label="Close">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="med-cart-body" id="cart-items">
+        <p class="med-cart-empty" id="cart-empty">Your cart is empty.</p>
+      </div>
+      <div class="med-cart-foot" id="cart-foot" hidden>
+        <div class="med-cart-total">
+          <span>Total</span>
+          <strong id="cart-total">TZS 0</strong>
+        </div>
+        <button type="button" class="btn-primary sch-submit" id="open-checkout">
+          Checkout via WhatsApp
+        </button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Checkout modal -->
+  <div id="checkout-modal" class="med-checkout" aria-hidden="true" hidden>
+    <button type="button" class="med-cart-backdrop" id="checkout-backdrop" aria-label="Close checkout"></button>
+    <div class="med-checkout-panel glass-card" role="dialog" aria-modal="true" aria-label="Checkout">
+      <div class="med-cart-head">
+        <h2>Checkout</h2>
+        <button type="button" class="med-cart-close" id="checkout-close" aria-label="Close">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <p class="med-checkout-hint">Enter your details. We’ll open WhatsApp with your order ready to send.</p>
+      <form id="checkout-form" class="sch-fields" novalidate>
+        <div class="sch-field">
+          <label for="checkout-name">Full name</label>
+          <input class="form-input" id="checkout-name" type="text" autocomplete="name" placeholder="Your full name" required>
+        </div>
+        <div class="sch-field">
+          <label for="checkout-mobile">Mobile number</label>
+          <input class="form-input" id="checkout-mobile" type="tel" autocomplete="tel" inputmode="tel" placeholder="+255 7XX XXX XXX" required>
+        </div>
+        <p id="checkout-error" class="sch-error" hidden role="alert"></p>
+        <button type="submit" class="btn-primary sch-submit">
+          <i data-lucide="message-circle" class="w-5 h-5"></i>
+          <span>Send order on WhatsApp</span>
+        </button>
+      </form>
+    </div>
+  </div>
 
   <section class="section-white py-10 sm:py-12 px-4 sm:px-6" id="more-companies">
     <div class="max-w-7xl mx-auto">
@@ -431,6 +490,8 @@
         }
       ];
 
+      const WHATSAPP_NUMBER = "255700000000";
+      let cart = [];
       let mainFilter = "All";
       let subFilter = "All";
 
@@ -443,9 +504,110 @@
       const relatedGrid = document.getElementById("related-grid");
       const crumbProduct = document.getElementById("crumb-product");
       const crumbSep = document.getElementById("crumb-product-sep");
+      const cartDrawer = document.getElementById("cart-drawer");
+      const checkoutModal = document.getElementById("checkout-modal");
 
-      function moneyQuery(title) {
-        return "../contact.html?interest=" + encodeURIComponent(title);
+      function parsePrice(price) {
+        return parseInt(String(price).replace(/[^\d]/g, ""), 10) || 0;
+      }
+
+      function formatTotal(n) {
+        return "TZS " + n.toLocaleString("en-US");
+      }
+
+      function cartCount() {
+        return cart.reduce(function (s, i) { return s + i.qty; }, 0);
+      }
+
+      function cartTotal() {
+        return cart.reduce(function (s, i) { return s + i.priceNum * i.qty; }, 0);
+      }
+
+      function updateCartBadge() {
+        const count = cartCount();
+        const el = document.getElementById("cart-count");
+        el.hidden = count === 0;
+        el.textContent = String(count);
+      }
+
+      function renderCart() {
+        const wrap = document.getElementById("cart-items");
+        const empty = document.getElementById("cart-empty");
+        const foot = document.getElementById("cart-foot");
+        wrap.querySelectorAll(".med-cart-line").forEach(function (n) { n.remove(); });
+
+        if (!cart.length) {
+          empty.hidden = false;
+          foot.hidden = true;
+          updateCartBadge();
+          return;
+        }
+
+        empty.hidden = true;
+        foot.hidden = false;
+        document.getElementById("cart-total").textContent = formatTotal(cartTotal());
+
+        cart.forEach(function (item) {
+          const row = document.createElement("div");
+          row.className = "med-cart-line";
+          row.innerHTML =
+            '<img src="' + item.image + '" alt="">' +
+            '<div class="med-cart-line-info">' +
+            "<strong>" + item.title + "</strong>" +
+            "<span>" + item.price + " · Qty " + item.qty + "</span>" +
+            "</div>" +
+            '<button type="button" class="med-cart-remove" data-id="' + item.id + '" aria-label="Remove">×</button>';
+          wrap.insertBefore(row, empty);
+        });
+
+        wrap.querySelectorAll(".med-cart-remove").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            cart = cart.filter(function (i) { return i.id !== btn.getAttribute("data-id"); });
+            renderCart();
+          });
+        });
+        updateCartBadge();
+      }
+
+      function addToCart(product) {
+        const existing = cart.find(function (i) { return i.id === product.id; });
+        if (existing) existing.qty += 1;
+        else cart.push({
+          id: product.id,
+          title: product.title,
+          price: product.price,
+          priceNum: parsePrice(product.price),
+          image: product.image,
+          qty: 1
+        });
+        renderCart();
+      }
+
+      function openCart() {
+        cartDrawer.classList.add("is-open");
+        cartDrawer.setAttribute("aria-hidden", "false");
+        renderCart();
+        if (typeof lucide !== "undefined") lucide.createIcons();
+      }
+
+      function closeCart() {
+        cartDrawer.classList.remove("is-open");
+        cartDrawer.setAttribute("aria-hidden", "true");
+      }
+
+      function openCheckout() {
+        if (!cart.length) return;
+        closeCart();
+        checkoutModal.hidden = false;
+        checkoutModal.setAttribute("aria-hidden", "false");
+        checkoutModal.classList.add("is-open");
+        if (typeof lucide !== "undefined") lucide.createIcons();
+      }
+
+      function closeCheckout() {
+        checkoutModal.classList.remove("is-open");
+        checkoutModal.setAttribute("aria-hidden", "true");
+        checkoutModal.hidden = true;
       }
 
       function productCard(p, opts) {
@@ -563,10 +725,6 @@
         document.getElementById("pdp-rating-text").textContent = product.rating;
         document.getElementById("pdp-price").textContent = product.price;
         document.getElementById("pdp-desc").textContent = product.desc;
-        document.getElementById("pdp-order").href = moneyQuery(product.title);
-        document.getElementById("pdp-enquire").onclick = function () {
-          window.location.href = moneyQuery(product.title);
-        };
 
         const bullets = document.getElementById("pdp-bullets");
         bullets.innerHTML = "";
@@ -575,6 +733,20 @@
           li.textContent = b;
           bullets.appendChild(li);
         });
+
+        const toast = document.getElementById("pdp-toast");
+        toast.hidden = true;
+
+        document.getElementById("pdp-add").onclick = function () {
+          addToCart(product);
+          toast.hidden = false;
+          toast.textContent = "Added to cart";
+          setTimeout(function () { toast.hidden = true; }, 1600);
+        };
+        document.getElementById("pdp-checkout-now").onclick = function () {
+          addToCart(product);
+          openCheckout();
+        };
 
         crumbProduct.textContent = product.title;
         crumbProduct.classList.remove("hidden");
@@ -612,12 +784,66 @@
         else showCatalog();
       });
 
+      document.getElementById("cart-toggle").addEventListener("click", openCart);
+      document.getElementById("hero-cart-btn").addEventListener("click", openCart);
+      document.getElementById("cart-close").addEventListener("click", closeCart);
+      document.getElementById("cart-backdrop").addEventListener("click", closeCart);
+      document.getElementById("open-checkout").addEventListener("click", openCheckout);
+      document.getElementById("checkout-close").addEventListener("click", closeCheckout);
+      document.getElementById("checkout-backdrop").addEventListener("click", closeCheckout);
+
+      document.getElementById("checkout-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const err = document.getElementById("checkout-error");
+        err.hidden = true;
+        const name = (document.getElementById("checkout-name").value || "").trim();
+        const mobile = (document.getElementById("checkout-mobile").value || "").trim();
+        if (!name) {
+          err.hidden = false;
+          err.textContent = "Please enter your full name.";
+          return;
+        }
+        if (!mobile || mobile.replace(/\D/g, "").length < 9) {
+          err.hidden = false;
+          err.textContent = "Please enter a valid mobile number.";
+          return;
+        }
+        if (!cart.length) {
+          err.hidden = false;
+          err.textContent = "Your cart is empty.";
+          return;
+        }
+
+        const lines = [
+          "*Swift Wave Outfit Order*",
+          "",
+          "*Name:* " + name,
+          "*Mobile:* " + mobile,
+          "",
+          "*Items:*"
+        ];
+        cart.forEach(function (item) {
+          lines.push("• " + item.title + " × " + item.qty + " — " + item.price);
+        });
+        const total = cartTotal();
+        if (total > 0) lines.push("", "*Estimated total:* " + formatTotal(total));
+        lines.push("", "_Sent from Swift Wave Outfit checkout_");
+
+        window.open(
+          "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(lines.join("\n")),
+          "_blank",
+          "noopener,noreferrer"
+        );
+      });
+
       renderMainFilters();
       renderSubFilters();
       renderCatalog();
+      updateCartBadge();
 
       const boot = (location.hash || "").match(/^#product\/(.+)$/);
       if (boot) openProduct(boot[1], false);
+      if (typeof lucide !== "undefined") lucide.createIcons();
     })();
   </script>
 </body>
