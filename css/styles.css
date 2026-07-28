@@ -2085,6 +2085,224 @@ a:hover .icon,
   }
 }
 
+/* ---------- Scholarship application form ---------- */
+.sch-form {
+  padding: 1.25rem 1.15rem 1.5rem;
+  border-radius: 20px;
+}
+
+.sch-form-head {
+  margin-bottom: 1.25rem;
+}
+
+.sch-form-head h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.sch-form-head p {
+  margin: 0.4rem 0 0;
+  font-size: 0.875rem;
+  color: var(--text-light);
+}
+
+.sch-fieldset {
+  border: 0;
+  margin: 0 0 1.25rem;
+  padding: 0;
+}
+
+.sch-fieldset legend {
+  padding: 0;
+  margin-bottom: 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-light);
+}
+
+.sch-service-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+}
+
+.sch-service {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.85rem 0.8rem;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+  transition: border-color var(--ease), background var(--ease), box-shadow var(--ease);
+}
+
+.sch-service input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.sch-service-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 11px;
+  background: var(--bg-premium);
+  color: var(--royal);
+  flex-shrink: 0;
+}
+
+.sch-service-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.sch-service-text strong {
+  font-size: 0.9rem;
+  color: var(--text-heading);
+  font-weight: 700;
+}
+
+.sch-service-text small {
+  font-size: 0.7rem;
+  color: var(--text-light);
+  line-height: 1.3;
+}
+
+.sch-service.is-active {
+  border-color: rgba(11, 46, 109, 0.35);
+  background: linear-gradient(135deg, rgba(11, 46, 109, 0.08), rgba(212, 175, 55, 0.1));
+  box-shadow: inset 0 0 0 1px rgba(11, 46, 109, 0.06);
+}
+
+.sch-service.is-active .sch-service-icon {
+  color: var(--gold);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+}
+
+.sch-fields {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.sch-field label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 650;
+  color: var(--text-heading);
+}
+
+.sch-optional {
+  font-weight: 500;
+  color: var(--text-light);
+}
+
+.sch-form .form-input,
+.sch-form select.form-input,
+.sch-form textarea.form-input {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--text);
+  border-radius: 12px;
+  padding: 0.7rem 0.9rem;
+  transition: border-color var(--ease), box-shadow var(--ease);
+}
+
+.sch-form .form-input:focus {
+  outline: none;
+  border-color: rgba(11, 46, 109, 0.45);
+  box-shadow: 0 0 0 3px rgba(11, 46, 109, 0.1);
+}
+
+.sch-textarea {
+  min-height: 5.5rem;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.sch-panel {
+  margin-top: 1.15rem;
+  padding: 1rem 0.9rem 1.05rem;
+  border-radius: 14px;
+  background: rgba(238, 244, 255, 0.55);
+  border: 1px solid rgba(11, 46, 109, 0.08);
+}
+
+.sch-panel[hidden],
+.sch-field[hidden] {
+  display: none !important;
+}
+
+.sch-panel-title {
+  margin: 0 0 0.85rem;
+  font-size: 0.78rem;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--royal);
+}
+
+.sch-error {
+  margin: 1rem 0 0;
+  padding: 0.7rem 0.85rem;
+  border-radius: 12px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  font-size: 0.85rem;
+}
+
+.sch-submit {
+  width: 100%;
+  margin-top: 1.25rem;
+  min-height: 3.15rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.sch-wa-note {
+  margin: 0.85rem 0 0;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-light);
+  line-height: 1.45;
+}
+
+@media (min-width: 640px) {
+  .sch-form {
+    padding: 1.75rem 1.75rem 1.9rem;
+    border-radius: 24px;
+  }
+
+  .sch-form-head h2 {
+    font-size: 1.45rem;
+  }
+
+  .sch-service {
+    padding: 1rem 1rem;
+  }
+
+  .sch-panel {
+    padding: 1.15rem 1.1rem 1.25rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
