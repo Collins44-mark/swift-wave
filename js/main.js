@@ -135,7 +135,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   document.addEventListener("click", (e) => {
-    const link = e.target.closest("a[data-coming-soon], a.coming-soon-link");
+    const link = e.target.closest(
+      "a[data-coming-soon], a.coming-soon-link, a[href*='catering.html']"
+    );
     if (!link) return;
     e.preventDefault();
     showComingSoon();
