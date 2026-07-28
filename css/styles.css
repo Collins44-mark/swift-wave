@@ -2303,6 +2303,126 @@ a:hover .icon,
   }
 }
 
+/* ---------- Freight booking slots ---------- */
+.fr-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 1.15rem;
+}
+
+.fr-step {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text-light);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--border);
+}
+
+.fr-step.is-active {
+  color: var(--royal);
+  background: var(--bg-premium);
+  border-color: rgba(11, 46, 109, 0.2);
+}
+
+.fr-slots-hint {
+  margin: 0 0 0.65rem;
+  font-size: 0.8rem;
+  color: var(--text-light);
+  line-height: 1.45;
+}
+
+.fr-month-label {
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-heading);
+}
+
+.fr-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.fr-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  padding: 0.75rem 0.8rem;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  transition: border-color var(--ease), background var(--ease), box-shadow var(--ease), transform var(--ease);
+}
+
+.fr-slot:hover {
+  border-color: rgba(11, 46, 109, 0.28);
+}
+
+.fr-slot.is-selected {
+  border-color: rgba(11, 46, 109, 0.45);
+  background: linear-gradient(135deg, rgba(11, 46, 109, 0.1), rgba(212, 175, 55, 0.12));
+  box-shadow: inset 0 0 0 1px rgba(11, 46, 109, 0.08);
+}
+
+.fr-slot-day {
+  font-size: 0.68rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.fr-slot-date {
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--royal);
+  line-height: 1.1;
+}
+
+.fr-slot-meta {
+  font-size: 0.72rem;
+  color: var(--text-light);
+}
+
+.fr-slot-mode {
+  margin-top: 0.2rem;
+  font-size: 0.65rem;
+  font-weight: 650;
+  color: var(--text-heading);
+}
+
+.fr-slots-empty {
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+
+.sch-submit:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+@media (min-width: 640px) {
+  .fr-slots-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.7rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="Swift Wave Freight services — ocean, air, clearing, warehousing, and door-to-door logistics.">
+  <meta name="description" content="Book Swift Wave Freight — choose route, collection slots, and send via WhatsApp.">
   <title>Swift Wave Freight — Swift Wave Group</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,9 +11,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
   <link rel="icon" type="image/png" href="../assets/images/logo.png?v=6">
-  <link rel="stylesheet" href="../css/styles.css?v=12">
+  <link rel="stylesheet" href="../css/styles.css?v=16">
 </head>
-<body class="min-h-screen w-full overflow-x-hidden company-page" data-company-mode="services">
+<body class="min-h-screen w-full overflow-x-hidden company-page">
 
   <nav id="navbar" class="fixed top-0 w-full nav-blur">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
@@ -38,26 +38,26 @@
     </div>
   </nav>
 
-    <div id="mobile-menu" class="mobile-menu" aria-hidden="true">
-      <button type="button" class="mobile-menu-backdrop" tabindex="-1" aria-label="Close menu"></button>
-      <div class="mobile-menu-sheet" role="dialog" aria-modal="true" aria-label="Site menu">
-        <div class="mobile-menu-top">
-          <span class="mobile-menu-eyebrow">Navigate</span>
-          <span class="mobile-menu-rule" aria-hidden="true"></span>
-        </div>
-        <nav class="mobile-nav" aria-label="Mobile">
-          <a href="../index.html" class="mobile-nav-link"><span class="mobile-nav-index">01</span><span class="mobile-nav-text">Home</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
-          <a href="../about.html" class="mobile-nav-link"><span class="mobile-nav-index">02</span><span class="mobile-nav-text">About</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
-          <a href="../companies.html" class="mobile-nav-link is-active"><span class="mobile-nav-index">03</span><span class="mobile-nav-text">Companies</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
-          <a href="../global.html" class="mobile-nav-link"><span class="mobile-nav-index">04</span><span class="mobile-nav-text">Global</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
-          <a href="../contact.html" class="mobile-nav-link"><span class="mobile-nav-index">05</span><span class="mobile-nav-text">Contact</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
-        </nav>
-        <div class="mobile-menu-bottom">
-          <a href="../contact.html" class="mobile-menu-cta">Get in Touch</a>
-          <p class="mobile-menu-meta">Swift Wave Group · Dar es Salaam</p>
-        </div>
+  <div id="mobile-menu" class="mobile-menu" aria-hidden="true">
+    <button type="button" class="mobile-menu-backdrop" tabindex="-1" aria-label="Close menu"></button>
+    <div class="mobile-menu-sheet" role="dialog" aria-modal="true" aria-label="Site menu">
+      <div class="mobile-menu-top">
+        <span class="mobile-menu-eyebrow">Navigate</span>
+        <span class="mobile-menu-rule" aria-hidden="true"></span>
+      </div>
+      <nav class="mobile-nav" aria-label="Mobile">
+        <a href="../index.html" class="mobile-nav-link"><span class="mobile-nav-index">01</span><span class="mobile-nav-text">Home</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
+        <a href="../about.html" class="mobile-nav-link"><span class="mobile-nav-index">02</span><span class="mobile-nav-text">About</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
+        <a href="../companies.html" class="mobile-nav-link is-active"><span class="mobile-nav-index">03</span><span class="mobile-nav-text">Companies</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
+        <a href="../global.html" class="mobile-nav-link"><span class="mobile-nav-index">04</span><span class="mobile-nav-text">Global</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
+        <a href="../contact.html" class="mobile-nav-link"><span class="mobile-nav-index">05</span><span class="mobile-nav-text">Contact</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
+      </nav>
+      <div class="mobile-menu-bottom">
+        <a href="../contact.html" class="mobile-menu-cta">Get in Touch</a>
+        <p class="mobile-menu-meta">Swift Wave Group · Dar es Salaam</p>
       </div>
     </div>
+  </div>
 
   <header class="co-shop-hero">
     <div class="co-shop-hero-bg" style="background-image:url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=2000&q=80')" aria-hidden="true"></div>
@@ -70,141 +70,108 @@
       </nav>
       <div class="co-shop-title-row">
         <div>
-          <div class="co-shop-badge"><i data-lucide="truck" class="w-4 h-4"></i><span>Services</span></div>
+          <div class="co-shop-badge"><i data-lucide="truck" class="w-4 h-4"></i><span>Book</span></div>
           <h1>Swift Wave Freight</h1>
-          <p class="co-shop-hint">Browse available services</p>
+          <p class="co-shop-hint">Pick route & collection slots — send on WhatsApp</p>
         </div>
-        <a href="../contact.html" class="btn-primary px-5 py-2.5 text-sm co-shop-contact">Contact</a>
       </div>
     </div>
   </header>
 
-  <section class="co-catalog section-premium px-4 sm:px-6 py-8 sm:py-12">
-    <div class="max-w-7xl mx-auto">
-      <div class="co-catalog-bar fade-up">
-        <h2 class="co-catalog-heading">Services</h2>
-        <div class="co-filters" role="tablist" aria-label="Filter">
-          <button type="button" class="co-filter is-active" data-filter="All">All</button>
-          <button type="button" class="co-filter" data-filter="Ocean">Ocean</button>
-          <button type="button" class="co-filter" data-filter="Air">Air</button>
-          <button type="button" class="co-filter" data-filter="Clearing">Clearing</button>
-          <button type="button" class="co-filter" data-filter="Warehouse">Warehouse</button>
+  <section class="sch-form-section section-premium px-4 sm:px-6 py-8 sm:py-12">
+    <div class="max-w-2xl mx-auto">
+      <form id="freight-form" class="sch-form glass-card fade-up" novalidate>
+        <div class="sch-form-head">
+          <h2>Freight booking</h2>
+          <p>Select where goods are picked up, where they’re going, then choose a collection slot.</p>
         </div>
-      </div>
-      <div class="co-product-grid" id="product-grid">
-          <article class="co-product glass-card fade-up" data-category="Ocean">
-            <div class="co-product-media">
-              <img src="https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=800&q=80" alt="Ocean Freight — FCL" loading="lazy">
-              <span class="co-product-tag">Ocean</span>
+
+        <div class="fr-steps" aria-hidden="true">
+          <span class="fr-step is-active" data-step-indicator="1">1 · Route</span>
+          <span class="fr-step" data-step-indicator="2">2 · Slots</span>
+          <span class="fr-step" data-step-indicator="3">3 · Details</span>
+        </div>
+
+        <!-- Step 1: Route -->
+        <div class="sch-panel fr-route-panel">
+          <div class="sch-panel-title">Route</div>
+          <div class="sch-fields">
+            <div class="sch-field">
+              <label for="pickupFrom">Pickup / From</label>
+              <select class="form-input" id="pickupFrom" name="pickupFrom" required>
+                <option value="" disabled selected>Where are the items?</option>
+                <option>China</option>
+                <option>Dubai (UAE)</option>
+                <option>India</option>
+                <option>Tanzania</option>
+                <option>Kenya</option>
+                <option>Other</option>
+              </select>
             </div>
-            <div class="co-product-body">
-              <h3 class="co-product-title">Ocean Freight — FCL</h3>
-              <p class="co-product-meta">Ocean</p>
-              <div class="co-product-row">
-                <span class="co-product-price">Full container load</span>
-                <a href="../contact.html" class="co-product-cta">Get Quote</a>
-              </div>
+            <div class="sch-field" id="field-from-other" hidden>
+              <label for="pickupFromOther">Specify pickup country</label>
+              <input class="form-input" id="pickupFromOther" name="pickupFromOther" type="text" placeholder="Country / city of origin">
             </div>
-          </article>
-          <article class="co-product glass-card fade-up" data-category="Ocean">
-            <div class="co-product-media">
-              <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80" alt="Ocean Freight — LCL" loading="lazy">
-              <span class="co-product-tag">Ocean</span>
+
+            <div class="sch-field">
+              <label for="destination">Destination</label>
+              <select class="form-input" id="destination" name="destination" required>
+                <option value="" disabled selected>Where are items going?</option>
+                <option>Tanzania (Dar es Salaam)</option>
+                <option>China</option>
+                <option>Dubai (UAE)</option>
+                <option>India</option>
+                <option>Kenya</option>
+                <option>Other</option>
+              </select>
             </div>
-            <div class="co-product-body">
-              <h3 class="co-product-title">Ocean Freight — LCL</h3>
-              <p class="co-product-meta">Ocean</p>
-              <div class="co-product-row">
-                <span class="co-product-price">Less than container</span>
-                <a href="../contact.html" class="co-product-cta">Get Quote</a>
-              </div>
+            <div class="sch-field" id="field-to-other" hidden>
+              <label for="destinationOther">Specify destination</label>
+              <input class="form-input" id="destinationOther" name="destinationOther" type="text" placeholder="Destination country / city">
             </div>
-          </article>
-          <article class="co-product glass-card fade-up" data-category="Air">
-            <div class="co-product-media">
-              <img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=800&q=80" alt="Air Freight Express" loading="lazy">
-              <span class="co-product-tag">Air</span>
+          </div>
+        </div>
+
+        <!-- Step 2: Slots (revealed after route) -->
+        <div id="panel-slots" class="sch-panel" hidden>
+          <div class="sch-panel-title">Available collection slots</div>
+          <p class="fr-slots-hint" id="slots-hint">Days we collect &amp; move goods on this route this month.</p>
+          <div class="fr-month-label" id="month-label"></div>
+          <div class="fr-slots-grid" id="slots-grid" role="group" aria-label="Collection slots"></div>
+          <p class="fr-slots-empty" id="slots-empty" hidden>No open slots for this route right now. Try another route or contact us.</p>
+        </div>
+
+        <!-- Step 3: Details (revealed after at least one slot) -->
+        <div id="panel-details" class="sch-panel" hidden>
+          <div class="sch-panel-title">Your details</div>
+          <div class="sch-fields">
+            <div class="sch-field">
+              <label for="fullName">Full name</label>
+              <input class="form-input" id="fullName" name="fullName" type="text" autocomplete="name" placeholder="Your full name" required>
             </div>
-            <div class="co-product-body">
-              <h3 class="co-product-title">Air Freight Express</h3>
-              <p class="co-product-meta">Air</p>
-              <div class="co-product-row">
-                <span class="co-product-price">Priority cargo</span>
-                <a href="../contact.html" class="co-product-cta">Get Quote</a>
-              </div>
+            <div class="sch-field">
+              <label for="mobile">Mobile number</label>
+              <input class="form-input" id="mobile" name="mobile" type="tel" autocomplete="tel" inputmode="tel" placeholder="+255 7XX XXX XXX" required>
             </div>
-          </article>
-          <article class="co-product glass-card fade-up" data-category="Clearing">
-            <div class="co-product-media">
-              <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80" alt="Customs Clearing" loading="lazy">
-              <span class="co-product-tag">Clearing</span>
+            <div class="sch-field">
+              <label for="pickupLocation">Items pickup location</label>
+              <input class="form-input" id="pickupLocation" name="pickupLocation" type="text" placeholder="Warehouse, market, or address where items are" required>
             </div>
-            <div class="co-product-body">
-              <h3 class="co-product-title">Customs Clearing</h3>
-              <p class="co-product-meta">Clearing</p>
-              <div class="co-product-row">
-                <span class="co-product-price">Import & export</span>
-                <a href="../contact.html" class="co-product-cta">Get Quote</a>
-              </div>
+            <div class="sch-field">
+              <label for="cargoNotes">Cargo description <span class="sch-optional">(optional)</span></label>
+              <textarea class="form-input sch-textarea" id="cargoNotes" name="cargoNotes" rows="3" placeholder="e.g. 12 cartons electronics, approx. 180kg"></textarea>
             </div>
-          </article>
-          <article class="co-product glass-card fade-up" data-category="Warehouse">
-            <div class="co-product-media">
-              <img src="https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=800&q=80" alt="Warehousing" loading="lazy">
-              <span class="co-product-tag">Warehouse</span>
-            </div>
-            <div class="co-product-body">
-              <h3 class="co-product-title">Warehousing</h3>
-              <p class="co-product-meta">Warehouse</p>
-              <div class="co-product-row">
-                <span class="co-product-price">Secure storage</span>
-                <a href="../contact.html" class="co-product-cta">Get Quote</a>
-              </div>
-            </div>
-          </article>
-          <article class="co-product glass-card fade-up" data-category="Ocean">
-            <div class="co-product-media">
-              <img src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=800&q=80" alt="Door-to-Door Delivery" loading="lazy">
-              <span class="co-product-tag">Ocean</span>
-            </div>
-            <div class="co-product-body">
-              <h3 class="co-product-title">Door-to-Door Delivery</h3>
-              <p class="co-product-meta">Ocean</p>
-              <div class="co-product-row">
-                <span class="co-product-price">Origin to door</span>
-                <a href="../contact.html" class="co-product-cta">Get Quote</a>
-              </div>
-            </div>
-          </article>
-          <article class="co-product glass-card fade-up" data-category="Ocean">
-            <div class="co-product-media">
-              <img src="https://images.unsplash.com/photo-1526304640581-d334cdbbf46e?auto=format&fit=crop&w=800&q=80" alt="China Import Corridor" loading="lazy">
-              <span class="co-product-tag">Ocean</span>
-            </div>
-            <div class="co-product-body">
-              <h3 class="co-product-title">China Import Corridor</h3>
-              <p class="co-product-meta">Ocean</p>
-              <div class="co-product-row">
-                <span class="co-product-price">China ↔ Tanzania</span>
-                <a href="../contact.html" class="co-product-cta">Get Quote</a>
-              </div>
-            </div>
-          </article>
-          <article class="co-product glass-card fade-up" data-category="Air">
-            <div class="co-product-media">
-              <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=800&q=80" alt="Dubai Trade Lane" loading="lazy">
-              <span class="co-product-tag">Air</span>
-            </div>
-            <div class="co-product-body">
-              <h3 class="co-product-title">Dubai Trade Lane</h3>
-              <p class="co-product-meta">Air</p>
-              <div class="co-product-row">
-                <span class="co-product-price">UAE corridor</span>
-                <a href="../contact.html" class="co-product-cta">Get Quote</a>
-              </div>
-            </div>
-          </article>
-      </div>
+          </div>
+        </div>
+
+        <p id="fr-error" class="sch-error" hidden role="alert"></p>
+
+        <button type="submit" class="sch-submit btn-primary" id="fr-submit" disabled>
+          <i data-lucide="message-circle" class="w-5 h-5"></i>
+          <span>Submit via WhatsApp</span>
+        </button>
+        <p class="sch-wa-note">Opens WhatsApp with your freight booking ready to send.</p>
+      </form>
     </div>
   </section>
 
@@ -212,11 +179,11 @@
     <div class="max-w-7xl mx-auto">
       <h2 class="text-lg sm:text-xl font-bold mb-5">More companies</h2>
       <div class="co-sister-grid">
-          <a href="scholarship.html" class="co-sister glass-card"><span class="icon-box"><i data-lucide="graduation-cap" class="w-4 h-4"></i></span><span class="co-sister-name">Scholarship</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
-          <a href="outfit.html" class="co-sister glass-card"><span class="icon-box"><i data-lucide="shirt" class="w-4 h-4"></i></span><span class="co-sister-name">Outfit</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
-          <a href="medical.html" class="co-sister glass-card"><span class="icon-box"><i data-lucide="heart-pulse" class="w-4 h-4"></i></span><span class="co-sister-name">Medical</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
-          <a href="travels.html" class="co-sister glass-card"><span class="icon-box"><i data-lucide="plane" class="w-4 h-4"></i></span><span class="co-sister-name">Travels</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
-          <a href="#" data-coming-soon class="co-sister glass-card"><span class="icon-box"><i data-lucide="utensils" class="w-4 h-4"></i></span><span class="co-sister-name">Catering</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
+        <a href="scholarship.html" class="co-sister glass-card"><span class="icon-box"><i data-lucide="graduation-cap" class="w-4 h-4"></i></span><span class="co-sister-name">Scholarship</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
+        <a href="outfit.html" class="co-sister glass-card"><span class="icon-box"><i data-lucide="shirt" class="w-4 h-4"></i></span><span class="co-sister-name">Outfit</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
+        <a href="medical.html" class="co-sister glass-card"><span class="icon-box"><i data-lucide="heart-pulse" class="w-4 h-4"></i></span><span class="co-sister-name">Medical</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
+        <a href="travels.html" class="co-sister glass-card"><span class="icon-box"><i data-lucide="plane" class="w-4 h-4"></i></span><span class="co-sister-name">Travels</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
+        <a href="#" data-coming-soon class="co-sister glass-card"><span class="icon-box"><i data-lucide="utensils" class="w-4 h-4"></i></span><span class="co-sister-name">Catering</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
       </div>
     </div>
   </section>
@@ -263,23 +230,254 @@
     </div>
   </footer>
 
-  <script src="../js/main.js?v=14"></script>
+  <script src="../js/main.js?v=16"></script>
   <script>
     (function () {
-      const buttons = document.querySelectorAll(".co-filter");
-      const cards = document.querySelectorAll(".co-product");
-      buttons.forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const filter = btn.getAttribute("data-filter");
-          buttons.forEach((b) => b.classList.remove("is-active"));
-          btn.classList.add("is-active");
-          cards.forEach((card) => {
-            const cat = card.getAttribute("data-category");
-            const show = filter === "All" || cat === filter;
-            card.hidden = !show;
+      var WHATSAPP_NUMBER = "255700000000";
+      var WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      var MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+      // Collection weekdays by origin hub (0=Sun … 6=Sat)
+      var HUB_DAYS = {
+        China: [2, 5],
+        "Dubai (UAE)": [1, 4],
+        India: [3, 6],
+        Tanzania: [1, 3, 5],
+        Kenya: [2, 4],
+        Other: [2, 5]
+      };
+
+      var form = document.getElementById("freight-form");
+      var pickupFrom = document.getElementById("pickupFrom");
+      var destination = document.getElementById("destination");
+      var panelSlots = document.getElementById("panel-slots");
+      var panelDetails = document.getElementById("panel-details");
+      var slotsGrid = document.getElementById("slots-grid");
+      var slotsEmpty = document.getElementById("slots-empty");
+      var monthLabel = document.getElementById("month-label");
+      var errorEl = document.getElementById("fr-error");
+      var submitBtn = document.getElementById("fr-submit");
+      var selectedSlots = new Set();
+
+      function val(id) {
+        return (document.getElementById(id).value || "").trim();
+      }
+
+      function resolvePlace(selectId, otherId) {
+        var v = val(selectId);
+        if (v === "Other") return val(otherId) || "Other";
+        return v;
+      }
+
+      function toggleOther(selectId, wrapId, otherId) {
+        var show = document.getElementById(selectId).value === "Other";
+        document.getElementById(wrapId).hidden = !show;
+        document.getElementById(otherId).required = show;
+        if (!show) document.getElementById(otherId).value = "";
+      }
+
+      function hubKey(fromValue) {
+        return HUB_DAYS[fromValue] ? fromValue : "Other";
+      }
+
+      function formatSlot(date) {
+        return WEEKDAYS[date.getDay()] + " " + date.getDate() + " " + MONTHS[date.getMonth()] + " " + date.getFullYear();
+      }
+
+      function isoKey(date) {
+        var m = date.getMonth() + 1;
+        var d = date.getDate();
+        return date.getFullYear() + "-" + (m < 10 ? "0" : "") + m + "-" + (d < 10 ? "0" : "") + d;
+      }
+
+      function buildSlots(fromValue) {
+        var days = HUB_DAYS[hubKey(fromValue)] || [2, 5];
+        var now = new Date();
+        var year = now.getFullYear();
+        var month = now.getMonth();
+        var today = new Date(year, month, now.getDate());
+        today.setHours(0, 0, 0, 0);
+
+        var slots = [];
+        var lastDay = new Date(year, month + 1, 0).getDate();
+        for (var day = 1; day <= lastDay; day++) {
+          var date = new Date(year, month, day);
+          if (date < today) continue;
+          if (days.indexOf(date.getDay()) === -1) continue;
+          slots.push({
+            key: isoKey(date),
+            label: formatSlot(date),
+            weekday: WEEKDAYS[date.getDay()],
+            dayNum: day,
+            mode: days.indexOf(date.getDay()) === 0 ? "Primary collection" : "Collection day"
           });
+        }
+
+        // If late in month and few slots, also show next month
+        if (slots.length < 3) {
+          var nextMonth = month + 1;
+          var nextYear = year;
+          if (nextMonth > 11) {
+            nextMonth = 0;
+            nextYear += 1;
+          }
+          var nextLast = new Date(nextYear, nextMonth + 1, 0).getDate();
+          for (var d2 = 1; d2 <= nextLast && slots.length < 8; d2++) {
+            var date2 = new Date(nextYear, nextMonth, d2);
+            if (days.indexOf(date2.getDay()) === -1) continue;
+            slots.push({
+              key: isoKey(date2),
+              label: formatSlot(date2),
+              weekday: WEEKDAYS[date2.getDay()],
+              dayNum: d2,
+              mode: "Next month"
+            });
+          }
+        }
+        return slots;
+      }
+
+      function setStepIndicators(active) {
+        document.querySelectorAll("[data-step-indicator]").forEach(function (el) {
+          var n = Number(el.getAttribute("data-step-indicator"));
+          el.classList.toggle("is-active", n <= active);
         });
+      }
+
+      function updateFlow() {
+        toggleOther("pickupFrom", "field-from-other", "pickupFromOther");
+        toggleOther("destination", "field-to-other", "destinationOther");
+
+        var fromRaw = val("pickupFrom");
+        var toRaw = val("destination");
+        var fromOk = fromRaw && (fromRaw !== "Other" || val("pickupFromOther"));
+        var toOk = toRaw && (toRaw !== "Other" || val("destinationOther"));
+        var routeReady = fromOk && toOk && resolvePlace("pickupFrom", "pickupFromOther") !== resolvePlace("destination", "destinationOther");
+
+        selectedSlots.clear();
+        slotsGrid.innerHTML = "";
+
+        if (!routeReady) {
+          panelSlots.hidden = true;
+          panelDetails.hidden = true;
+          submitBtn.disabled = true;
+          setStepIndicators(1);
+          return;
+        }
+
+        panelSlots.hidden = false;
+        setStepIndicators(2);
+
+        var fromLabel = resolvePlace("pickupFrom", "pickupFromOther");
+        var toLabel = resolvePlace("destination", "destinationOther");
+        var slots = buildSlots(fromRaw === "Other" ? "Other" : fromRaw);
+        var now = new Date();
+        monthLabel.textContent = MONTHS[now.getMonth()] + " " + now.getFullYear() + " · " + fromLabel + " → " + toLabel;
+
+        if (!slots.length) {
+          slotsEmpty.hidden = false;
+          panelDetails.hidden = true;
+          submitBtn.disabled = true;
+          return;
+        }
+
+        slotsEmpty.hidden = true;
+        slots.forEach(function (slot) {
+          var btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "fr-slot";
+          btn.setAttribute("aria-pressed", "false");
+          btn.dataset.key = slot.key;
+          btn.innerHTML =
+            '<span class="fr-slot-day">' + slot.weekday + "</span>" +
+            '<span class="fr-slot-date">' + slot.dayNum + "</span>" +
+            '<span class="fr-slot-meta">' + slot.label.split(" ").slice(2).join(" ") + "</span>" +
+            '<span class="fr-slot-mode">' + slot.mode + "</span>";
+          btn.addEventListener("click", function () {
+            if (selectedSlots.has(slot.key)) {
+              selectedSlots.delete(slot.key);
+              btn.classList.remove("is-selected");
+              btn.setAttribute("aria-pressed", "false");
+            } else {
+              selectedSlots.add(slot.key);
+              btn.classList.add("is-selected");
+              btn.setAttribute("aria-pressed", "true");
+            }
+            var hasSlot = selectedSlots.size > 0;
+            panelDetails.hidden = !hasSlot;
+            submitBtn.disabled = !hasSlot;
+            setStepIndicators(hasSlot ? 3 : 2);
+          });
+          slotsGrid.appendChild(btn);
+        });
+
+        panelDetails.hidden = true;
+        submitBtn.disabled = true;
+      }
+
+      function showError(msg) {
+        errorEl.hidden = !msg;
+        errorEl.textContent = msg || "";
+      }
+
+      pickupFrom.addEventListener("change", updateFlow);
+      destination.addEventListener("change", updateFlow);
+      document.getElementById("pickupFromOther").addEventListener("input", updateFlow);
+      document.getElementById("destinationOther").addEventListener("input", updateFlow);
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        showError("");
+
+        var fromLabel = resolvePlace("pickupFrom", "pickupFromOther");
+        var toLabel = resolvePlace("destination", "destinationOther");
+        var fullName = val("fullName");
+        var mobile = val("mobile");
+        var pickupLocation = val("pickupLocation");
+        var cargoNotes = val("cargoNotes");
+
+        if (!fromLabel || fromLabel === "Other") return showError("Please select where the items are.");
+        if (!toLabel || toLabel === "Other") return showError("Please select the destination.");
+        if (fromLabel === toLabel) return showError("Pickup and destination must be different.");
+        if (!selectedSlots.size) return showError("Please select at least one collection slot.");
+        if (!fullName) return showError("Please enter your full name.");
+        if (!mobile || mobile.replace(/\D/g, "").length < 9) {
+          return showError("Please enter a valid mobile number.");
+        }
+        if (!pickupLocation) return showError("Please enter the items pickup location.");
+
+        var slotLabels = [];
+        slotsGrid.querySelectorAll(".fr-slot.is-selected").forEach(function (el) {
+          var meta = el.querySelector(".fr-slot-day").textContent + " " +
+            el.querySelector(".fr-slot-date").textContent + " " +
+            el.querySelector(".fr-slot-meta").textContent;
+          slotLabels.push(meta);
+        });
+
+        var lines = [
+          "*Swift Wave Freight Booking*",
+          "",
+          "*From:* " + fromLabel,
+          "*Destination:* " + toLabel,
+          "*Collection slot(s):*",
+          slotLabels.map(function (s) { return "• " + s; }).join("\n"),
+          "",
+          "*Name:* " + fullName,
+          "*Mobile:* " + mobile,
+          "*Items pickup location:* " + pickupLocation
+        ];
+        if (cargoNotes) lines.push("*Cargo:* " + cargoNotes);
+        lines.push("", "_Sent from Swift Wave Freight form_");
+
+        window.open(
+          "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(lines.join("\n")),
+          "_blank",
+          "noopener,noreferrer"
+        );
       });
+
+      updateFlow();
+      if (typeof lucide !== "undefined") lucide.createIcons();
     })();
   </script>
 </body>
