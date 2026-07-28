@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="Apply with Swift Wave Scholarship — education pathways and visa support via WhatsApp.">
+  <meta name="description" content="Apply with Swift Wave Scholarship — study abroad application via WhatsApp.">
   <title>Swift Wave Scholarship — Swift Wave Group</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -83,30 +83,8 @@
       <form id="scholarship-form" class="sch-form glass-card fade-up" novalidate>
         <div class="sch-form-head">
           <h2>Application form</h2>
-          <p>Choose a service, complete your details, then submit via WhatsApp.</p>
+          <p>Complete your details, then submit via WhatsApp.</p>
         </div>
-
-        <fieldset class="sch-fieldset">
-          <legend>Service</legend>
-          <div class="sch-service-grid" role="radiogroup" aria-label="Service type">
-            <label class="sch-service is-active">
-              <input type="radio" name="service" value="Education" checked>
-              <span class="sch-service-icon"><i data-lucide="graduation-cap" class="w-5 h-5"></i></span>
-              <span class="sch-service-text">
-                <strong>Education</strong>
-                <small>Study abroad pathway</small>
-              </span>
-            </label>
-            <label class="sch-service">
-              <input type="radio" name="service" value="Visa">
-              <span class="sch-service-icon"><i data-lucide="stamp" class="w-5 h-5"></i></span>
-              <span class="sch-service-text">
-                <strong>Visa</strong>
-                <small>Visa assistance only</small>
-              </span>
-            </label>
-          </div>
-        </fieldset>
 
         <div class="sch-fields">
           <div class="sch-field">
@@ -163,13 +141,12 @@
           </div>
         </div>
 
-        <!-- Education-only fields -->
         <div id="panel-education" class="sch-panel">
           <div class="sch-panel-title">Education details</div>
           <div class="sch-fields">
             <div class="sch-field">
               <label for="educationLevel">Level of education</label>
-              <select class="form-input" id="educationLevel" name="educationLevel">
+              <select class="form-input" id="educationLevel" name="educationLevel" required>
                 <option value="" disabled selected>Select level</option>
                 <option>Diploma</option>
                 <option>Degree (Bachelor)</option>
@@ -180,7 +157,7 @@
 
             <div class="sch-field">
               <label for="fieldOfStudy">Field of study</label>
-              <select class="form-input" id="fieldOfStudy" name="fieldOfStudy">
+              <select class="form-input" id="fieldOfStudy" name="fieldOfStudy" required>
                 <option value="" disabled selected>Select field</option>
                 <option>Business</option>
                 <option>Music</option>
@@ -197,35 +174,6 @@
             <div class="sch-field" id="field-study-other" hidden>
               <label for="fieldOfStudyOther">Specify field of study</label>
               <input class="form-input" id="fieldOfStudyOther" name="fieldOfStudyOther" type="text" placeholder="Your field">
-            </div>
-          </div>
-        </div>
-
-        <!-- Visa-only fields -->
-        <div id="panel-visa" class="sch-panel" hidden>
-          <div class="sch-panel-title">Visa details</div>
-          <div class="sch-fields">
-            <div class="sch-field">
-              <label for="visaType">Visa type</label>
-              <select class="form-input" id="visaType" name="visaType">
-                <option value="" disabled selected>Select visa type</option>
-                <option>Student visa</option>
-                <option>Tourist / Visit visa</option>
-                <option>Business visa</option>
-                <option>Work visa</option>
-                <option>Dependent visa</option>
-                <option>Other</option>
-              </select>
-            </div>
-
-            <div class="sch-field" id="field-visa-other" hidden>
-              <label for="visaTypeOther">Specify visa type</label>
-              <input class="form-input" id="visaTypeOther" name="visaTypeOther" type="text" placeholder="Visa type">
-            </div>
-
-            <div class="sch-field">
-              <label for="visaPurpose">Purpose of travel</label>
-              <textarea class="form-input sch-textarea" id="visaPurpose" name="visaPurpose" rows="3" placeholder="Briefly describe why you need the visa"></textarea>
             </div>
           </div>
         </div>
@@ -309,49 +257,9 @@
     (function () {
       // Same number as contact page (+255 700 000 000)
       var WHATSAPP_NUMBER = "255700000000";
-
       var form = document.getElementById("scholarship-form");
-      var panelEdu = document.getElementById("panel-education");
-      var panelVisa = document.getElementById("panel-visa");
       var errorEl = document.getElementById("sch-error");
-
-      var educationLevel = document.getElementById("educationLevel");
       var fieldOfStudy = document.getElementById("fieldOfStudy");
-      var visaType = document.getElementById("visaType");
-      var visaPurpose = document.getElementById("visaPurpose");
-
-      function serviceValue() {
-        var checked = form.querySelector('input[name="service"]:checked');
-        return checked ? checked.value : "Education";
-      }
-
-      function setServiceUI() {
-        var service = serviceValue();
-        var isEdu = service === "Education";
-
-        document.querySelectorAll(".sch-service").forEach(function (label) {
-          var input = label.querySelector('input[name="service"]');
-          label.classList.toggle("is-active", input && input.checked);
-        });
-
-        panelEdu.hidden = !isEdu;
-        panelVisa.hidden = isEdu;
-
-        educationLevel.required = isEdu;
-        fieldOfStudy.required = isEdu;
-        visaType.required = !isEdu;
-        visaPurpose.required = !isEdu;
-
-        if (isEdu) {
-          visaType.value = "";
-          visaPurpose.value = "";
-          document.getElementById("field-visa-other").hidden = true;
-        } else {
-          educationLevel.value = "";
-          fieldOfStudy.value = "";
-          document.getElementById("field-study-other").hidden = true;
-        }
-      }
 
       function toggleOther(selectId, fieldId, otherInputId) {
         var select = document.getElementById(selectId);
@@ -363,10 +271,6 @@
         if (!show) other.value = "";
       }
 
-      form.querySelectorAll('input[name="service"]').forEach(function (radio) {
-        radio.addEventListener("change", setServiceUI);
-      });
-
       document.getElementById("nationality").addEventListener("change", function () {
         toggleOther("nationality", "field-nationality-other", "nationalityOther");
       });
@@ -375,9 +279,6 @@
       });
       fieldOfStudy.addEventListener("change", function () {
         toggleOther("fieldOfStudy", "field-study-other", "fieldOfStudyOther");
-      });
-      visaType.addEventListener("change", function () {
-        toggleOther("visaType", "field-visa-other", "visaTypeOther");
       });
 
       function val(id) {
@@ -399,7 +300,6 @@
         e.preventDefault();
         showError("");
 
-        var service = serviceValue();
         var fullName = val("fullName");
         var mobile = val("mobile");
         var nationality = resolveSelect("nationality", "nationalityOther");
@@ -416,36 +316,21 @@
         if (!val("destination") || (val("destination") === "Other" && !val("destinationOther"))) {
           return showError("Please select the country you want to go to.");
         }
+        if (!val("educationLevel")) return showError("Please select your education level.");
+        if (!val("fieldOfStudy") || (val("fieldOfStudy") === "Other" && !val("fieldOfStudyOther"))) {
+          return showError("Please select your field of study.");
+        }
 
         var lines = [
           "*Swift Wave Scholarship Application*",
           "",
-          "*Service:* " + service,
           "*Full name:* " + fullName,
           "*Mobile:* " + mobile,
           "*Nationality:* " + nationality,
-          "*Destination:* " + destination
+          "*Destination:* " + destination,
+          "*Education level:* " + val("educationLevel"),
+          "*Field of study:* " + resolveSelect("fieldOfStudy", "fieldOfStudyOther")
         ];
-
-        if (service === "Education") {
-          if (!val("educationLevel")) return showError("Please select your education level.");
-          if (!val("fieldOfStudy") || (val("fieldOfStudy") === "Other" && !val("fieldOfStudyOther"))) {
-            return showError("Please select your field of study.");
-          }
-          lines.push(
-            "*Education level:* " + val("educationLevel"),
-            "*Field of study:* " + resolveSelect("fieldOfStudy", "fieldOfStudyOther")
-          );
-        } else {
-          if (!val("visaType") || (val("visaType") === "Other" && !val("visaTypeOther"))) {
-            return showError("Please select a visa type.");
-          }
-          if (!val("visaPurpose")) return showError("Please describe the purpose of travel.");
-          lines.push(
-            "*Visa type:* " + resolveSelect("visaType", "visaTypeOther"),
-            "*Purpose:* " + val("visaPurpose")
-          );
-        }
 
         if (notes) lines.push("*Notes:* " + notes);
         lines.push("", "_Sent from Swift Wave Scholarship form_");
@@ -459,7 +344,6 @@
         window.open(url, "_blank", "noopener,noreferrer");
       });
 
-      setServiceUI();
       if (typeof lucide !== "undefined") lucide.createIcons();
     })();
   </script>
