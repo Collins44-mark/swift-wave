@@ -135,7 +135,7 @@
         <!-- Step 2: Slots (revealed after route) -->
         <div id="panel-slots" class="sch-panel" hidden>
           <div class="sch-panel-title">Available collection slots</div>
-          <p class="fr-slots-hint" id="slots-hint">Days we collect &amp; move goods on this route this month.</p>
+          <p class="fr-slots-hint" id="slots-hint">Pick one collection day for this route this month.</p>
           <div class="fr-month-label" id="month-label"></div>
           <div class="fr-slots-grid" id="slots-grid" role="group" aria-label="Collection slots"></div>
           <p class="fr-slots-empty" id="slots-empty" hidden>No open slots for this route right now. Try another route or contact us.</p>
@@ -257,7 +257,7 @@
       var monthLabel = document.getElementById("month-label");
       var errorEl = document.getElementById("fr-error");
       var submitBtn = document.getElementById("fr-submit");
-      var selectedSlots = new Set();
+      var selectedSlotKey = null;
 
       function val(id) {
         return (document.getElementById(id).value || "").trim();
@@ -354,7 +354,7 @@
         var toOk = toRaw && (toRaw !== "Other" || val("destinationOther"));
         var routeReady = fromOk && toOk && resolvePlace("pickupFrom", "pickupFromOther") !== resolvePlace("destination", "destinationOther");
 
-        selectedSlots.clear();
+        selectedSlotKey = null;
         slotsGrid.innerHTML = "";
 
         if (!routeReady) {
@@ -394,19 +394,26 @@
             '<span class="fr-slot-meta">' + slot.label.split(" ").slice(2).join(" ") + "</span>" +
             '<span class="fr-slot-mode">' + slot.mode + "</span>";
           btn.addEventListener("click", function () {
-            if (selectedSlots.has(slot.key)) {
-              selectedSlots.delete(slot.key);
-              btn.classList.remove("is-selected");
-              btn.setAttribute("aria-pressed", "false");
-            } else {
-              selectedSlots.add(slot.key);
-              btn.classList.add("is-selected");
-              btn.setAttribute("aria-pressed", "true");
+            // Single select only — clear any previous choice
+            slotsGrid.querySelectorAll(".fr-slot.is-selected").forEach(function (el) {
+              el.classList.remove("is-selected");
+              el.setAttribute("aria-pressed", "false");
+            });
+
+            if (selectedSlotKey === slot.key) {
+              selectedSlotKey = null;
+              panelDetails.hidden = true;
+              submitBtn.disabled = true;
+              setStepIndicators(2);
+              return;
             }
-            var hasSlot = selectedSlots.size > 0;
-            panelDetails.hidden = !hasSlot;
-            submitBtn.disabled = !hasSlot;
-            setStepIndicators(hasSlot ? 3 : 2);
+
+            selectedSlotKey = slot.key;
+            btn.classList.add("is-selected");
+            btn.setAttribute("aria-pressed", "true");
+            panelDetails.hidden = false;
+            submitBtn.disabled = false;
+            setStepIndicators(3);
           });
           slotsGrid.appendChild(btn);
         });
@@ -439,28 +446,25 @@
         if (!fromLabel || fromLabel === "Other") return showError("Please select where the items are.");
         if (!toLabel || toLabel === "Other") return showError("Please select the destination.");
         if (fromLabel === toLabel) return showError("Pickup and destination must be different.");
-        if (!selectedSlots.size) return showError("Please select at least one collection slot.");
+        if (!selectedSlotKey) return showError("Please select a collection slot.");
         if (!fullName) return showError("Please enter your full name.");
         if (!mobile || mobile.replace(/\D/g, "").length < 9) {
           return showError("Please enter a valid mobile number.");
         }
         if (!pickupLocation) return showError("Please enter the items pickup location.");
 
-        var slotLabels = [];
-        slotsGrid.querySelectorAll(".fr-slot.is-selected").forEach(function (el) {
-          var meta = el.querySelector(".fr-slot-day").textContent + " " +
-            el.querySelector(".fr-slot-date").textContent + " " +
-            el.querySelector(".fr-slot-meta").textContent;
-          slotLabels.push(meta);
-        });
+        var selectedEl = slotsGrid.querySelector('.fr-slot.is-selected');
+        var slotLabel =
+          selectedEl.querySelector(".fr-slot-day").textContent + " " +
+          selectedEl.querySelector(".fr-slot-date").textContent + " " +
+          selectedEl.querySelector(".fr-slot-meta").textContent;
 
         var lines = [
           "*Swift Wave Freight Booking*",
           "",
           "*From:* " + fromLabel,
           "*Destination:* " + toLabel,
-          "*Collection slot(s):*",
-          slotLabels.map(function (s) { return "• " + s; }).join("\n"),
+          "*Collection slot:* " + slotLabel,
           "",
           "*Name:* " + fullName,
           "*Mobile:* " + mobile,
