@@ -83,7 +83,7 @@
     <div class="max-w-7xl mx-auto">
       <div class="co-catalog-bar fade-up">
         <h2 class="co-catalog-heading">Products & Services</h2>
-        <div class="co-filters" role="tablist" aria-label="Filter">
+        <div class="co-filters" id="main-filters" role="tablist" aria-label="Filter">
           <button type="button" class="co-filter is-active" data-filter="All">All</button>
           <button type="button" class="co-filter" data-filter="Supplies">Supplies</button>
           <button type="button" class="co-filter" data-filter="Equipment">Equipment</button>
@@ -92,6 +92,7 @@
           <button type="button" class="co-filter" data-filter="Contracts">Contracts</button>
         </div>
       </div>
+      <div class="co-subfilters" id="sub-filters" hidden aria-label="Skin Care subcategories"></div>
       <div class="co-product-grid" id="product-grid">
           <article class="co-product glass-card fade-up" data-category="Supplies">
             <div class="co-product-media">
@@ -206,10 +207,10 @@
             </div>
           </article>
 
-          <article class="co-product glass-card fade-up" data-category="Skin Care">
+          <article class="co-product glass-card fade-up" data-category="Skin Care" data-sub="Lotion">
             <div class="co-product-media">
               <img src="https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=800&q=80" alt="Hydrating Body Lotion" loading="lazy">
-              <span class="co-product-tag">Skin Care</span>
+              <span class="co-product-tag">Lotion</span>
             </div>
             <div class="co-product-body">
               <h3 class="co-product-title">Hydrating Body Lotion</h3>
@@ -220,10 +221,10 @@
               </div>
             </div>
           </article>
-          <article class="co-product glass-card fade-up" data-category="Skin Care">
+          <article class="co-product glass-card fade-up" data-category="Skin Care" data-sub="Lotion">
             <div class="co-product-media">
               <img src="https://images.unsplash.com/photo-1570194065650-d99fb4b38b17?auto=format&fit=crop&w=800&q=80" alt="Daily Face Cream" loading="lazy">
-              <span class="co-product-tag">Skin Care</span>
+              <span class="co-product-tag">Lotion</span>
             </div>
             <div class="co-product-body">
               <h3 class="co-product-title">Daily Face Cream</h3>
@@ -234,10 +235,10 @@
               </div>
             </div>
           </article>
-          <article class="co-product glass-card fade-up" data-category="Skin Care">
+          <article class="co-product glass-card fade-up" data-category="Skin Care" data-sub="Shampoo">
             <div class="co-product-media">
               <img src="https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&w=800&q=80" alt="Nourishing Hair Shampoo" loading="lazy">
-              <span class="co-product-tag">Skin Care</span>
+              <span class="co-product-tag">Shampoo</span>
             </div>
             <div class="co-product-body">
               <h3 class="co-product-title">Nourishing Hair Shampoo</h3>
@@ -248,10 +249,10 @@
               </div>
             </div>
           </article>
-          <article class="co-product glass-card fade-up" data-category="Skin Care">
+          <article class="co-product glass-card fade-up" data-category="Skin Care" data-sub="Shampoo">
             <div class="co-product-media">
               <img src="https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&w=800&q=80" alt="Repair Conditioner" loading="lazy">
-              <span class="co-product-tag">Skin Care</span>
+              <span class="co-product-tag">Shampoo</span>
             </div>
             <div class="co-product-body">
               <h3 class="co-product-title">Repair Conditioner</h3>
@@ -262,10 +263,10 @@
               </div>
             </div>
           </article>
-          <article class="co-product glass-card fade-up" data-category="Skin Care">
+          <article class="co-product glass-card fade-up" data-category="Skin Care" data-sub="Oil">
             <div class="co-product-media">
               <img src="https://images.unsplash.com/photo-1608248543800-ba5401bb9cb0?auto=format&fit=crop&w=800&q=80" alt="Coconut Hair Oil" loading="lazy">
-              <span class="co-product-tag">Skin Care</span>
+              <span class="co-product-tag">Oil</span>
             </div>
             <div class="co-product-body">
               <h3 class="co-product-title">Coconut Hair Oil</h3>
@@ -276,10 +277,10 @@
               </div>
             </div>
           </article>
-          <article class="co-product glass-card fade-up" data-category="Skin Care">
+          <article class="co-product glass-card fade-up" data-category="Skin Care" data-sub="Oil">
             <div class="co-product-media">
               <img src="https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=800&q=80" alt="Vitamin E Skin Oil" loading="lazy">
-              <span class="co-product-tag">Skin Care</span>
+              <span class="co-product-tag">Oil</span>
             </div>
             <div class="co-product-body">
               <h3 class="co-product-title">Vitamin E Skin Oil</h3>
@@ -290,10 +291,10 @@
               </div>
             </div>
           </article>
-          <article class="co-product glass-card fade-up" data-category="Skin Care">
+          <article class="co-product glass-card fade-up" data-category="Skin Care" data-sub="Cleanser">
             <div class="co-product-media">
               <img src="https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=800&q=80" alt="Gentle Facial Cleanser" loading="lazy">
-              <span class="co-product-tag">Skin Care</span>
+              <span class="co-product-tag">Cleanser</span>
             </div>
             <div class="co-product-body">
               <h3 class="co-product-title">Gentle Facial Cleanser</h3>
@@ -304,10 +305,10 @@
               </div>
             </div>
           </article>
-          <article class="co-product glass-card fade-up" data-category="Skin Care">
+          <article class="co-product glass-card fade-up" data-category="Skin Care" data-sub="Lotion">
             <div class="co-product-media">
               <img src="https://images.unsplash.com/photo-1620916565916-b6b8a5f3a0d0?auto=format&fit=crop&w=800&q=80" alt="Shea Butter Moisturizer" loading="lazy">
-              <span class="co-product-tag">Skin Care</span>
+              <span class="co-product-tag">Lotion</span>
             </div>
             <div class="co-product-body">
               <h3 class="co-product-title">Shea Butter Moisturizer</h3>
@@ -318,10 +319,10 @@
               </div>
             </div>
           </article>
-          <article class="co-product glass-card fade-up" data-category="Skin Care">
+          <article class="co-product glass-card fade-up" data-category="Skin Care" data-sub="Gel">
             <div class="co-product-media">
               <img src="https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=800&q=80" alt="Aloe Vera Gel" loading="lazy">
-              <span class="co-product-tag">Skin Care</span>
+              <span class="co-product-tag">Gel</span>
             </div>
             <div class="co-product-body">
               <h3 class="co-product-title">Aloe Vera Gel</h3>
@@ -332,10 +333,10 @@
               </div>
             </div>
           </article>
-          <article class="co-product glass-card fade-up" data-category="Skin Care">
+          <article class="co-product glass-card fade-up" data-category="Skin Care" data-sub="Shampoo">
             <div class="co-product-media">
               <img src="https://images.unsplash.com/photo-1571781926291-c77df8098c1f?auto=format&fit=crop&w=800&q=80" alt="Anti-Dandruff Shampoo" loading="lazy">
-              <span class="co-product-tag">Skin Care</span>
+              <span class="co-product-tag">Shampoo</span>
             </div>
             <div class="co-product-body">
               <h3 class="co-product-title">Anti-Dandruff Shampoo</h3>
@@ -346,10 +347,10 @@
               </div>
             </div>
           </article>
-          <article class="co-product glass-card fade-up" data-category="Skin Care">
+          <article class="co-product glass-card fade-up" data-category="Skin Care" data-sub="Oil">
             <div class="co-product-media">
               <img src="https://images.unsplash.com/photo-1611930022073-b7a4ba5fccb0?auto=format&fit=crop&w=800&q=80" alt="Argan Beauty Oil" loading="lazy">
-              <span class="co-product-tag">Skin Care</span>
+              <span class="co-product-tag">Oil</span>
             </div>
             <div class="co-product-body">
               <h3 class="co-product-title">Argan Beauty Oil</h3>
@@ -360,10 +361,10 @@
               </div>
             </div>
           </article>
-          <article class="co-product glass-card fade-up" data-category="Skin Care">
+          <article class="co-product glass-card fade-up" data-category="Skin Care" data-sub="Lotion">
             <div class="co-product-media">
               <img src="https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?auto=format&fit=crop&w=800&q=80" alt="Hand & Body Cream" loading="lazy">
-              <span class="co-product-tag">Skin Care</span>
+              <span class="co-product-tag">Lotion</span>
             </div>
             <div class="co-product-body">
               <h3 class="co-product-title">Hand &amp; Body Cream</h3>
@@ -436,20 +437,59 @@
   <script src="../js/main.js?v=14"></script>
   <script>
     (function () {
-      const buttons = document.querySelectorAll(".co-filter");
-      const cards = document.querySelectorAll(".co-product");
-      buttons.forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const filter = btn.getAttribute("data-filter");
-          buttons.forEach((b) => b.classList.remove("is-active"));
-          btn.classList.add("is-active");
-          cards.forEach((card) => {
-            const cat = card.getAttribute("data-category");
-            const show = filter === "All" || cat === filter;
-            card.hidden = !show;
+      var SKIN_SUBS = ["Lotion", "Shampoo", "Oil", "Cleanser", "Gel"];
+      var mainFilter = "All";
+      var subFilter = "All";
+      var mainButtons = document.querySelectorAll("#main-filters .co-filter");
+      var subFiltersEl = document.getElementById("sub-filters");
+      var cards = document.querySelectorAll(".co-product");
+
+      function renderSubFilters() {
+        if (mainFilter !== "Skin Care") {
+          subFiltersEl.hidden = true;
+          subFiltersEl.innerHTML = "";
+          subFilter = "All";
+          return;
+        }
+        subFiltersEl.hidden = false;
+        subFiltersEl.innerHTML = "";
+        ["All"].concat(SKIN_SUBS).forEach(function (name) {
+          var btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "co-subfilter" + (name === subFilter ? " is-active" : "");
+          btn.textContent = name;
+          btn.addEventListener("click", function () {
+            subFilter = name;
+            renderSubFilters();
+            applyFilters();
           });
+          subFiltersEl.appendChild(btn);
+        });
+      }
+
+      function applyFilters() {
+        cards.forEach(function (card) {
+          var cat = card.getAttribute("data-category");
+          var sub = card.getAttribute("data-sub") || "";
+          var showMain = mainFilter === "All" || cat === mainFilter;
+          var showSub = mainFilter !== "Skin Care" || subFilter === "All" || sub === subFilter;
+          card.hidden = !(showMain && showSub);
+        });
+      }
+
+      mainButtons.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          mainFilter = btn.getAttribute("data-filter");
+          subFilter = "All";
+          mainButtons.forEach(function (b) { b.classList.remove("is-active"); });
+          btn.classList.add("is-active");
+          renderSubFilters();
+          applyFilters();
         });
       });
+
+      renderSubFilters();
+      applyFilters();
     })();
   </script>
 </body>
