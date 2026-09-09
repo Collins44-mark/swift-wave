@@ -83,18 +83,17 @@ function replaceCmsBg(html: string, cmsKey: string, url: string): string {
   });
 }
 
-function hydrateSlideshow(html: string, slides: string[]): string {
-  if (!slides.length) return html;
-  const slideHtml = slides
-    .map(
-      (url, i) =>
-        `<div class="slideshow-slide${i === 0 ? " is-active" : ""}" style="background-image:url('${url.replace(/'/g, "%27")}')"></div>`
-    )
-    .join("");
-  return html.replace(
-    /(<div class="slideshow-track"[^>]*data-cms-slides="hero\.slides"[^>]*>)([\s\S]*?)(<\/div>)/,
-    `$1${slideHtml}$3`
-  );
+function resolveHeroBackgroundUrl(flat: Record<string, unknown>): string | null {
+  const imageUrl = flat["hero.image_url"];
+  if (typeof imageUrl === "string" && imageUrl) return imageUrl;
+
+  const slides = flat["hero.slides"];
+  if (Array.isArray(slides) && slides.length) {
+    const first = slides[0];
+    if (typeof first === "string" && first) return first;
+  }
+
+  return null;
 }
 
 function hydrateValuesGrid(
@@ -151,16 +150,10 @@ export function hydrateLegacyHtml(
     out = replaceCmsText(out, "hero.title", heroTitle, "html");
   }
 
-  // Background images
-  const heroImage = flat["hero.image_url"];
-  if (typeof heroImage === "string" && heroImage) {
-    out = replaceCmsBg(out, "hero.image_url", heroImage);
-  }
-
-  // Slideshow slides
-  const slides = flat["hero.slides"];
-  if (Array.isArray(slides) && slides.length) {
-    out = hydrateSlideshow(out, slides as string[]);
+  // Hero background (static single image on homepage)
+  const heroBackground = resolveHeroBackgroundUrl(flat);
+  if (heroBackground) {
+    out = replaceCmsBg(out, "hero.image_url", heroBackground);
   }
 
   // CTA / link hrefs via data-cms-href="section.field"

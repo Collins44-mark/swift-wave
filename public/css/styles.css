@@ -1080,6 +1080,15 @@ a:hover .icon,
   text-transform: uppercase;
 }
 
+.hero-background {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
 .slideshow-track {
   position: absolute;
   inset: 0;
@@ -1286,8 +1295,8 @@ a:hover .icon,
   color: var(--gold);
 }
 
-.page-hero > *:not(.slideshow-track):not(.slideshow-overlay):not(.slideshow-dots),
-.hero-slideshow > *:not(.slideshow-track):not(.slideshow-overlay):not(.slideshow-dots),
+.page-hero > *:not(.slideshow-track):not(.slideshow-overlay):not(.slideshow-dots):not(.hero-background),
+.hero-slideshow > *:not(.slideshow-track):not(.slideshow-overlay):not(.slideshow-dots):not(.hero-background),
 .premium-band > *:not(.band-glow) {
   position: relative;
   z-index: 2;
