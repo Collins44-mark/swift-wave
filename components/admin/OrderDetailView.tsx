@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
-import type { Order, OrderItemEnriched } from "@/lib/admin/types-catalog";
+import { useState } from "react";
+import type { Order, OrderItemEnriched, OrderStatus } from "@/lib/admin/types-catalog";
 import { OrderStatusBadge } from "@/components/admin/OrderStatusBadge";
 import { OrderStatusForm } from "@/components/admin/OrderStatusForm";
 import {
@@ -17,8 +20,6 @@ export function OrderDetailView({
   order,
   items,
   canEditStatus,
-  statusAction,
-  statusError,
   listStatus,
 }: {
   companySlug: string;
@@ -26,10 +27,9 @@ export function OrderDetailView({
   order: Order;
   items: OrderItemEnriched[];
   canEditStatus: boolean;
-  statusAction: (formData: FormData) => void | Promise<void>;
-  statusError?: string | null;
   listStatus?: string | null;
 }) {
+  const [status, setStatus] = useState<OrderStatus>(order.status);
   const ordersListHref =
     listStatus && listStatus !== "all"
       ? `/admin/companies/${companySlug}/orders?status=${listStatus}`
@@ -66,15 +66,9 @@ export function OrderDetailView({
               })}
             </p>
           </div>
-          <OrderStatusBadge status={order.status} />
+          <OrderStatusBadge status={status} />
         </div>
       </div>
-
-      {statusError ? (
-        <div className="sw-admin-alert is-error" role="alert">
-          {statusError}
-        </div>
-      ) : null}
 
       <div className="sw-admin-order-detail-grid">
         <section className="sw-admin-order-card">
@@ -118,10 +112,11 @@ export function OrderDetailView({
         <section className="sw-admin-order-card">
           <h3 className="sw-admin-order-card-title">Order status</h3>
           <OrderStatusForm
+            companySlug={companySlug}
             orderId={order.id}
-            currentStatus={order.status}
-            action={statusAction}
+            initialStatus={status}
             canEdit={canEditStatus}
+            onStatusChange={setStatus}
           />
         </section>
       </div>

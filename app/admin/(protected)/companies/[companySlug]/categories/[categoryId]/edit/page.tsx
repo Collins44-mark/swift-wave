@@ -46,7 +46,7 @@ export default async function EditCategoryPage({
     "use server";
     const result = await updateCategory(companySlug, categoryId, formData);
     if (!result.ok) return { error: result.error };
-    redirect(`/admin/companies/${companySlug}/categories`);
+    return { success: "Category updated." };
   }
 
   return (

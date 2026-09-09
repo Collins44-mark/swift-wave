@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import {
   requireCompanyAccess,
   canMutate,
@@ -40,7 +40,7 @@ export default async function EditProductPage({
     "use server";
     const result = await updateProduct(companySlug, productId, formData);
     if (!result.ok) return { error: result.error };
-    redirect(`/admin/companies/${companySlug}/products?toast=product_updated`);
+    return { success: "Product updated." };
   }
 
   return (

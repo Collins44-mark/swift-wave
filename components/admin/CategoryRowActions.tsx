@@ -3,16 +3,20 @@
 import Link from "next/link";
 import { useEffect, useId, useRef, useState, useTransition } from "react";
 import { deleteCategory } from "@/lib/admin/actions/categories";
+import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
 
 export function CategoryRowActions({
   companySlug,
   categoryId,
   categoryName,
+  onDeleted,
 }: {
   companySlug: string;
   categoryId: string;
   categoryName: string;
+  onDeleted?: () => void;
 }) {
+  const { showError } = useAdminToastContext();
   const [open, setOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -47,10 +51,12 @@ export function CategoryRowActions({
       const result = await deleteCategory(companySlug, categoryId);
       if (!result.ok) {
         setError(result.error);
+        showError("Couldn't delete this item.");
         return;
       }
       setConfirmOpen(false);
       setError(null);
+      onDeleted?.();
     });
   }
 

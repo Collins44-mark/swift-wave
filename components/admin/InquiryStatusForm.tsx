@@ -1,35 +1,30 @@
 "use client";
 
-import { useFormStatus } from "react-dom";
+import { useState, useTransition } from "react";
 import {
   INQUIRY_STATUS_LABELS,
   inquiryStatusesForCompany,
 } from "@/lib/admin/inquiry-utils";
 import type { InquiryStatus } from "@/lib/admin/types-catalog";
-import { SubmitButton } from "@/components/admin/SubmitButton";
-
-function SaveStatusButton() {
-  const { pending } = useFormStatus();
-  return (
-    <SubmitButton pendingLabel="Saving…">
-      {pending ? "Saving…" : "Save status"}
-    </SubmitButton>
-  );
-}
+import { updateInquiry } from "@/lib/admin/actions/inquiries";
+import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
 
 export function InquiryStatusForm({
   companySlug,
   inquiryId,
-  currentStatus,
-  action,
+  initialStatus,
   canEdit,
+  onStatusChange,
 }: {
   companySlug: string;
   inquiryId: string;
-  currentStatus: InquiryStatus;
-  action: (formData: FormData) => void | Promise<void>;
+  initialStatus: InquiryStatus;
   canEdit: boolean;
+  onStatusChange?: (status: InquiryStatus) => void;
 }) {
+  const [status, setStatus] = useState(initialStatus);
+  const [pending, startTransition] = useTransition();
+  const { showSuccess, showError } = useAdminToastContext();
   const statuses = inquiryStatusesForCompany(companySlug);
 
   if (!canEdit) {
@@ -40,20 +35,44 @@ export function InquiryStatusForm({
     );
   }
 
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    formData.set("status", status);
+
+    startTransition(async () => {
+      const result = await updateInquiry(companySlug, inquiryId, formData);
+      if (!result.ok) {
+        showError("Couldn't update the inquiry status. Please try again.");
+        return;
+      }
+      onStatusChange?.(status);
+      showSuccess("Status updated.");
+    });
+  }
+
   return (
-    <form action={action} className="sw-admin-order-status-form">
-      <input type="hidden" name="inquiry_id" value={inquiryId} />
+    <form onSubmit={handleSubmit} className="sw-admin-order-status-form">
       <div className="sw-admin-field">
         <label htmlFor="inquiry-status">Status</label>
-        <select id="inquiry-status" name="status" defaultValue={currentStatus}>
-          {statuses.map((status) => (
-            <option key={status} value={status}>
-              {INQUIRY_STATUS_LABELS[status]}
+        <select
+          id="inquiry-status"
+          name="status"
+          value={status}
+          disabled={pending}
+          onChange={(e) => setStatus(e.target.value as InquiryStatus)}
+        >
+          {statuses.map((item) => (
+            <option key={item} value={item}>
+              {INQUIRY_STATUS_LABELS[item]}
             </option>
           ))}
         </select>
       </div>
-      <SaveStatusButton />
+      <button type="submit" className="sw-admin-btn" disabled={pending}>
+        {pending ? "Saving…" : "Save status"}
+      </button>
     </form>
   );
 }

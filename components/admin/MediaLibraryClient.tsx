@@ -7,6 +7,7 @@ import {
 } from "@/lib/admin/actions/media";
 import type { MediaAsset } from "@/lib/admin/types-media";
 import { MediaUploadButton } from "@/components/admin/MediaUploadButton";
+import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
 
 function formatBytes(bytes: number | null): string {
   if (!bytes || bytes <= 0) return "—";
@@ -42,10 +43,37 @@ export function MediaLibraryClient({
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  const { showSuccess, showError } = useAdminToastContext();
 
-  function refreshFromUpload() {
-    // Server revalidates; force a soft reload for fresh list
-    window.location.reload();
+  function refreshFromUpload(asset: {
+    id?: string;
+    secure_url: string;
+    public_id: string;
+  }) {
+    if (!asset.id) return;
+    const assetId = asset.id;
+    setItems((prev) => [
+      {
+        id: assetId,
+        company_id: "",
+        cloudinary_public_id: asset.public_id,
+        secure_url: asset.secure_url,
+        resource_type: "image",
+        format: null,
+        width: null,
+        height: null,
+        bytes: null,
+        original_filename: null,
+        alt_text: null,
+        folder: null,
+        created_by: null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      },
+      ...prev,
+    ]);
+    showSuccess("Image uploaded.");
+    setError(null);
   }
 
   async function copyUrl(url: string) {
@@ -58,18 +86,26 @@ export function MediaLibraryClient({
     }
   }
 
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+
   function onDelete(id: string) {
-    if (!confirm("Delete this image permanently?")) return;
-    setStatus(null);
+    setDeleteTarget(id);
     setError(null);
+  }
+
+  function confirmDelete() {
+    if (!deleteTarget) return;
+    setStatus(null);
     startTransition(async () => {
-      const result = await deleteMediaAsset(companySlug, id);
+      const result = await deleteMediaAsset(companySlug, deleteTarget);
       if (!result.ok) {
         setError(result.error);
+        showError("Couldn't delete this item.");
         return;
       }
-      setItems((prev) => prev.filter((a) => a.id !== id));
-      setStatus("Image deleted.");
+      setItems((prev) => prev.filter((a) => a.id !== deleteTarget));
+      setDeleteTarget(null);
+      showSuccess("Image deleted.");
     });
   }
 
@@ -170,6 +206,35 @@ export function MediaLibraryClient({
           ))}
         </div>
       )}
+
+      {deleteTarget ? (
+        <div className="sw-admin-modal-backdrop" role="presentation">
+          <div className="sw-admin-modal" role="dialog" aria-modal="true">
+            <h3 style={{ marginTop: 0 }}>Delete image?</h3>
+            <p style={{ color: "var(--admin-muted)", marginTop: 0 }}>
+              This image will be removed from the media library.
+            </p>
+            <div className="sw-admin-toolbar">
+              <button
+                type="button"
+                className="sw-admin-btn sw-admin-btn-ghost"
+                disabled={pending}
+                onClick={() => setDeleteTarget(null)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="sw-admin-btn sw-admin-btn-danger-solid"
+                disabled={pending}
+                onClick={confirmDelete}
+              >
+                {pending ? "Deleting…" : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

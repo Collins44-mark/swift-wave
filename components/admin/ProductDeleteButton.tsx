@@ -1,23 +1,23 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { deleteProduct } from "@/lib/admin/actions/products";
-import { AdminToast } from "@/components/admin/AdminToast";
+import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
 
 export function ProductDeleteButton({
   companySlug,
   productId,
   productName,
+  onDeleted,
 }: {
   companySlug: string;
   productId: string;
   productName: string;
+  onDeleted?: () => void;
 }) {
-  const router = useRouter();
+  const { showError } = useAdminToastContext();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const dialogId = `delete-product-${productId}`;
 
@@ -37,12 +37,12 @@ export function ProductDeleteButton({
       const result = await deleteProduct(companySlug, productId);
       if (!result.ok) {
         setError(result.error);
+        showError("Couldn't delete this item.");
         return;
       }
       setConfirmOpen(false);
       setError(null);
-      setSuccessMessage("Product deleted");
-      router.refresh();
+      onDeleted?.();
     });
   }
 
@@ -65,11 +65,11 @@ export function ProductDeleteButton({
             aria-labelledby={`${dialogId}-title`}
           >
             <h3 id={`${dialogId}-title`} style={{ marginTop: 0 }}>
-              Delete Product?
+              Delete product?
             </h3>
             <p style={{ color: "var(--admin-muted)", marginTop: 0 }}>
-              Are you sure you want to delete &ldquo;{productName}&rdquo;?
-              This action cannot be undone.
+              Are you sure you want to remove &ldquo;{productName}&rdquo;? This
+              action cannot be undone.
             </p>
             {error ? (
               <div className="sw-admin-alert is-error" role="alert">
@@ -96,13 +96,6 @@ export function ProductDeleteButton({
             </div>
           </div>
         </div>
-      ) : null}
-
-      {successMessage ? (
-        <AdminToast
-          message={successMessage}
-          onDismiss={() => setSuccessMessage(null)}
-        />
       ) : null}
     </>
   );

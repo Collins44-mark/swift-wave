@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { SubmitButton } from "@/components/admin/SubmitButton";
+import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
 import { ImageFieldPicker } from "@/components/admin/ImageFieldPicker";
 import type { Product } from "@/lib/admin/types-catalog";
 import type { MediaAsset } from "@/lib/admin/types-media";
@@ -13,7 +15,11 @@ function bulletsText(bullets: Product["bullets"] | undefined): string {
   return "";
 }
 
-type FormState = { error?: string } | null;
+type FormState = {
+  error?: string;
+  success?: string;
+  redirectTo?: string;
+} | null;
 
 export function ProductForm({
   companySlug,
@@ -31,7 +37,17 @@ export function ProductForm({
   action: (prev: FormState, formData: FormData) => Promise<FormState>;
 }) {
   const [state, formAction] = useActionState(action, null);
+  const { showSuccess } = useAdminToastContext();
+  const router = useRouter();
   const isEdit = Boolean(product);
+
+  useEffect(() => {
+    if (!state?.success) return;
+    showSuccess(state.success);
+    if (state.redirectTo) {
+      router.push(state.redirectTo);
+    }
+  }, [state, showSuccess, router]);
 
   return (
     <form action={formAction} className="sw-admin-form-grid">

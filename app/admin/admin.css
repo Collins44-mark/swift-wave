@@ -2132,6 +2132,75 @@ a.sw-admin-hub-card:hover {
   padding: 0.35rem 0.25rem 1.1rem;
 }
 
+.sw-admin-brand--horizontal {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.35rem 0.15rem 0.95rem;
+  margin-bottom: 0.15rem;
+}
+
+.sw-admin-brand--horizontal .sw-admin-brand-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.sw-admin-brand-title {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  color: var(--admin-gold);
+}
+
+.sw-admin-brand--horizontal .sw-admin-brand-console {
+  margin-top: 0.15rem;
+  font-size: 0.64rem;
+}
+
+.sw-admin-sidebar-collapse {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(230, 238, 255, 0.88);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.sw-admin-sidebar-collapse:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.sw-admin-toast-host {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 120;
+  pointer-events: none;
+}
+
+.sw-admin-toast-host .sw-admin-toast {
+  pointer-events: auto;
+}
+
+.sw-admin-shell.is-collapsed .sw-admin-brand--horizontal .sw-admin-brand-copy,
+.sw-admin-shell.is-collapsed .sw-admin-brand--horizontal .sw-admin-sidebar-collapse {
+  display: none;
+}
+
+.sw-admin-shell.is-collapsed .sw-admin-brand--horizontal {
+  justify-content: center;
+  padding-bottom: 0.75rem;
+}
+
 .sw-admin-brand-logo {
   width: 46px;
   height: 46px;

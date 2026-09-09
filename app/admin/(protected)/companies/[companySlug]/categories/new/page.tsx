@@ -38,7 +38,10 @@ export default async function NewCategoryPage({
     "use server";
     const result = await createCategory(companySlug, formData);
     if (!result.ok) return { error: result.error };
-    redirect(`/admin/companies/${companySlug}/categories`);
+    return {
+      success: "Category added.",
+      redirectTo: `/admin/companies/${companySlug}/categories`,
+    };
   }
 
   return (

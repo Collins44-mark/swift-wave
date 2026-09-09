@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
 import { MediaUploadButton } from "@/components/admin/MediaUploadButton";
 import type { HeroPageDef } from "@/lib/cms/hero-pages";
 import type { MediaAsset } from "@/lib/admin/types-media";
@@ -35,7 +35,7 @@ export function HeroImageEditor({
   canUpload,
   backHref,
 }: Props) {
-  const router = useRouter();
+  const { showSuccess, showError } = useAdminToastContext();
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const [url, setUrl] = useState(content.image_url ?? "");
@@ -88,9 +88,10 @@ export function HeroImageEditor({
             const result = await updateHeroImage(hero.companySlug, fd);
             if (!result.ok) {
               setError(result.error);
+              showError("Couldn't save changes.");
               return;
             }
-            router.refresh();
+            showSuccess("Changes saved.");
           });
         }}
       >

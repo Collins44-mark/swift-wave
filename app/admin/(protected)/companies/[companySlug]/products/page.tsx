@@ -3,22 +3,12 @@ import Link from "next/link";
 import { requireCompanyAccess } from "@/lib/admin/require-company-access";
 import { listProducts } from "@/lib/admin/data/products";
 import { listCategories } from "@/lib/admin/data/categories";
-import { ProductDeleteButton } from "@/components/admin/ProductDeleteButton";
-import { ProductsPageToasts } from "@/components/admin/ProductsPageClient";
-import type { Product } from "@/lib/admin/types-catalog";
+import { ProductsTableClient } from "@/components/admin/ProductsTableClient";
 
 export const metadata: Metadata = {
   title: "Products — Swift Wave Admin",
   robots: { index: false, follow: false },
 };
-
-function priceDisplay(p: Product): string {
-  if (p.price_label) return p.price_label;
-  if (p.price != null) {
-    return `${p.currency} ${Number(p.price).toLocaleString("en-US")}`;
-  }
-  return "—";
-}
 
 export default async function ProductsPage({
   params,
@@ -39,9 +29,7 @@ export default async function ProductsPage({
   const categoryName = new Map(categories.map((c) => [c.id, c.name]));
 
   return (
-    <>
-      <ProductsPageToasts />
-      <section className="sw-admin-panel">
+    <section className="sw-admin-panel">
       <div className="sw-admin-toolbar">
         <div>
           <h2 style={{ margin: 0 }}>Products</h2>
@@ -83,71 +71,11 @@ export default async function ProductsPage({
         ) : null}
       </form>
 
-      {products.length === 0 ? (
-        <div className="sw-admin-empty" style={{ marginTop: "1rem" }}>
-          <p style={{ margin: "0 0 0.35rem", fontWeight: 600 }}>No products yet.</p>
-          <p style={{ margin: "0 0 1rem", color: "var(--admin-muted)" }}>
-            Add your first product to start building the Outfit catalog.
-          </p>
-          <Link
-            className="sw-admin-btn"
-            href={`/admin/companies/${companySlug}/products/new`}
-          >
-            + Add product
-          </Link>
-        </div>
-      ) : (
-        <div className="sw-admin-table-wrap" style={{ marginTop: "1rem" }}>
-          <table className="sw-admin-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Price</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((p) => (
-                <tr key={p.id}>
-                  <td>
-                    <strong>{p.name}</strong>
-                    {p.subcategory ? (
-                      <div className="sw-admin-muted-sm">{p.subcategory}</div>
-                    ) : null}
-                  </td>
-                  <td>
-                    {p.category_id
-                      ? categoryName.get(p.category_id) ?? "—"
-                      : "—"}
-                  </td>
-                  <td>{priceDisplay(p)}</td>
-                  <td>
-                    <span className="sw-admin-badge">{p.status}</span>
-                  </td>
-                  <td>
-                    <div className="sw-admin-row-actions">
-                      <Link
-                        className="sw-admin-btn sw-admin-btn-ghost"
-                        href={`/admin/companies/${companySlug}/products/${p.id}/edit`}
-                      >
-                        Edit
-                      </Link>
-                      <ProductDeleteButton
-                        companySlug={companySlug}
-                        productId={p.id}
-                        productName={p.name}
-                      />
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      <ProductsTableClient
+        companySlug={companySlug}
+        initialProducts={products}
+        categoryName={categoryName}
+      />
     </section>
-    </>
   );
 }

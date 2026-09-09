@@ -11,6 +11,7 @@ import {
 import type { CurrentAdmin } from "@/lib/auth/types";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
+import { AdminToastProvider } from "@/components/admin/AdminToastProvider";
 
 type AdminShellContextValue = {
   navOpen: boolean;
@@ -80,28 +81,30 @@ export function AdminShell({
   );
 
   return (
-    <AdminShellContext.Provider value={value}>
-      <div
-        className={`sw-admin-shell${navOpen ? " is-nav-open" : ""}${
-          sidebarCollapsed ? " is-collapsed" : ""
-        }`}
-      >
-        <button
-          type="button"
-          className="sw-admin-backdrop"
-          aria-label="Close navigation"
-          onClick={closeNav}
-        />
-        <AdminSidebar
-          admin={admin}
-          onNavigate={closeNav}
-          companyCount={companyCount}
-        />
-        <div className="sw-admin-main">
-          <AdminTopbar admin={admin} />
-          <div className="sw-admin-content">{children}</div>
+    <AdminToastProvider>
+      <AdminShellContext.Provider value={value}>
+        <div
+          className={`sw-admin-shell${navOpen ? " is-nav-open" : ""}${
+            sidebarCollapsed ? " is-collapsed" : ""
+          }`}
+        >
+          <button
+            type="button"
+            className="sw-admin-backdrop"
+            aria-label="Close navigation"
+            onClick={closeNav}
+          />
+          <AdminSidebar
+            admin={admin}
+            onNavigate={closeNav}
+            companyCount={companyCount}
+          />
+          <div className="sw-admin-main">
+            <AdminTopbar admin={admin} />
+            <div className="sw-admin-content">{children}</div>
+          </div>
         </div>
-      </div>
-    </AdminShellContext.Provider>
+      </AdminShellContext.Provider>
+    </AdminToastProvider>
   );
 }

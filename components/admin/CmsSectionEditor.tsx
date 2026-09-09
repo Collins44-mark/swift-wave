@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
 import type { CmsSectionDef } from "@/lib/cms/types";
 import type { WebsiteContent } from "@/lib/admin/types-catalog";
 import { ImageFieldPicker } from "@/components/admin/ImageFieldPicker";
@@ -41,11 +41,11 @@ export function CmsSectionEditor({
   previewPath,
   backHref,
 }: Props) {
-  const router = useRouter();
+  const { showSuccess, showError } = useAdminToastContext();
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const content = (record?.content ?? {}) as Record<string, unknown>;
-  const status = record?.status ?? "draft";
+  const [status, setStatus] = useState(record?.status ?? "draft");
 
   return (
     <section className="sw-admin-panel">
@@ -91,9 +91,16 @@ export function CmsSectionEditor({
                 : await publishWebsiteSection(companySlug, fd);
             if (!result.ok) {
               setError(result.error);
+              showError("Couldn't save changes.");
               return;
             }
-            router.refresh();
+            if (action === "draft") {
+              setStatus("draft");
+              showSuccess("Changes saved.");
+            } else {
+              setStatus("published");
+              showSuccess("Changes saved.");
+            }
           });
         }}
       >

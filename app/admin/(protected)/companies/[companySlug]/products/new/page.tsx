@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
 import {
   requireCompanyAccess,
   canMutate,
@@ -36,7 +35,10 @@ export default async function NewProductPage({
     "use server";
     const result = await createProduct(companySlug, formData);
     if (!result.ok) return { error: result.error };
-    redirect(`/admin/companies/${companySlug}/products?toast=product_created`);
+    return {
+      success: "Product added.",
+      redirectTo: `/admin/companies/${companySlug}/products`,
+    };
   }
 
   return (

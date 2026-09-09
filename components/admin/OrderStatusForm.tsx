@@ -1,33 +1,31 @@
 "use client";
 
-import { useFormStatus } from "react-dom";
+import { useState, useTransition } from "react";
 import {
   ORDER_STATUSES,
   ORDER_STATUS_LABELS,
 } from "@/lib/admin/order-utils";
 import type { OrderStatus } from "@/lib/admin/types-catalog";
-import { SubmitButton } from "@/components/admin/SubmitButton";
-
-function SaveStatusButton() {
-  const { pending } = useFormStatus();
-  return (
-    <SubmitButton pendingLabel="Saving…">
-      {pending ? "Saving…" : "Save status"}
-    </SubmitButton>
-  );
-}
+import { updateOrderStatus } from "@/lib/admin/actions/orders";
+import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
 
 export function OrderStatusForm({
+  companySlug,
   orderId,
-  currentStatus,
-  action,
+  initialStatus,
   canEdit,
+  onStatusChange,
 }: {
+  companySlug: string;
   orderId: string;
-  currentStatus: OrderStatus;
-  action: (formData: FormData) => void | Promise<void>;
+  initialStatus: OrderStatus;
   canEdit: boolean;
+  onStatusChange?: (status: OrderStatus) => void;
 }) {
+  const [status, setStatus] = useState(initialStatus);
+  const [pending, startTransition] = useTransition();
+  const { showSuccess, showError } = useAdminToastContext();
+
   if (!canEdit) {
     return (
       <div className="sw-admin-order-status-readonly">
@@ -39,20 +37,49 @@ export function OrderStatusForm({
     );
   }
 
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const next = new FormData(form).get("status");
+    if (typeof next !== "string") return;
+
+    startTransition(async () => {
+      const result = await updateOrderStatus(
+        companySlug,
+        orderId,
+        next as OrderStatus
+      );
+      if (!result.ok) {
+        showError("Couldn't update the order status. Please try again.");
+        return;
+      }
+      setStatus(next as OrderStatus);
+      onStatusChange?.(next as OrderStatus);
+      showSuccess("Order status updated.");
+    });
+  }
+
   return (
-    <form action={action} className="sw-admin-order-status-form">
-      <input type="hidden" name="order_id" value={orderId} />
+    <form onSubmit={handleSubmit} className="sw-admin-order-status-form">
       <div className="sw-admin-field">
         <label htmlFor="order-status">Order status</label>
-        <select id="order-status" name="status" defaultValue={currentStatus}>
-          {ORDER_STATUSES.map((status) => (
-            <option key={status} value={status}>
-              {ORDER_STATUS_LABELS[status]}
+        <select
+          id="order-status"
+          name="status"
+          value={status}
+          disabled={pending}
+          onChange={(e) => setStatus(e.target.value as OrderStatus)}
+        >
+          {ORDER_STATUSES.map((item) => (
+            <option key={item} value={item}>
+              {ORDER_STATUS_LABELS[item]}
             </option>
           ))}
         </select>
       </div>
-      <SaveStatusButton />
+      <button type="submit" className="sw-admin-btn" disabled={pending}>
+        {pending ? "Saving…" : "Save status"}
+      </button>
     </form>
   );
 }

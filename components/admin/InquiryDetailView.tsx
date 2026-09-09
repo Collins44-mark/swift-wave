@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
-import type { Inquiry } from "@/lib/admin/types-catalog";
+import { useState } from "react";
+import type { Inquiry, InquiryStatus } from "@/lib/admin/types-catalog";
 import { InquiryStatusBadge } from "@/components/admin/InquiryStatusBadge";
 import { InquiryStatusForm } from "@/components/admin/InquiryStatusForm";
 import {
@@ -18,17 +21,14 @@ export function InquiryDetailView({
   companySlug,
   inquiry,
   canEditStatus,
-  statusAction,
-  statusError,
   listStatus,
 }: {
   companySlug: string;
   inquiry: Inquiry;
   canEditStatus: boolean;
-  statusAction: (formData: FormData) => void | Promise<void>;
-  statusError?: string | null;
   listStatus?: string | null;
 }) {
+  const [status, setStatus] = useState<InquiryStatus>(inquiry.status);
   const payload = inquiry.payload ?? {};
   const contactInquiry = isContactInquiry(inquiry.inquiry_type, payload);
   const subject = contactInquiry
@@ -59,15 +59,9 @@ export function InquiryDetailView({
               })}
             </p>
           </div>
-          <InquiryStatusBadge status={inquiry.status} />
+          <InquiryStatusBadge status={status} />
         </div>
       </div>
-
-      {statusError ? (
-        <div className="sw-admin-alert is-error" role="alert">
-          {statusError}
-        </div>
-      ) : null}
 
       <div className="sw-admin-order-detail-grid">
         <section className="sw-admin-order-card">
@@ -107,9 +101,9 @@ export function InquiryDetailView({
           <InquiryStatusForm
             companySlug={companySlug}
             inquiryId={inquiry.id}
-            currentStatus={inquiry.status}
-            action={statusAction}
+            initialStatus={status}
             canEdit={canEditStatus}
+            onStatusChange={setStatus}
           />
         </section>
       </div>
