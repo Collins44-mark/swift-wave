@@ -1,0 +1,225 @@
+<nav id="navbar" class="fixed top-0 w-full nav-blur">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+      <a href="/" class="nav-brand">
+        <span class="logo-box">
+          <img src="/assets/images/logo.png?v=6" alt="Swift Wave Group" class="site-logo">
+        </span>
+      </a>
+      <div class="hidden lg:flex items-center gap-6">
+        <a href="/" class="nav-link text-sm font-medium">Home</a>
+        <a href="/about" class="nav-link text-sm font-medium">About</a>
+        <a href="/companies" class="nav-link active text-sm font-medium">Companies</a>
+        <a href="/global" class="nav-link text-sm font-medium">Global</a>
+        <a href="/contact" class="nav-link text-sm font-medium">Contact</a>
+      </div>
+      <div class="flex items-center gap-3">
+        <button type="button" class="med-cart-btn" id="cart-toggle" aria-label="Open cart">
+          <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+          <span class="med-cart-count" id="cart-count" hidden>0</span>
+        </button>
+        <a href="/contact" class="hidden sm:inline-flex px-5 py-2.5 text-sm btn-primary">Get in Touch</a>
+        <button id="mobile-toggle" class="mobile-toggle lg:hidden" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+          <span class="hamburger" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div id="mobile-menu" class="mobile-menu" aria-hidden="true">
+    <button type="button" class="mobile-menu-backdrop" tabindex="-1" aria-label="Close menu"></button>
+    <div class="mobile-menu-sheet" role="dialog" aria-modal="true" aria-label="Site menu">
+      <div class="mobile-menu-top">
+        <span class="mobile-menu-eyebrow">Navigate</span>
+        <span class="mobile-menu-rule" aria-hidden="true"></span>
+      </div>
+      <nav class="mobile-nav" aria-label="Mobile">
+        <a href="/" class="mobile-nav-link"><span class="mobile-nav-index">01</span><span class="mobile-nav-text">Home</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
+        <a href="/about" class="mobile-nav-link"><span class="mobile-nav-index">02</span><span class="mobile-nav-text">About</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
+        <a href="/companies" class="mobile-nav-link is-active"><span class="mobile-nav-index">03</span><span class="mobile-nav-text">Companies</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
+        <a href="/global" class="mobile-nav-link"><span class="mobile-nav-index">04</span><span class="mobile-nav-text">Global</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
+        <a href="/contact" class="mobile-nav-link"><span class="mobile-nav-index">05</span><span class="mobile-nav-text">Contact</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
+      </nav>
+      <div class="mobile-menu-bottom">
+        <a href="/contact" class="mobile-menu-cta">Get in Touch</a>
+        <p class="mobile-menu-meta">Swift Wave Group · Dar es Salaam</p>
+      </div>
+    </div>
+  </div>
+
+  <header class="co-shop-hero">
+    <div class="co-shop-hero-bg" data-cms-bg="hero.image_url" style="background-image:url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=2000&q=80')" aria-hidden="true"></div>
+    <div class="co-shop-hero-overlay" aria-hidden="true"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 co-shop-hero-inner">
+      <nav class="co-breadcrumb" aria-label="Breadcrumb">
+        <a href="/companies">Companies</a>
+        <span aria-hidden="true">/</span>
+        <a href="/companies/medical" id="crumb-shop">Medical</a>
+        <span id="crumb-product-sep" class="hidden" aria-hidden="true">/</span>
+        <span id="crumb-product" class="hidden"></span>
+      </nav>
+      <div class="co-shop-title-row">
+        <div>
+          <div class="co-shop-badge"><i data-lucide="heart-pulse" class="w-4 h-4"></i><span data-cms="hero.badge">Shop</span></div>
+          <h1 data-cms="hero.title">Swift Wave Medical</h1>
+          <p class="co-shop-hint" data-cms="hero.hint">Medical supplies, equipment &amp; skin care</p>
+        </div>
+        <button type="button" class="btn-primary px-5 py-2.5 text-sm co-shop-contact" id="hero-cart-btn">View cart</button>
+      </div>
+    </div>
+  </header>
+
+  <section id="catalog-view" class="co-catalog section-premium px-4 sm:px-6 py-8 sm:py-12">
+    <div class="max-w-7xl mx-auto">
+      <div class="co-catalog-bar fade-up">
+        <h2 class="co-catalog-heading">Products &amp; Services</h2>
+        <div class="co-filters" id="main-filters" role="tablist" aria-label="Category"></div>
+      </div>
+      <div class="co-subfilters" id="sub-filters" hidden></div>
+      <div class="co-product-grid" id="product-grid"></div>
+      <p id="catalog-empty" class="co-catalog-empty" hidden>No items in this category.</p>
+    </div>
+  </section>
+
+  <section id="detail-view" class="co-pdp section-white px-4 sm:px-6 py-8 sm:py-12" hidden>
+    <div class="max-w-7xl mx-auto">
+      <button type="button" class="co-pdp-back" id="back-to-shop">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+        Back to shop
+      </button>
+      <div class="co-pdp-main glass-card">
+        <div class="co-pdp-gallery">
+          <img id="pdp-image" src="" alt="">
+        </div>
+        <div class="co-pdp-info">
+          <p class="co-pdp-path" id="pdp-path"></p>
+          <h2 id="pdp-title"></h2>
+          <div class="co-pdp-rating">
+            <span class="co-pdp-stars" aria-hidden="true">★★★★☆</span>
+            <span id="pdp-rating-text"></span>
+          </div>
+          <p class="co-pdp-price" id="pdp-price"></p>
+          <p class="co-pdp-desc" id="pdp-desc"></p>
+          <ul class="co-pdp-bullets" id="pdp-bullets"></ul>
+          <div class="co-pdp-actions">
+            <button type="button" class="btn-primary px-6 py-3 text-sm" id="pdp-add">Add to cart</button>
+            <button type="button" class="btn-secondary px-6 py-3 text-sm" id="pdp-checkout-now">Checkout</button>
+          </div>
+          <p class="co-pdp-note" id="pdp-toast" hidden>Added to cart</p>
+          <p class="co-pdp-note">Ships from Dar es Salaam · Swift Wave Medical</p>
+        </div>
+      </div>
+      <div class="co-related">
+        <h3 class="co-related-title">Related items</h3>
+        <div class="co-product-grid" id="related-grid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cart drawer -->
+  <div id="cart-drawer" class="med-cart" aria-hidden="true">
+    <button type="button" class="med-cart-backdrop" id="cart-backdrop" aria-label="Close cart"></button>
+    <aside class="med-cart-panel" role="dialog" aria-modal="true" aria-label="Shopping cart">
+      <div class="med-cart-head">
+        <h2>Your cart</h2>
+        <button type="button" class="med-cart-close" id="cart-close" aria-label="Close">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="med-cart-body" id="cart-items">
+        <p class="med-cart-empty" id="cart-empty">Your cart is empty.</p>
+      </div>
+      <div class="med-cart-foot" id="cart-foot" hidden>
+        <div class="med-cart-total">
+          <span>Total</span>
+          <strong id="cart-total">TZS 0</strong>
+        </div>
+        <button type="button" class="btn-primary sch-submit" id="open-checkout">
+          Checkout via WhatsApp
+        </button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Checkout modal -->
+  <div id="checkout-modal" class="med-checkout" aria-hidden="true" hidden>
+    <button type="button" class="med-cart-backdrop" id="checkout-backdrop" aria-label="Close checkout"></button>
+    <div class="med-checkout-panel glass-card" role="dialog" aria-modal="true" aria-label="Checkout">
+      <div class="med-cart-head">
+        <h2>Checkout</h2>
+        <button type="button" class="med-cart-close" id="checkout-close" aria-label="Close">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <p class="med-checkout-hint">Enter your details. We’ll open WhatsApp with your order ready to send.</p>
+      <form id="checkout-form" class="sch-fields" novalidate>
+        <div class="sch-field">
+          <label for="checkout-name">Full name</label>
+          <input class="form-input" id="checkout-name" type="text" autocomplete="name" placeholder="Your full name" required>
+        </div>
+        <div class="sch-field">
+          <label for="checkout-mobile">Mobile number</label>
+          <input class="form-input" id="checkout-mobile" type="tel" autocomplete="tel" inputmode="tel" placeholder="+255 7XX XXX XXX" required>
+        </div>
+        <p id="checkout-error" class="sch-error" hidden role="alert"></p>
+        <button type="submit" class="btn-primary sch-submit">
+          <i data-lucide="message-circle" class="w-5 h-5"></i>
+          <span>Send order on WhatsApp</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <section class="section-white py-10 sm:py-12 px-4 sm:px-6" id="more-companies">
+    <div class="max-w-7xl mx-auto">
+      <h2 class="text-lg sm:text-xl font-bold mb-5">More companies</h2>
+      <div class="co-sister-grid">
+        <a href="/companies/scholarship" class="co-sister glass-card"><span class="icon-box"><i data-lucide="graduation-cap" class="w-4 h-4"></i></span><span class="co-sister-name">Scholarship</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
+        <a href="/companies/freight" class="co-sister glass-card"><span class="icon-box"><i data-lucide="truck" class="w-4 h-4"></i></span><span class="co-sister-name">Freight</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
+        <a href="/companies/outfit" class="co-sister glass-card"><span class="icon-box"><i data-lucide="shirt" class="w-4 h-4"></i></span><span class="co-sister-name">Outfit</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
+        <a href="#" data-coming-soon class="co-sister glass-card"><span class="icon-box"><i data-lucide="plane" class="w-4 h-4"></i></span><span class="co-sister-name">Travels</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
+        <a href="#" data-coming-soon class="co-sister glass-card"><span class="icon-box"><i data-lucide="utensils" class="w-4 h-4"></i></span><span class="co-sister-name">Catering</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer py-12 sm:py-16 px-4 sm:px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 mb-12">
+        <div class="col-span-2 lg:col-span-1">
+          <div class="mb-4">
+            <span class="logo-box logo-box--footer">
+              <img src="/assets/images/logo.png?v=6" alt="Swift Wave Group" class="site-logo">
+            </span>
+          </div>
+          <p class="text-sm footer-desc leading-relaxed">International multi-division organization delivering world-class solutions across industries.</p>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Quick Links</h4>
+          <div class="space-y-2 text-sm">
+            <a href="/about" class="block">About Us</a>
+            <a href="/companies" class="block">Our Companies</a>
+            <a href="/contact" class="block">Contact</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Companies</h4>
+          <div class="space-y-2 text-sm">
+            <a href="/companies/scholarship" class="block">Scholarship</a>
+            <a href="/companies/freight" class="block">Freight</a>
+            <a href="#" data-coming-soon class="block">Travels</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Connect</h4>
+          <div class="flex gap-3">
+            <a data-coming-soon href="#" aria-label="LinkedIn" class="social-btn"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+            <a data-coming-soon href="#" aria-label="Twitter" class="social-btn"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+            <a data-coming-soon href="#" aria-label="Instagram" class="social-btn"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-white/10 pt-8 text-center">
+        <p class="text-sm footer-copy">&copy; Swift Wave Group. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>

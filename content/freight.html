@@ -1,0 +1,214 @@
+<nav id="navbar" class="fixed top-0 w-full nav-blur">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+      <a href="/" class="nav-brand">
+        <span class="logo-box">
+          <img src="/assets/images/logo.png?v=6" alt="Swift Wave Group" class="site-logo">
+        </span>
+      </a>
+      <div class="hidden lg:flex items-center gap-6">
+        <a href="/" class="nav-link text-sm font-medium">Home</a>
+        <a href="/about" class="nav-link text-sm font-medium">About</a>
+        <a href="/companies" class="nav-link active text-sm font-medium">Companies</a>
+        <a href="/global" class="nav-link text-sm font-medium">Global</a>
+        <a href="/contact" class="nav-link text-sm font-medium">Contact</a>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="/contact" class="hidden sm:inline-flex px-5 py-2.5 text-sm btn-primary">Get in Touch</a>
+        <button id="mobile-toggle" class="mobile-toggle lg:hidden" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+          <span class="hamburger" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div id="mobile-menu" class="mobile-menu" aria-hidden="true">
+    <button type="button" class="mobile-menu-backdrop" tabindex="-1" aria-label="Close menu"></button>
+    <div class="mobile-menu-sheet" role="dialog" aria-modal="true" aria-label="Site menu">
+      <div class="mobile-menu-top">
+        <span class="mobile-menu-eyebrow">Navigate</span>
+        <span class="mobile-menu-rule" aria-hidden="true"></span>
+      </div>
+      <nav class="mobile-nav" aria-label="Mobile">
+        <a href="/" class="mobile-nav-link"><span class="mobile-nav-index">01</span><span class="mobile-nav-text">Home</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
+        <a href="/about" class="mobile-nav-link"><span class="mobile-nav-index">02</span><span class="mobile-nav-text">About</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
+        <a href="/companies" class="mobile-nav-link is-active"><span class="mobile-nav-index">03</span><span class="mobile-nav-text">Companies</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
+        <a href="/global" class="mobile-nav-link"><span class="mobile-nav-index">04</span><span class="mobile-nav-text">Global</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
+        <a href="/contact" class="mobile-nav-link"><span class="mobile-nav-index">05</span><span class="mobile-nav-text">Contact</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
+      </nav>
+      <div class="mobile-menu-bottom">
+        <a href="/contact" class="mobile-menu-cta">Get in Touch</a>
+        <p class="mobile-menu-meta">Swift Wave Group · Dar es Salaam</p>
+      </div>
+    </div>
+  </div>
+
+  <header class="co-shop-hero">
+    <div class="co-shop-hero-bg" style="background-image:url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=2000&q=80')" aria-hidden="true"></div>
+    <div class="co-shop-hero-overlay" aria-hidden="true"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 co-shop-hero-inner">
+      <nav class="co-breadcrumb" aria-label="Breadcrumb">
+        <a href="/companies">Companies</a>
+        <span aria-hidden="true">/</span>
+        <span>Freight</span>
+      </nav>
+      <div class="co-shop-title-row">
+        <div>
+          <div class="co-shop-badge"><i data-lucide="truck" class="w-4 h-4"></i><span>Book</span></div>
+          <h1>Swift Wave Freight</h1>
+          <p class="co-shop-hint">Pick route & collection slots — send on WhatsApp</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="sch-form-section section-premium px-4 sm:px-6 py-8 sm:py-12">
+    <div class="max-w-2xl mx-auto">
+      <form id="freight-form" class="sch-form glass-card fade-up" novalidate>
+        <div class="sch-form-head">
+          <h2>Freight booking</h2>
+          <p>Select where goods are picked up, where they’re going, then choose a collection slot.</p>
+        </div>
+
+        <div class="fr-steps" aria-hidden="true">
+          <span class="fr-step is-active" data-step-indicator="1">1 · Route</span>
+          <span class="fr-step" data-step-indicator="2">2 · Slots</span>
+          <span class="fr-step" data-step-indicator="3">3 · Details</span>
+        </div>
+
+        <!-- Step 1: Route -->
+        <div class="sch-panel fr-route-panel">
+          <div class="sch-panel-title">Route</div>
+          <div class="sch-fields">
+            <div class="sch-field">
+              <label for="pickupFrom">Pickup / From</label>
+              <select class="form-input" id="pickupFrom" name="pickupFrom" required>
+                <option value="" disabled selected>Where are the items?</option>
+                <option>China</option>
+                <option>Dubai (UAE)</option>
+                <option>India</option>
+                <option>Tanzania</option>
+                <option>Kenya</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="sch-field" id="field-from-other" hidden>
+              <label for="pickupFromOther">Specify pickup country</label>
+              <input class="form-input" id="pickupFromOther" name="pickupFromOther" type="text" placeholder="Country / city of origin">
+            </div>
+
+            <div class="sch-field">
+              <label for="destination">Destination</label>
+              <select class="form-input" id="destination" name="destination" required>
+                <option value="" disabled selected>Where are items going?</option>
+                <option>Tanzania (Dar es Salaam)</option>
+                <option>China</option>
+                <option>Dubai (UAE)</option>
+                <option>India</option>
+                <option>Kenya</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="sch-field" id="field-to-other" hidden>
+              <label for="destinationOther">Specify destination</label>
+              <input class="form-input" id="destinationOther" name="destinationOther" type="text" placeholder="Destination country / city">
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Slots (revealed after route) -->
+        <div id="panel-slots" class="sch-panel" hidden>
+          <div class="sch-panel-title">Available collection slots</div>
+          <p class="fr-slots-hint" id="slots-hint">Pick one collection day for this route this month.</p>
+          <div class="fr-month-label" id="month-label"></div>
+          <div class="fr-slots-grid" id="slots-grid" role="group" aria-label="Collection slots"></div>
+          <p class="fr-slots-empty" id="slots-empty" hidden>No open slots for this route right now. Try another route or contact us.</p>
+        </div>
+
+        <!-- Step 3: Details (revealed after at least one slot) -->
+        <div id="panel-details" class="sch-panel" hidden>
+          <div class="sch-panel-title">Your details</div>
+          <div class="sch-fields">
+            <div class="sch-field">
+              <label for="fullName">Full name</label>
+              <input class="form-input" id="fullName" name="fullName" type="text" autocomplete="name" placeholder="Your full name" required>
+            </div>
+            <div class="sch-field">
+              <label for="mobile">Mobile number</label>
+              <input class="form-input" id="mobile" name="mobile" type="tel" autocomplete="tel" inputmode="tel" placeholder="+255 7XX XXX XXX" required>
+            </div>
+            <div class="sch-field">
+              <label for="pickupLocation">Items pickup location</label>
+              <input class="form-input" id="pickupLocation" name="pickupLocation" type="text" placeholder="Warehouse, market, or address where items are" required>
+            </div>
+            <div class="sch-field">
+              <label for="cargoNotes">Cargo description <span class="sch-optional">(optional)</span></label>
+              <textarea class="form-input sch-textarea" id="cargoNotes" name="cargoNotes" rows="3" placeholder="e.g. 12 cartons electronics, approx. 180kg"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <p id="fr-error" class="sch-error" hidden role="alert"></p>
+
+        <button type="submit" class="sch-submit btn-primary" id="fr-submit" disabled>
+          <i data-lucide="message-circle" class="w-5 h-5"></i>
+          <span>Submit via WhatsApp</span>
+        </button>
+        <p class="sch-wa-note">Opens WhatsApp with your freight booking ready to send.</p>
+      </form>
+    </div>
+  </section>
+
+  <section class="section-white py-10 sm:py-12 px-4 sm:px-6">
+    <div class="max-w-7xl mx-auto">
+      <h2 class="text-lg sm:text-xl font-bold mb-5">More companies</h2>
+      <div class="co-sister-grid">
+        <a href="/companies/scholarship" class="co-sister glass-card"><span class="icon-box"><i data-lucide="graduation-cap" class="w-4 h-4"></i></span><span class="co-sister-name">Scholarship</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
+        <a href="/companies/outfit" class="co-sister glass-card"><span class="icon-box"><i data-lucide="shirt" class="w-4 h-4"></i></span><span class="co-sister-name">Outfit</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
+        <a href="/companies/medical" class="co-sister glass-card"><span class="icon-box"><i data-lucide="heart-pulse" class="w-4 h-4"></i></span><span class="co-sister-name">Medical</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
+        <a href="#" data-coming-soon class="co-sister glass-card"><span class="icon-box"><i data-lucide="plane" class="w-4 h-4"></i></span><span class="co-sister-name">Travels</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
+        <a href="#" data-coming-soon class="co-sister glass-card"><span class="icon-box"><i data-lucide="utensils" class="w-4 h-4"></i></span><span class="co-sister-name">Catering</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer py-12 sm:py-16 px-4 sm:px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 mb-12">
+        <div class="col-span-2 lg:col-span-1">
+          <div class="mb-4">
+            <span class="logo-box logo-box--footer">
+              <img src="/assets/images/logo.png?v=6" alt="Swift Wave Group" class="site-logo">
+            </span>
+          </div>
+          <p class="text-sm footer-desc leading-relaxed">International multi-division organization delivering world-class solutions across industries.</p>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Quick Links</h4>
+          <div class="space-y-2 text-sm">
+            <a href="/about" class="block">About Us</a>
+            <a href="/companies" class="block">Our Companies</a>
+            <a href="/contact" class="block">Contact</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Companies</h4>
+          <div class="space-y-2 text-sm">
+            <a href="/companies/scholarship" class="block">Scholarship</a>
+            <a href="/companies/freight" class="block">Freight</a>
+            <a href="#" data-coming-soon class="block">Travels</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Connect</h4>
+          <div class="flex gap-3">
+            <a data-coming-soon href="#" aria-label="LinkedIn" class="social-btn"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+            <a data-coming-soon href="#" aria-label="Twitter" class="social-btn"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+            <a data-coming-soon href="#" aria-label="Instagram" class="social-btn"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-white/10 pt-8 text-center">
+        <p class="text-sm footer-copy">&copy; Swift Wave Group. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>

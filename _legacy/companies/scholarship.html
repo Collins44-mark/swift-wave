@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Apply with Swift Wave Scholarship — study abroad application via WhatsApp.">
+  <title>Swift Wave Scholarship — Swift Wave Group</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <link rel="icon" type="image/png" href="../assets/images/logo.png?v=6">
+  <link rel="stylesheet" href="../css/styles.css?v=15">
+</head>
+<body class="min-h-screen w-full overflow-x-hidden company-page">
+
+  <nav id="navbar" class="fixed top-0 w-full nav-blur">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+      <a href="../index.html" class="nav-brand">
+        <span class="logo-box">
+          <img src="../assets/images/logo.png?v=6" alt="Swift Wave Group" class="site-logo">
+        </span>
+      </a>
+      <div class="hidden lg:flex items-center gap-6">
+        <a href="../index.html" class="nav-link text-sm font-medium">Home</a>
+        <a href="../about.html" class="nav-link text-sm font-medium">About</a>
+        <a href="../companies.html" class="nav-link active text-sm font-medium">Companies</a>
+        <a href="../global.html" class="nav-link text-sm font-medium">Global</a>
+        <a href="../contact.html" class="nav-link text-sm font-medium">Contact</a>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="../contact.html" class="hidden sm:inline-flex px-5 py-2.5 text-sm btn-primary">Get in Touch</a>
+        <button id="mobile-toggle" class="mobile-toggle lg:hidden" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+          <span class="hamburger" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div id="mobile-menu" class="mobile-menu" aria-hidden="true">
+    <button type="button" class="mobile-menu-backdrop" tabindex="-1" aria-label="Close menu"></button>
+    <div class="mobile-menu-sheet" role="dialog" aria-modal="true" aria-label="Site menu">
+      <div class="mobile-menu-top">
+        <span class="mobile-menu-eyebrow">Navigate</span>
+        <span class="mobile-menu-rule" aria-hidden="true"></span>
+      </div>
+      <nav class="mobile-nav" aria-label="Mobile">
+        <a href="../index.html" class="mobile-nav-link"><span class="mobile-nav-index">01</span><span class="mobile-nav-text">Home</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
+        <a href="../about.html" class="mobile-nav-link"><span class="mobile-nav-index">02</span><span class="mobile-nav-text">About</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
+        <a href="../companies.html" class="mobile-nav-link is-active"><span class="mobile-nav-index">03</span><span class="mobile-nav-text">Companies</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
+        <a href="../global.html" class="mobile-nav-link"><span class="mobile-nav-index">04</span><span class="mobile-nav-text">Global</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
+        <a href="../contact.html" class="mobile-nav-link"><span class="mobile-nav-index">05</span><span class="mobile-nav-text">Contact</span><span class="mobile-nav-chevron" aria-hidden="true"></span></a>
+      </nav>
+      <div class="mobile-menu-bottom">
+        <a href="../contact.html" class="mobile-menu-cta">Get in Touch</a>
+        <p class="mobile-menu-meta">Swift Wave Group · Dar es Salaam</p>
+      </div>
+    </div>
+  </div>
+
+  <header class="co-shop-hero">
+    <div class="co-shop-hero-bg" style="background-image:url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=2000&q=80')" aria-hidden="true"></div>
+    <div class="co-shop-hero-overlay" aria-hidden="true"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 co-shop-hero-inner">
+      <nav class="co-breadcrumb" aria-label="Breadcrumb">
+        <a href="../companies.html">Companies</a>
+        <span aria-hidden="true">/</span>
+        <span>Scholarship</span>
+      </nav>
+      <div class="co-shop-title-row">
+        <div>
+          <div class="co-shop-badge"><i data-lucide="graduation-cap" class="w-4 h-4"></i><span>Apply</span></div>
+          <h1>Swift Wave Scholarship</h1>
+          <p class="co-shop-hint">Fill the form — we receive it on WhatsApp</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="sch-form-section section-premium px-4 sm:px-6 py-8 sm:py-12">
+    <div class="max-w-2xl mx-auto">
+      <form id="scholarship-form" class="sch-form glass-card fade-up" novalidate>
+        <div class="sch-form-head">
+          <h2>Application form</h2>
+          <p>Complete your details, then submit via WhatsApp.</p>
+        </div>
+
+        <div class="sch-fields">
+          <div class="sch-field">
+            <label for="fullName">Full name</label>
+            <input class="form-input" id="fullName" name="fullName" type="text" autocomplete="name" placeholder="As on passport / ID" required>
+          </div>
+
+          <div class="sch-field">
+            <label for="mobile">Mobile number</label>
+            <input class="form-input" id="mobile" name="mobile" type="tel" autocomplete="tel" inputmode="tel" placeholder="+255 7XX XXX XXX" required>
+          </div>
+
+          <div class="sch-field">
+            <label for="nationality">Nationality</label>
+            <select class="form-input" id="nationality" name="nationality" required>
+              <option value="" disabled selected>Select nationality</option>
+              <option>Tanzanian</option>
+              <option>Kenyan</option>
+              <option>Ugandan</option>
+              <option>Rwandan</option>
+              <option>Burundian</option>
+              <option>Congolese (DRC)</option>
+              <option>Zambian</option>
+              <option>Malawian</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="sch-field" id="field-nationality-other" hidden>
+            <label for="nationalityOther">Specify nationality</label>
+            <input class="form-input" id="nationalityOther" name="nationalityOther" type="text" placeholder="Your nationality">
+          </div>
+
+          <div class="sch-field">
+            <label for="destination">Country you want to go</label>
+            <select class="form-input" id="destination" name="destination" required>
+              <option value="" disabled selected>Select destination</option>
+              <option>China</option>
+              <option>India</option>
+              <option>United Arab Emirates (Dubai)</option>
+              <option>Turkey</option>
+              <option>United Kingdom</option>
+              <option>Canada</option>
+              <option>Germany</option>
+              <option>USA</option>
+              <option>Australia</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="sch-field" id="field-destination-other" hidden>
+            <label for="destinationOther">Specify destination</label>
+            <input class="form-input" id="destinationOther" name="destinationOther" type="text" placeholder="Destination country">
+          </div>
+        </div>
+
+        <div id="panel-education" class="sch-panel">
+          <div class="sch-panel-title">Education details</div>
+          <div class="sch-fields">
+            <div class="sch-field">
+              <label for="educationLevel">Level of education</label>
+              <select class="form-input" id="educationLevel" name="educationLevel" required>
+                <option value="" disabled selected>Select level</option>
+                <option>Diploma</option>
+                <option>Degree (Bachelor)</option>
+                <option>Masters</option>
+                <option>PhD</option>
+              </select>
+            </div>
+
+            <div class="sch-field">
+              <label for="fieldOfStudy">Field of study</label>
+              <select class="form-input" id="fieldOfStudy" name="fieldOfStudy" required>
+                <option value="" disabled selected>Select field</option>
+                <option>Business</option>
+                <option>Music</option>
+                <option>Engineering</option>
+                <option>Medicine / Health</option>
+                <option>IT / Computer Science</option>
+                <option>Law</option>
+                <option>Education</option>
+                <option>Agriculture</option>
+                <option>Other</option>
+              </select>
+            </div>
+
+            <div class="sch-field" id="field-study-other" hidden>
+              <label for="fieldOfStudyOther">Specify field of study</label>
+              <input class="form-input" id="fieldOfStudyOther" name="fieldOfStudyOther" type="text" placeholder="Your field">
+            </div>
+          </div>
+        </div>
+
+        <div class="sch-field">
+          <label for="notes">Additional notes <span class="sch-optional">(optional)</span></label>
+          <textarea class="form-input sch-textarea" id="notes" name="notes" rows="3" placeholder="Anything else we should know"></textarea>
+        </div>
+
+        <p id="sch-error" class="sch-error" hidden role="alert"></p>
+
+        <button type="submit" class="sch-submit btn-primary" id="sch-submit">
+          <i data-lucide="message-circle" class="w-5 h-5"></i>
+          <span>Submit via WhatsApp</span>
+        </button>
+
+        <p class="sch-wa-note">
+          Opens WhatsApp with your application details ready to send to Swift Wave Scholarship.
+        </p>
+      </form>
+    </div>
+  </section>
+
+  <section class="section-white py-10 sm:py-12 px-4 sm:px-6">
+    <div class="max-w-7xl mx-auto">
+      <h2 class="text-lg sm:text-xl font-bold mb-5">More companies</h2>
+      <div class="co-sister-grid">
+        <a href="freight.html" class="co-sister glass-card"><span class="icon-box"><i data-lucide="truck" class="w-4 h-4"></i></span><span class="co-sister-name">Freight</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
+        <a href="outfit.html" class="co-sister glass-card"><span class="icon-box"><i data-lucide="shirt" class="w-4 h-4"></i></span><span class="co-sister-name">Outfit</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
+        <a href="medical.html" class="co-sister glass-card"><span class="icon-box"><i data-lucide="heart-pulse" class="w-4 h-4"></i></span><span class="co-sister-name">Medical</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
+        <a href="#" data-coming-soon class="co-sister glass-card"><span class="icon-box"><i data-lucide="plane" class="w-4 h-4"></i></span><span class="co-sister-name">Travels</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
+        <a href="#" data-coming-soon class="co-sister glass-card"><span class="icon-box"><i data-lucide="utensils" class="w-4 h-4"></i></span><span class="co-sister-name">Catering</span><i data-lucide="arrow-up-right" class="w-4 h-4 co-sister-arrow"></i></a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer py-12 sm:py-16 px-4 sm:px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 mb-12">
+        <div class="col-span-2 lg:col-span-1">
+          <div class="mb-4">
+            <span class="logo-box logo-box--footer">
+              <img src="../assets/images/logo.png?v=6" alt="Swift Wave Group" class="site-logo">
+            </span>
+          </div>
+          <p class="text-sm footer-desc leading-relaxed">International multi-division organization delivering world-class solutions across industries.</p>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Quick Links</h4>
+          <div class="space-y-2 text-sm">
+            <a href="../about.html" class="block">About Us</a>
+            <a href="../companies.html" class="block">Our Companies</a>
+            <a href="../contact.html" class="block">Contact</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Companies</h4>
+          <div class="space-y-2 text-sm">
+            <a href="scholarship.html" class="block">Scholarship</a>
+            <a href="freight.html" class="block">Freight</a>
+            <a href="#" data-coming-soon class="block">Travels</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Connect</h4>
+          <div class="flex gap-3">
+            <a data-coming-soon href="#" aria-label="LinkedIn" class="social-btn"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+            <a data-coming-soon href="#" aria-label="Twitter" class="social-btn"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+            <a data-coming-soon href="#" aria-label="Instagram" class="social-btn"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-white/10 pt-8 text-center">
+        <p class="text-sm footer-copy">&copy; Swift Wave Group. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/main.js?v=18"></script>
+  <script>
+    (function () {
+      // Same number as contact page (+255 700 000 000)
+      var WHATSAPP_NUMBER = "255700000000";
+      var form = document.getElementById("scholarship-form");
+      var errorEl = document.getElementById("sch-error");
+      var fieldOfStudy = document.getElementById("fieldOfStudy");
+
+      function toggleOther(selectId, fieldId, otherInputId) {
+        var select = document.getElementById(selectId);
+        var wrap = document.getElementById(fieldId);
+        var other = document.getElementById(otherInputId);
+        var show = select.value === "Other";
+        wrap.hidden = !show;
+        other.required = show;
+        if (!show) other.value = "";
+      }
+
+      document.getElementById("nationality").addEventListener("change", function () {
+        toggleOther("nationality", "field-nationality-other", "nationalityOther");
+      });
+      document.getElementById("destination").addEventListener("change", function () {
+        toggleOther("destination", "field-destination-other", "destinationOther");
+      });
+      fieldOfStudy.addEventListener("change", function () {
+        toggleOther("fieldOfStudy", "field-study-other", "fieldOfStudyOther");
+      });
+
+      function val(id) {
+        return (document.getElementById(id).value || "").trim();
+      }
+
+      function resolveSelect(id, otherId) {
+        var v = val(id);
+        if (v === "Other") return val(otherId) || "Other";
+        return v;
+      }
+
+      function showError(msg) {
+        errorEl.hidden = !msg;
+        errorEl.textContent = msg || "";
+      }
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        showError("");
+
+        var fullName = val("fullName");
+        var mobile = val("mobile");
+        var nationality = resolveSelect("nationality", "nationalityOther");
+        var destination = resolveSelect("destination", "destinationOther");
+        var notes = val("notes");
+
+        if (!fullName) return showError("Please enter your full name.");
+        if (!mobile || mobile.replace(/\D/g, "").length < 9) {
+          return showError("Please enter a valid mobile number.");
+        }
+        if (!val("nationality") || (val("nationality") === "Other" && !val("nationalityOther"))) {
+          return showError("Please select your nationality.");
+        }
+        if (!val("destination") || (val("destination") === "Other" && !val("destinationOther"))) {
+          return showError("Please select the country you want to go to.");
+        }
+        if (!val("educationLevel")) return showError("Please select your education level.");
+        if (!val("fieldOfStudy") || (val("fieldOfStudy") === "Other" && !val("fieldOfStudyOther"))) {
+          return showError("Please select your field of study.");
+        }
+
+        var lines = [
+          "*Swift Wave Scholarship Application*",
+          "",
+          "*Full name:* " + fullName,
+          "*Mobile:* " + mobile,
+          "*Nationality:* " + nationality,
+          "*Destination:* " + destination,
+          "*Education level:* " + val("educationLevel"),
+          "*Field of study:* " + resolveSelect("fieldOfStudy", "fieldOfStudyOther")
+        ];
+
+        if (notes) lines.push("*Notes:* " + notes);
+        lines.push("", "_Sent from Swift Wave Scholarship form_");
+
+        var url =
+          "https://wa.me/" +
+          WHATSAPP_NUMBER +
+          "?text=" +
+          encodeURIComponent(lines.join("\n"));
+
+        window.open(url, "_blank", "noopener,noreferrer");
+      });
+
+      if (typeof lucide !== "undefined") lucide.createIcons();
+    })();
+  </script>
+</body>
+</html>

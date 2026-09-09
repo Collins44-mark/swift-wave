@@ -1,0 +1,191 @@
+<nav id="navbar" class="fixed top-0 w-full nav-blur">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+      <a href="/" class="nav-brand">
+        <span class="logo-box">
+          <img src="/assets/images/logo.png?v=6" alt="Swift Wave Group" class="site-logo">
+        </span>
+      </a>
+      <div class="hidden lg:flex items-center gap-6">
+        <a href="/" class="nav-link text-sm font-medium">Home</a>
+        <a href="/about" class="nav-link text-sm font-medium">About</a>
+        <a href="/companies" class="nav-link text-sm font-medium">Companies</a>
+        <a href="/global" class="nav-link text-sm font-medium">Global</a>
+        <a href="/contact" class="nav-link active text-sm font-medium">Contact</a>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="/contact" class="hidden sm:inline-flex px-5 py-2.5 text-sm btn-primary">Get in Touch</a>
+        <button id="mobile-toggle" class="mobile-toggle lg:hidden" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+          <span class="hamburger" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+    <div id="mobile-menu" class="mobile-menu" aria-hidden="true">
+      <button type="button" class="mobile-menu-backdrop" tabindex="-1" aria-label="Close menu"></button>
+      <div class="mobile-menu-sheet" role="dialog" aria-modal="true" aria-label="Site menu">
+        <div class="mobile-menu-top">
+          <span class="mobile-menu-eyebrow">Navigate</span>
+          <span class="mobile-menu-rule" aria-hidden="true"></span>
+        </div>
+        <nav class="mobile-nav" aria-label="Mobile">
+          <a href="/" class="mobile-nav-link">
+            <span class="mobile-nav-index">01</span>
+            <span class="mobile-nav-text">Home</span>
+            <span class="mobile-nav-chevron" aria-hidden="true"></span>
+          </a>
+          <a href="/about" class="mobile-nav-link">
+            <span class="mobile-nav-index">02</span>
+            <span class="mobile-nav-text">About</span>
+            <span class="mobile-nav-chevron" aria-hidden="true"></span>
+          </a>
+          <a href="/companies" class="mobile-nav-link">
+            <span class="mobile-nav-index">03</span>
+            <span class="mobile-nav-text">Companies</span>
+            <span class="mobile-nav-chevron" aria-hidden="true"></span>
+          </a>
+          <a href="/global" class="mobile-nav-link">
+            <span class="mobile-nav-index">04</span>
+            <span class="mobile-nav-text">Global</span>
+            <span class="mobile-nav-chevron" aria-hidden="true"></span>
+          </a>
+          <a href="/contact" class="mobile-nav-link is-active">
+            <span class="mobile-nav-index">05</span>
+            <span class="mobile-nav-text">Contact</span>
+            <span class="mobile-nav-chevron" aria-hidden="true"></span>
+          </a>
+        </nav>
+        <div class="mobile-menu-bottom">
+          <a href="/contact" class="mobile-menu-cta">Get in Touch</a>
+          <p class="mobile-menu-meta">Swift Wave Group · Dar es Salaam</p>
+        </div>
+      </div>
+    </div>
+
+  <header class="page-hero" data-slideshow data-interval="5500">
+    <div class="slideshow-track" aria-hidden="true">
+      <div class="slideshow-slide is-active" style="background-image:url('https://images.unsplash.com/photo-1423666639041-f56000c27a9a?auto=format&fit=crop&w=2000&q=80')"></div>
+      <div class="slideshow-slide" style="background-image:url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2000&q=80')"></div>
+      <div class="slideshow-slide" style="background-image:url('https://images.unsplash.com/photo-1556761175-4b46a572b136?auto=format&fit=crop&w=2000&q=80')"></div>
+    </div>
+    <div class="slideshow-overlay"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 text-center">
+      <span class="eyebrow" data-cms="hero.badge">Get In Touch</span>
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold mt-3" data-cms="hero.title">Contact Us</h1>
+      <p class="mt-4 max-w-2xl mx-auto text-sm sm:text-base" data-cms="hero.subtitle">Whether you are a partner, client, or future team member — we would love to hear from you.</p>
+    </div>
+  </header>
+
+  <section class="section-light py-16 px-4 sm:px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-12 fade-up">
+        <div class="space-y-6">
+          <div class="flex items-start gap-4">
+            <div class="icon-box shrink-0">
+              <i data-lucide="mail" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <p class="font-semibold">Email</p>
+              <a href="mailto:info@swiftwavegroup.com" class="text-sm text-muted" data-cms="contact_info.email">info@swiftwavegroup.com</a>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <div class="icon-box shrink-0">
+              <i data-lucide="phone" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <p class="font-semibold">Phone</p>
+              <a href="tel:+255700000000" class="text-sm text-muted" data-cms="contact_info.phone">+255 700 000 000</a>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <div class="icon-box shrink-0">
+              <i data-lucide="map-pin" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <p class="font-semibold">Head Office</p>
+              <p class="text-sm text-muted">Dar es Salaam, Tanzania</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <div class="icon-box shrink-0">
+              <i data-lucide="clock" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <p class="font-semibold">Business Hours</p>
+              <p class="text-sm text-muted">Monday – Friday: 8:00 AM – 5:00 PM EAT</p>
+            </div>
+          </div>
+        </div>
+
+        <form id="contact-form" class="space-y-4 form-panel p-6 sm:p-8">
+          <div>
+            <label for="cf-name" class="block text-sm font-medium mb-1.5">Full Name</label>
+            <input id="cf-name" name="name" type="text" required placeholder="Your full name" class="form-input w-full px-5 py-3.5 rounded-xl outline-none">
+          </div>
+          <div>
+            <label for="cf-email" class="block text-sm font-medium mb-1.5">Email Address</label>
+            <input id="cf-email" name="email" type="email" required placeholder="you@example.com" class="form-input w-full px-5 py-3.5 rounded-xl outline-none">
+          </div>
+          <div>
+            <label for="cf-subject" class="block text-sm font-medium mb-1.5">Subject</label>
+            <select id="cf-subject" name="subject" class="form-input w-full px-5 py-3.5 rounded-xl outline-none bg-white">
+              <option value="general">General Inquiry</option>
+              <option value="partnership">Partnership</option>
+              <option value="careers">Careers</option>
+              <option value="freight">Freight Services</option>
+              <option value="scholarship">Scholarship</option>
+            </select>
+          </div>
+          <div>
+            <label for="cf-msg" class="block text-sm font-medium mb-1.5">Message</label>
+            <textarea id="cf-msg" name="message" rows="4" required placeholder="How can we help you?" class="form-input w-full px-5 py-3.5 rounded-xl outline-none resize-none"></textarea>
+          </div>
+          <button type="submit" class="w-full py-4 btn-primary">Send Message</button>
+          <p id="form-success" class="text-green-600 text-sm font-medium hidden text-center">Message sent successfully! We will get back to you soon.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+    <footer class="site-footer py-12 sm:py-16 px-4 sm:px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 mb-12">
+        <div class="col-span-2 lg:col-span-1">
+          <div class="mb-4">
+            <span class="logo-box logo-box--footer">
+              <img src="/assets/images/logo.png?v=6" alt="Swift Wave Group" class="site-logo">
+            </span>
+          </div>
+          <p class="text-sm footer-desc leading-relaxed">International multi-division organization delivering world-class solutions across industries.</p>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Quick Links</h4>
+          <div class="space-y-2 text-sm">
+            <a href="/about" class="block">About Us</a>
+            <a href="/companies" class="block">Our Companies</a>
+            <a href="/contact" class="block">Contact</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Companies</h4>
+          <div class="space-y-2 text-sm">
+            <a href="/companies/scholarship" class="block">Scholarship</a>
+            <a href="/companies/freight" class="block">Freight</a>
+            <a href="#" data-coming-soon class="block">Travels</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Connect</h4>
+          <div class="flex gap-3">
+            <a data-coming-soon href="#" aria-label="LinkedIn" class="social-btn"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+            <a data-coming-soon href="#" aria-label="Twitter" class="social-btn"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+            <a data-coming-soon href="#" aria-label="Instagram" class="social-btn"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-white/10 pt-8 text-center">
+        <p class="text-sm footer-copy">&copy; Swift Wave Group. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>

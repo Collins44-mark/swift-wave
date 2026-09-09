@@ -1,0 +1,54 @@
+import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+import {
+  requireCompanyAccess,
+  canMutate,
+} from "@/lib/admin/require-company-access";
+import { listCategories } from "@/lib/admin/data/categories";
+import { listMediaAssets } from "@/lib/admin/data/media";
+import { createProduct } from "@/lib/admin/actions/products";
+import { ProductForm } from "@/components/admin/ProductForm";
+
+export const metadata: Metadata = {
+  title: "Add Product — Swift Wave Admin",
+  robots: { index: false, follow: false },
+};
+
+export default async function NewProductPage({
+  params,
+}: {
+  params: Promise<{ companySlug: string }>;
+}) {
+  const { companySlug } = await params;
+  const { admin, company } = await requireCompanyAccess(
+    companySlug,
+    "products"
+  );
+  const [categories, mediaLibrary] = await Promise.all([
+    listCategories(company.id),
+    listMediaAssets(company.id),
+  ]);
+
+  async function action(
+    _prev: { error?: string } | null,
+    formData: FormData
+  ) {
+    "use server";
+    const result = await createProduct(companySlug, formData);
+    if (!result.ok) return { error: result.error };
+    redirect(`/admin/companies/${companySlug}/products`);
+  }
+
+  return (
+    <section className="sw-admin-panel">
+      <h2 style={{ marginTop: 0 }}>Add product</h2>
+      <ProductForm
+        companySlug={companySlug}
+        categories={categories}
+        mediaLibrary={mediaLibrary}
+        canUpload={canMutate(admin)}
+        action={action}
+      />
+    </section>
+  );
+}
