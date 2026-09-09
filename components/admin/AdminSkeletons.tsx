@@ -85,6 +85,34 @@ export function TablePageSkeleton({ rows = 5 }: { rows?: number }) {
   );
 }
 
+export function OrderDetailSkeleton() {
+  return (
+    <div className="sw-admin-panel" aria-busy="true" aria-live="polite">
+      <div
+        className="sw-admin-skeleton-card"
+        style={{ height: "1.5rem", width: "8rem", marginBottom: "1rem" }}
+      />
+      <div
+        className="sw-admin-skeleton-card"
+        style={{ height: "4.5rem", marginBottom: "1rem" }}
+      />
+      <div className="sw-admin-order-detail-grid">
+        <div className="sw-admin-skeleton-card" style={{ height: "14rem" }} />
+        <div className="sw-admin-skeleton-card" style={{ height: "14rem" }} />
+      </div>
+      <div
+        className="sw-admin-skeleton-card"
+        style={{ height: "12rem", marginTop: "1rem" }}
+      />
+      <div
+        className="sw-admin-skeleton-card"
+        style={{ height: "7rem", marginTop: "1rem" }}
+      />
+      <span className="sr-only">Loading order…</span>
+    </div>
+  );
+}
+
 export function MediaGridSkeleton() {
   return (
     <div className="sw-admin-panel" aria-busy="true" aria-live="polite">

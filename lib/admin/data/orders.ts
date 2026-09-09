@@ -3,6 +3,7 @@ import {
   ORDER_SELECT,
   type Order,
   type OrderItem,
+  type OrderItemEnriched,
   type OrderStatus,
 } from "@/lib/admin/types-catalog";
 
@@ -29,7 +30,7 @@ export async function listOrders(
 export async function getOrderWithItems(
   companyId: string,
   orderId: string
-): Promise<{ order: Order; items: OrderItem[] } | null> {
+): Promise<{ order: Order; items: OrderItemEnriched[] } | null> {
   const supabase = await createClient();
   const { data: order, error } = await supabase
     .from("orders")
@@ -48,9 +49,70 @@ export async function getOrderWithItems(
     .eq("order_id", orderId)
     .order("created_at", { ascending: true });
 
+  const baseItems = (items as OrderItem[]) ?? [];
+  const productIds = [
+    ...new Set(
+      baseItems
+        .map((item) => item.product_id)
+        .filter((id): id is string => Boolean(id))
+    ),
+  ];
+
+  const productMeta = new Map<
+    string,
+    { image_url: string | null; category_name: string | null }
+  >();
+
+  if (productIds.length > 0) {
+    const { data: products } = await supabase
+      .from("products")
+      .select("id, image_url, category_id")
+      .eq("company_id", companyId)
+      .in("id", productIds);
+
+    const categoryIds = [
+      ...new Set(
+        (products ?? [])
+          .map((p) => p.category_id)
+          .filter((id): id is string => Boolean(id))
+      ),
+    ];
+
+    const categoryNames = new Map<string, string>();
+    if (categoryIds.length > 0) {
+      const { data: categories } = await supabase
+        .from("categories")
+        .select("id, name")
+        .eq("company_id", companyId)
+        .in("id", categoryIds);
+
+      for (const category of categories ?? []) {
+        categoryNames.set(category.id, category.name);
+      }
+    }
+
+    for (const product of products ?? []) {
+      productMeta.set(product.id, {
+        image_url: product.image_url,
+        category_name: product.category_id
+          ? categoryNames.get(product.category_id) ?? null
+          : null,
+      });
+    }
+  }
+
+  const enrichedItems: OrderItemEnriched[] = baseItems.map((item) => {
+    const meta = item.product_id ? productMeta.get(item.product_id) : null;
+    return {
+      ...item,
+      product_image_url: meta?.image_url ?? null,
+      product_category: meta?.category_name ?? null,
+    };
+  });
+
   return {
     order: order as Order,
-    items: (items as OrderItem[]) ?? [],
+    items: enrichedItems,
   };
 }
 

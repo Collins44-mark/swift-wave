@@ -77,6 +77,11 @@ export type OrderItem = {
   subtotal: number;
 };
 
+export type OrderItemEnriched = OrderItem & {
+  product_image_url: string | null;
+  product_category: string | null;
+};
+
 export type Inquiry = {
   id: string;
   company_id: string;

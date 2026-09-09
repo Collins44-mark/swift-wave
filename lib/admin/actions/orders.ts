@@ -35,10 +35,14 @@ export async function updateOrderStatus(
     .eq("company_id", company.id);
 
   if (error) {
-    return { ok: false, error: error.message || "Failed to update order." };
+    return {
+      ok: false,
+      error: "Couldn't update the order status. Please try again.",
+    };
   }
 
   revalidatePath(`/admin/companies/${companySlug}/orders`);
+  revalidatePath(`/admin/companies/${companySlug}/orders/${orderId}`);
   revalidatePath(`/admin/companies/${companySlug}`);
-  return { ok: true };
+  return { ok: true, message: "Order status updated." };
 }
