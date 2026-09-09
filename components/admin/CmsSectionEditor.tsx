@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, useTransition } from "react";
 import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
 import type { CmsSectionDef } from "@/lib/cms/types";
-import type { WebsiteContent } from "@/lib/admin/types-catalog";
+import type { ContentStatus, WebsiteContent } from "@/lib/admin/types-catalog";
 import { ImageFieldPicker } from "@/components/admin/ImageFieldPicker";
 import type { MediaAsset } from "@/lib/admin/types-media";
 import {
@@ -21,6 +21,7 @@ type Props = {
   canUpload: boolean;
   previewPath: string;
   backHref: string;
+  onStatusChange?: (sectionKey: string, status: ContentStatus) => void;
 };
 
 function fieldValue(
@@ -40,6 +41,7 @@ export function CmsSectionEditor({
   canUpload,
   previewPath,
   backHref,
+  onStatusChange,
 }: Props) {
   const { showSuccess, showError } = useAdminToastContext();
   const [error, setError] = useState<string | null>(null);
@@ -94,13 +96,11 @@ export function CmsSectionEditor({
               showError("Couldn't save changes.");
               return;
             }
-            if (action === "draft") {
-              setStatus("draft");
-              showSuccess("Changes saved.");
-            } else {
-              setStatus("published");
-              showSuccess("Changes saved.");
-            }
+            const nextStatus: ContentStatus =
+              action === "draft" ? "draft" : "published";
+            setStatus(nextStatus);
+            onStatusChange?.(section.key, nextStatus);
+            showSuccess("Changes saved.");
           });
         }}
       >

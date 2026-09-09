@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { createAdminUser, updateAdminUser } from "@/lib/admin/actions/users";
+import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
 import type { ManagedUser } from "@/lib/admin/data/users";
 import type { AdminRole } from "@/lib/auth/types";
 
@@ -17,6 +18,7 @@ export function AdminUserForm({
   user?: ManagedUser | null;
 }) {
   const router = useRouter();
+  const { showSuccess, showError } = useAdminToastContext();
   const [error, setError] = useState<string | null>(null);
   const [role, setRole] = useState<AdminRole>(user?.role ?? "company_admin");
   const [selected, setSelected] = useState<string[]>(
@@ -52,10 +54,11 @@ export function AdminUserForm({
             : await createAdminUser(fd);
           if (!result.ok) {
             setError(result.error);
+            showError("Couldn't save changes.");
             return;
           }
+          showSuccess(isEdit ? "Changes saved." : "Administrator created.");
           router.push("/admin/settings/users");
-          router.refresh();
         });
       }}
     >

@@ -2,16 +2,17 @@
 
 import Link from "next/link";
 import { useMemo, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import type { ManagedUser } from "@/lib/admin/data/users";
 import { roleLabel } from "@/lib/admin/labels";
 import {
   deleteAdminUser,
   setAdminActive,
 } from "@/lib/admin/actions/users";
+import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
 
 export function UsersAdminTable({ users }: { users: ManagedUser[] }) {
-  const router = useRouter();
+  const { showSuccess, showError } = useAdminToastContext();
+  const [items, setItems] = useState(users);
   const [q, setQ] = useState("");
   const [role, setRole] = useState("all");
   const [company, setCompany] = useState("all");
@@ -21,13 +22,13 @@ export function UsersAdminTable({ users }: { users: ManagedUser[] }) {
 
   const companyOptions = useMemo(() => {
     const map = new Map<string, string>();
-    for (const u of users) {
+    for (const u of items) {
       for (const c of u.companies) map.set(c.id, c.name);
     }
     return [...map.entries()].sort((a, b) => a[1].localeCompare(b[1]));
-  }, [users]);
+  }, [items]);
 
-  const filtered = users.filter((u) => {
+  const filtered = items.filter((u) => {
     const hay = `${u.full_name ?? ""} ${u.email ?? ""}`.toLowerCase();
     if (q && !hay.includes(q.toLowerCase())) return false;
     if (role !== "all" && u.role !== role) return false;
@@ -136,8 +137,19 @@ export function UsersAdminTable({ users }: { users: ManagedUser[] }) {
                           setError(null);
                           startTransition(async () => {
                             const res = await setAdminActive(u.id, !u.is_active);
-                            if (!res.ok) setError(res.error);
-                            else router.refresh();
+                            if (!res.ok) {
+                              setError(res.error);
+                              showError("Couldn't update this administrator.");
+                              return;
+                            }
+                            setItems((prev) =>
+                              prev.map((row) =>
+                                row.id === u.id
+                                  ? { ...row, is_active: !row.is_active }
+                                  : row
+                              )
+                            );
+                            showSuccess("Changes saved.");
                           });
                         }}
                       >
@@ -201,14 +213,17 @@ export function UsersAdminTable({ users }: { users: ManagedUser[] }) {
                 onClick={() => {
                   setError(null);
                   startTransition(async () => {
-                    const res = await deleteAdminUser(deleteTarget.id);
+                    const deletedId = deleteTarget.id;
+                    const res = await deleteAdminUser(deletedId);
                     if (!res.ok) {
                       setError(res.error);
+                      showError("Couldn't delete this administrator.");
                       setDeleteTarget(null);
                       return;
                     }
+                    setItems((prev) => prev.filter((row) => row.id !== deletedId));
                     setDeleteTarget(null);
-                    router.refresh();
+                    showSuccess("Administrator deleted.");
                   });
                 }}
               >

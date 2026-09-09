@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { requireCompanyAccess } from "@/lib/admin/require-company-access";
+import {
+  requireCompanyAccess,
+  canOperate,
+} from "@/lib/admin/require-company-access";
 import { listOrders } from "@/lib/admin/data/orders";
-import { OrderStatusBadge } from "@/components/admin/OrderStatusBadge";
-import { OrdersPageToasts } from "@/components/admin/OrdersPageToasts";
+import { OrdersTableClient } from "@/components/admin/OrdersTableClient";
 import {
   ORDER_STATUSES,
   ORDER_STATUS_LABELS,
-  formatMoney,
-  formatOrderReference,
 } from "@/lib/admin/order-utils";
 import type { OrderStatus } from "@/lib/admin/types-catalog";
 
@@ -26,7 +26,7 @@ export default async function OrdersPage({
 }) {
   const { companySlug } = await params;
   const { status } = await searchParams;
-  const { company } = await requireCompanyAccess(companySlug, "orders");
+  const { admin, company } = await requireCompanyAccess(companySlug, "orders");
 
   const filterStatus =
     status && ORDER_STATUSES.includes(status as OrderStatus)
@@ -37,12 +37,8 @@ export default async function OrdersPage({
     status: filterStatus,
   });
 
-  const statusQuery =
-    filterStatus !== "all" ? `?status=${filterStatus}` : "";
-
   return (
     <>
-      <OrdersPageToasts />
       <section className="sw-admin-panel">
         <div className="sw-admin-toolbar">
           <div>
@@ -71,51 +67,12 @@ export default async function OrdersPage({
           ))}
         </div>
 
-        {orders.length === 0 ? (
-          <div className="sw-admin-empty" style={{ marginTop: "1rem" }}>
-            No orders found.
-          </div>
-        ) : (
-          <div className="sw-admin-table-wrap" style={{ marginTop: "1rem" }}>
-            <table className="sw-admin-table">
-              <thead>
-                <tr>
-                  <th>Order</th>
-                  <th>Customer</th>
-                  <th>Phone</th>
-                  <th>Total</th>
-                  <th>Status</th>
-                  <th>Created</th>
-                  <th />
-                </tr>
-              </thead>
-              <tbody>
-                {orders.map((o) => (
-                  <tr key={o.id}>
-                    <td>
-                      <strong>#{formatOrderReference(o.id)}</strong>
-                    </td>
-                    <td>{o.customer_name}</td>
-                    <td>{o.customer_phone}</td>
-                    <td>{formatMoney(o.currency, Number(o.total))}</td>
-                    <td>
-                      <OrderStatusBadge status={o.status} />
-                    </td>
-                    <td>{new Date(o.created_at).toLocaleString()}</td>
-                    <td>
-                      <Link
-                        className="sw-admin-btn sw-admin-btn-ghost"
-                        href={`/admin/companies/${companySlug}/orders/${o.id}${statusQuery}`}
-                      >
-                        View
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+        <OrdersTableClient
+          companySlug={companySlug}
+          initialOrders={orders}
+          filterStatus={filterStatus}
+          canEditStatus={canOperate(admin)}
+        />
       </section>
     </>
   );

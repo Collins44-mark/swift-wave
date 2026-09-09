@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { requireCompanyAccess } from "@/lib/admin/require-company-access";
 import { WhatsappSettingsClient } from "@/components/admin/WhatsappSettingsClient";
+import { PageHeader } from "@/components/admin/PageHeader";
 
 export const metadata: Metadata = {
   title: "WhatsApp — Swift Wave Admin",
@@ -17,12 +18,14 @@ export default async function WhatsappPage({
   const number = company.whatsapp_number ?? "";
 
   return (
-    <section className="sw-admin-panel">
-      <h2 style={{ marginTop: 0 }}>WhatsApp</h2>
-      <p style={{ color: "var(--admin-muted)", marginTop: 0 }}>
-        Used by public checkout and inquiry flows for {company.name}.
-      </p>
-      <WhatsappSettingsClient companySlug={companySlug} initialNumber={number} />
-    </section>
+    <>
+      <PageHeader
+        title="WhatsApp"
+        description={`Used by public checkout and inquiry flows for ${company.name}.`}
+      />
+      <section className="sw-admin-panel">
+        <WhatsappSettingsClient companySlug={companySlug} initialNumber={number} />
+      </section>
+    </>
   );
 }
