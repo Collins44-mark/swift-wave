@@ -3,6 +3,7 @@ import { requireCompanyAccess } from "@/lib/admin/require-company-access";
 import { updateWhatsappNumber } from "@/lib/admin/actions/company-settings";
 import { SubmitButton } from "@/components/admin/SubmitButton";
 import { redirect } from "next/navigation";
+import { buildWhatsAppUrl } from "@/lib/whatsapp/normalize";
 
 export const metadata: Metadata = {
   title: "WhatsApp — Swift Wave Admin",
@@ -17,9 +18,7 @@ export default async function WhatsappPage({
   const { companySlug } = await params;
   const { company } = await requireCompanyAccess(companySlug, "whatsapp");
   const number = company.whatsapp_number ?? "";
-  const preview = number
-    ? `https://wa.me/${number.replace(/\D/g, "")}`
-    : null;
+  const preview = number ? buildWhatsAppUrl(number) : null;
 
   async function action(formData: FormData) {
     "use server";

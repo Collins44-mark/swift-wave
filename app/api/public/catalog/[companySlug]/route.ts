@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { normalizeWhatsAppNumber } from "@/lib/whatsapp/normalize";
 
 /**
  * GET published catalog for outfit/medical storefronts.
@@ -93,7 +94,7 @@ export async function GET(
     company: {
       name: company.name,
       slug: company.slug,
-      whatsapp_number: company.whatsapp_number,
+      whatsapp_number: normalizeWhatsAppNumber(company.whatsapp_number),
     },
     categories: categoryMap,
     products: mappedProducts,

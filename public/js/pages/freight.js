@@ -2,7 +2,7 @@
 (function(){
 
     (function () {
-      var WHATSAPP_NUMBER = "255700000000";
+      var WHATSAPP_NUMBER = null;
       var COMPANY_SLUG = "freight";
       var WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
       var MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -243,12 +243,6 @@
         if (cargoNotes) lines.push("*Cargo:* " + cargoNotes);
         lines.push("", "_Sent from Swift Wave Freight form_");
 
-        var url =
-          "https://wa.me/" +
-          WHATSAPP_NUMBER +
-          "?text=" +
-          encodeURIComponent(lines.join("\n"));
-
         var payload = {
           company_slug: COMPANY_SLUG,
           inquiry_type: "freight_booking",
@@ -264,25 +258,34 @@
           }
         };
 
-        fetch("/api/public/inquiry", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        })
-          .catch(function () {})
-          .then(function () {
-            window.open(url, "_blank", "noopener,noreferrer");
-          });
+        companyLoaded.then(function () {
+          var wa = window.SwiftWaveWhatsApp;
+          var url = wa.buildWhatsAppUrl(WHATSAPP_NUMBER, lines.join("\n"));
+          if (!url) {
+            return showError(wa.UNAVAILABLE_MESSAGE);
+          }
+
+          fetch("/api/public/inquiry", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          })
+            .catch(function () {})
+            .then(function () {
+              window.open(url, "_blank", "noopener,noreferrer");
+            });
+        });
       });
 
-      fetch("/api/public/company/" + COMPANY_SLUG)
+      var companyLoaded = fetch("/api/public/company/" + COMPANY_SLUG)
         .then(function (res) {
           return res.ok ? res.json() : null;
         })
         .then(function (data) {
           if (data && data.whatsapp_number) {
-            WHATSAPP_NUMBER =
-              String(data.whatsapp_number).replace(/\D/g, "") || WHATSAPP_NUMBER;
+            WHATSAPP_NUMBER = window.SwiftWaveWhatsApp.normalizeWhatsAppNumber(
+              data.whatsapp_number
+            );
           }
         })
         .catch(function () {});

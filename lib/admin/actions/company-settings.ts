@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { normalizeWhatsAppNumber } from "@/lib/whatsapp/normalize";
 import { requireCompanyAccess, canMutate } from "@/lib/admin/require-company-access";
 import { getCompanySettings } from "@/lib/admin/data/company-settings";
 import type { ActionResult } from "@/lib/admin/types-catalog";
@@ -84,11 +85,20 @@ export async function updateWhatsappNumber(
     return { ok: false, error: "Staff can view WhatsApp settings but cannot edit them." };
   }
 
-  const whatsapp = str(formData, "whatsapp_number").replace(/\D/g, "");
+  const raw = str(formData, "whatsapp_number");
+  const whatsapp = raw ? normalizeWhatsAppNumber(raw) : null;
+  if (raw && !whatsapp) {
+    return {
+      ok: false,
+      error:
+        "Enter a valid WhatsApp number with country code (e.g. 255754123456) or local mobile (e.g. 0754123456).",
+    };
+  }
+
   const supabase = await createClient();
   const { error } = await supabase
     .from("companies")
-    .update({ whatsapp_number: whatsapp || null })
+    .update({ whatsapp_number: whatsapp })
     .eq("id", company.id);
 
   if (error) {

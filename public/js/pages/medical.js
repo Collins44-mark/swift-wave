@@ -2,7 +2,7 @@
 (function(){
 
     (function () {
-      var WHATSAPP_NUMBER = "255700000000";
+      var WHATSAPP_NUMBER = null;
       var COMPANY_SLUG = "medical";
       var CATEGORIES = {
         All: [],
@@ -372,11 +372,14 @@
         };
 
         function openWhatsApp() {
-          window.open(
-            "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(lines.join("\n")),
-            "_blank",
-            "noopener,noreferrer"
-          );
+          var wa = window.SwiftWaveWhatsApp;
+          var url = wa.buildWhatsAppUrl(WHATSAPP_NUMBER, lines.join("\n"));
+          if (!url) {
+            err.hidden = false;
+            err.textContent = wa.UNAVAILABLE_MESSAGE;
+            return;
+          }
+          window.open(url, "_blank", "noopener,noreferrer");
         }
 
         fetch("/api/public/order", {
@@ -405,13 +408,15 @@
           return res.ok ? res.json() : null;
         })
         .then(function (data) {
+          if (data && data.company && data.company.whatsapp_number) {
+            WHATSAPP_NUMBER = window.SwiftWaveWhatsApp.normalizeWhatsAppNumber(
+              data.company.whatsapp_number
+            );
+          }
           if (data && Array.isArray(data.products) && data.products.length > 0) {
             PRODUCTS = data.products;
             if (data.categories && typeof data.categories === "object") {
               CATEGORIES = data.categories;
-            }
-            if (data.company && data.company.whatsapp_number) {
-              WHATSAPP_NUMBER = String(data.company.whatsapp_number).replace(/\D/g, "") || WHATSAPP_NUMBER;
             }
           }
         })

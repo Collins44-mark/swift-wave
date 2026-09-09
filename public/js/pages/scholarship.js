@@ -2,8 +2,7 @@
 (function(){
 
     (function () {
-      // Same number as contact page (+255 700 000 000)
-      var WHATSAPP_NUMBER = "255700000000";
+      var WHATSAPP_NUMBER = null;
       var COMPANY_SLUG = "scholarship";
       var form = document.getElementById("scholarship-form");
       var errorEl = document.getElementById("sch-error");
@@ -44,14 +43,15 @@
         errorEl.textContent = msg || "";
       }
 
-      fetch("/api/public/company/" + COMPANY_SLUG)
+      var companyLoaded = fetch("/api/public/company/" + COMPANY_SLUG)
         .then(function (res) {
           return res.ok ? res.json() : null;
         })
         .then(function (data) {
           if (data && data.whatsapp_number) {
-            WHATSAPP_NUMBER =
-              String(data.whatsapp_number).replace(/\D/g, "") || WHATSAPP_NUMBER;
+            WHATSAPP_NUMBER = window.SwiftWaveWhatsApp.normalizeWhatsAppNumber(
+              data.whatsapp_number
+            );
           }
         })
         .catch(function () {});
@@ -97,12 +97,6 @@
         if (notes) lines.push("*Notes:* " + notes);
         lines.push("", "_Sent from Swift Wave Scholarship form_");
 
-        var url =
-          "https://wa.me/" +
-          WHATSAPP_NUMBER +
-          "?text=" +
-          encodeURIComponent(lines.join("\n"));
-
         var payload = {
           company_slug: COMPANY_SLUG,
           inquiry_type: "scholarship_application",
@@ -117,15 +111,23 @@
           }
         };
 
-        fetch("/api/public/inquiry", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        })
-          .catch(function () {})
-          .then(function () {
-            window.open(url, "_blank", "noopener,noreferrer");
-          });
+        companyLoaded.then(function () {
+          var wa = window.SwiftWaveWhatsApp;
+          var url = wa.buildWhatsAppUrl(WHATSAPP_NUMBER, lines.join("\n"));
+          if (!url) {
+            return showError(wa.UNAVAILABLE_MESSAGE);
+          }
+
+          fetch("/api/public/inquiry", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          })
+            .catch(function () {})
+            .then(function () {
+              window.open(url, "_blank", "noopener,noreferrer");
+            });
+        });
       });
 
       if (typeof lucide !== "undefined") lucide.createIcons();

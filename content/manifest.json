@@ -67,7 +67,7 @@
     "bodyClass": "min-h-screen w-full overflow-x-hidden company-page",
     "bodyStyle": null,
     "bodyAttrs": {},
-    "scripts": ["/js/main.js", "/js/pages/scholarship.js"],
+    "scripts": ["/js/whatsapp-utils.js", "/js/main.js", "/js/pages/scholarship.js"],
     "robots": false,
     "refresh": null
   },
@@ -79,7 +79,7 @@
     "bodyClass": "min-h-screen w-full overflow-x-hidden company-page",
     "bodyStyle": null,
     "bodyAttrs": {},
-    "scripts": ["/js/main.js", "/js/pages/freight.js"],
+    "scripts": ["/js/whatsapp-utils.js", "/js/main.js", "/js/pages/freight.js"],
     "robots": false,
     "refresh": null
   },
@@ -91,7 +91,7 @@
     "bodyClass": "min-h-screen w-full overflow-x-hidden company-page",
     "bodyStyle": null,
     "bodyAttrs": { "data-company-mode": "ecommerce" },
-    "scripts": ["/js/main.js", "/js/pages/outfit.js"],
+    "scripts": ["/js/whatsapp-utils.js", "/js/main.js", "/js/pages/outfit.js"],
     "robots": false,
     "refresh": null
   },
@@ -103,7 +103,7 @@
     "bodyClass": "min-h-screen w-full overflow-x-hidden company-page",
     "bodyStyle": null,
     "bodyAttrs": { "data-company-mode": "ecommerce" },
-    "scripts": ["/js/main.js", "/js/pages/medical.js"],
+    "scripts": ["/js/whatsapp-utils.js", "/js/main.js", "/js/pages/medical.js"],
     "robots": false,
     "refresh": null
   },
