@@ -1,7 +1,10 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import {
+  createClient,
+  isSupabaseConfigured,
+} from "@/lib/supabase/server";
 import { getCurrentAdmin } from "@/lib/auth/get-current-admin";
 
 export type AuthActionState = {
@@ -43,6 +46,13 @@ export async function signInAction(
 
   if (!email || !password) {
     return { error: "Email and password are required." };
+  }
+
+  if (!isSupabaseConfigured()) {
+    return {
+      error:
+        "Admin authentication is not configured for this deployment. Set Supabase environment variables in Vercel Production and redeploy.",
+    };
   }
 
   const supabase = await createClient();
