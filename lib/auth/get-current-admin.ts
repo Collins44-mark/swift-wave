@@ -1,4 +1,7 @@
-import { createClient } from "@/lib/supabase/server";
+import {
+  createClient,
+  isSupabaseConfigured,
+} from "@/lib/supabase/server";
 import type {
   AdminAccessError,
   AdminCompany,
@@ -26,6 +29,10 @@ export type GetCurrentAdminResult =
  * Authorization is derived from public.profiles + user_company_access (and RLS).
  */
 export async function getCurrentAdmin(): Promise<GetCurrentAdminResult> {
+  if (!isSupabaseConfigured()) {
+    return { ok: false, error: "unauthenticated" };
+  }
+
   const supabase = await createClient();
 
   const {

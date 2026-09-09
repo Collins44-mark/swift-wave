@@ -1,4 +1,7 @@
-import { createClient } from "@/lib/supabase/server";
+import {
+  createClient,
+  isSupabaseConfigured,
+} from "@/lib/supabase/server";
 import type { CmsPageContent, CmsSectionRecord } from "@/lib/cms/types";
 
 export type ContentFetchMode = "published" | "preview";
@@ -12,6 +15,8 @@ export async function getPageContent(
   pageKey: string,
   mode: ContentFetchMode = "published"
 ): Promise<CmsPageContent> {
+  if (!isSupabaseConfigured()) return {};
+
   const supabase = await createClient();
 
   const { data, error } = await supabase
@@ -44,6 +49,8 @@ export async function getPageContent(
 export async function getCompanyIdBySlug(
   slug: string
 ): Promise<string | null> {
+  if (!isSupabaseConfigured()) return null;
+
   const supabase = await createClient();
   const { data } = await supabase
     .from("companies")
