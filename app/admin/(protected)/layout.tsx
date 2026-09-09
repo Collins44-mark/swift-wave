@@ -1,5 +1,8 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import {
+  createClient,
+  isSupabaseConfigured,
+} from "@/lib/supabase/server";
 import { getCurrentAdmin } from "@/lib/auth/get-current-admin";
 import { getAccessibleCompanies } from "@/lib/admin/companies";
 import { filterDashboardCompanies } from "@/lib/admin/data/dashboard-stats";
@@ -14,8 +17,10 @@ export default async function AdminProtectedLayout({
   const access = await getCurrentAdmin();
 
   if (!access.ok) {
-    const supabase = await createClient();
-    await supabase.auth.signOut();
+    if (isSupabaseConfigured()) {
+      const supabase = await createClient();
+      await supabase.auth.signOut();
+    }
     redirect(`/admin/login?error=${encodeURIComponent(access.error)}`);
   }
 
