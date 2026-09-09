@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { normalizeWhatsAppNumber } from "@/lib/whatsapp/normalize";
 
+export const dynamic = "force-dynamic";
+
 /**
  * GET published catalog for outfit/medical storefronts.
  */

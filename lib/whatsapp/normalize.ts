@@ -1,7 +1,6 @@
 /**
  * Normalize a company WhatsApp number for wa.me links.
- * Accepts international numbers (e.g. 255754123456) or local mobile with
- * leading 0 (e.g. 0754123456 → 255754123456).
+ * Digits-only international format — no +, spaces, or local-prefix guessing.
  */
 export function normalizeWhatsAppNumber(
   input: string | null | undefined
@@ -16,16 +15,35 @@ export function normalizeWhatsAppNumber(
   }
   if (!digits) return null;
 
-  // Local mobile without country code (e.g. 754123456 after removing 0).
-  if (digits.length === 9) {
-    digits = `255${digits}`;
-  }
-
-  if (digits.length < 10 || digits.length > 15 || digits.startsWith("0")) {
+  if (digits.length < 10 || digits.length > 15) {
     return null;
   }
 
   return digits;
+}
+
+export function validateWhatsAppNumber(raw: string): {
+  ok: true;
+  normalized: string;
+} | {
+  ok: false;
+  error: string;
+} {
+  const trimmed = raw.trim();
+  if (!trimmed) {
+    return { ok: false, error: "WhatsApp number is required." };
+  }
+
+  const normalized = normalizeWhatsAppNumber(trimmed);
+  if (!normalized) {
+    return {
+      ok: false,
+      error:
+        "Enter a valid international WhatsApp number, including the country code.",
+    };
+  }
+
+  return { ok: true, normalized };
 }
 
 export function buildWhatsAppUrl(

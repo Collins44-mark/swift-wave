@@ -10,11 +10,7 @@
     }
     if (!digits) return null;
 
-    if (digits.length === 9) {
-      digits = "255" + digits;
-    }
-
-    if (digits.length < 10 || digits.length > 15 || digits.charAt(0) === "0") {
+    if (digits.length < 10 || digits.length > 15) {
       return null;
     }
 
@@ -32,9 +28,24 @@
     return url;
   }
 
+  /** Reliable on mobile after async work — avoids popup blockers breaking wa.me. */
+  function openWhatsAppUrl(url) {
+    if (!url) return false;
+    var link = document.createElement("a");
+    link.href = url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.style.display = "none";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    return true;
+  }
+
   global.SwiftWaveWhatsApp = {
     normalizeWhatsAppNumber: normalizeWhatsAppNumber,
     buildWhatsAppUrl: buildWhatsAppUrl,
+    openWhatsAppUrl: openWhatsAppUrl,
     UNAVAILABLE_MESSAGE: "WhatsApp ordering is currently unavailable.",
   };
 })(typeof window !== "undefined" ? window : globalThis);

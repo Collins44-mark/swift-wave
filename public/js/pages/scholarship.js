@@ -118,15 +118,12 @@
             return showError(wa.UNAVAILABLE_MESSAGE);
           }
 
+          wa.openWhatsAppUrl(url);
           fetch("/api/public/inquiry", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
-          })
-            .catch(function () {})
-            .then(function () {
-              window.open(url, "_blank", "noopener,noreferrer");
-            });
+          }).catch(function () {});
         });
       });
 

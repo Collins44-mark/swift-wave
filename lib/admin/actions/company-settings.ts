@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { normalizeWhatsAppNumber } from "@/lib/whatsapp/normalize";
+import { validateWhatsAppNumber } from "@/lib/whatsapp/normalize";
 import { requireCompanyAccess, canMutate } from "@/lib/admin/require-company-access";
 import { getCompanySettings } from "@/lib/admin/data/company-settings";
 import type { ActionResult } from "@/lib/admin/types-catalog";
@@ -86,13 +86,14 @@ export async function updateWhatsappNumber(
   }
 
   const raw = str(formData, "whatsapp_number");
-  const whatsapp = raw ? normalizeWhatsAppNumber(raw) : null;
-  if (raw && !whatsapp) {
-    return {
-      ok: false,
-      error:
-        "Enter a valid WhatsApp number with country code (e.g. 255754123456) or local mobile (e.g. 0754123456).",
-    };
+  let whatsapp: string | null = null;
+
+  if (raw) {
+    const validated = validateWhatsAppNumber(raw);
+    if (!validated.ok) {
+      return { ok: false, error: validated.error };
+    }
+    whatsapp = validated.normalized;
   }
 
   const supabase = await createClient();
@@ -102,11 +103,17 @@ export async function updateWhatsappNumber(
     .eq("id", company.id);
 
   if (error) {
-    return { ok: false, error: error.message || "Failed to update WhatsApp number." };
+    return {
+      ok: false,
+      error: "Unable to save WhatsApp number. Please try again.",
+    };
   }
 
   revalidatePath(`/admin/companies/${companySlug}/whatsapp`);
   revalidatePath(`/admin/companies/${companySlug}`);
+  revalidatePath(`/companies/${companySlug}`);
+  revalidatePath(`/api/public/catalog/${companySlug}`);
+  revalidatePath(`/api/public/company/${companySlug}`);
   return { ok: true };
 }
 

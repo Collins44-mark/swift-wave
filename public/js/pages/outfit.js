@@ -362,26 +362,20 @@
           })
         };
 
-        function openWhatsApp() {
-          var wa = window.SwiftWaveWhatsApp;
-          var url = wa.buildWhatsAppUrl(WHATSAPP_NUMBER, lines.join("\n"));
-          if (!url) {
-            err.hidden = false;
-            err.textContent = wa.UNAVAILABLE_MESSAGE;
-            return;
-          }
-          window.open(url, "_blank", "noopener,noreferrer");
+        var wa = window.SwiftWaveWhatsApp;
+        var url = wa.buildWhatsAppUrl(WHATSAPP_NUMBER, lines.join("\n"));
+        if (!url) {
+          err.hidden = false;
+          err.textContent = wa.UNAVAILABLE_MESSAGE;
+          return;
         }
 
+        wa.openWhatsAppUrl(url);
         fetch("/api/public/order", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(orderPayload)
-        })
-          .catch(function () {})
-          .then(function () {
-            openWhatsApp();
-          });
+        }).catch(function () {});
       });
 
       function bootUI() {

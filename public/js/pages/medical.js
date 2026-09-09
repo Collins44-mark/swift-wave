@@ -4,37 +4,8 @@
     (function () {
       var WHATSAPP_NUMBER = null;
       var COMPANY_SLUG = "medical";
-      var CATEGORIES = {
-        All: [],
-        Supplies: [],
-        Equipment: [],
-        "Skin Care": ["Lotion", "Shampoo", "Oil", "Cleanser", "Gel"],
-        Wellness: [],
-        Contracts: []
-      };
-
-      var PRODUCTS = [
-        { id: "ppe-kit", title: "PPE Kit (Box of 50)", category: "Supplies", sub: "", price: "TZS 95,000", priceNum: 95000, rating: "4.5 · 64 ratings", image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=1000&q=80", desc: "Complete PPE set for clinics and facilities. Includes masks, gloves, and gowns.", bullets: ["Box of 50 kits", "Clinic grade", "Bulk pricing available"] },
-        { id: "first-aid", title: "First Aid Station Pack", category: "Supplies", sub: "", price: "TZS 180,000", priceNum: 180000, rating: "4.6 · 41 ratings", image: "https://images.unsplash.com/photo-1603398938378-e54eab446dde?auto=format&fit=crop&w=1000&q=80", desc: "Wall-ready first aid station pack with essential emergency supplies.", bullets: ["Clinic ready", "Refill options", "Wall mountable"] },
-        { id: "consumables", title: "Hospital Consumables", category: "Supplies", sub: "", price: "Get Quote", priceNum: 0, rating: "4.4 · 28 ratings", image: "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?auto=format&fit=crop&w=1000&q=80", desc: "Bulk hospital consumables for ongoing facility supply.", bullets: ["Bulk order", "Custom list", "Scheduled delivery"] },
-        { id: "bp-monitor", title: "Digital BP Monitor", category: "Equipment", sub: "", price: "TZS 210,000", priceNum: 210000, rating: "4.7 · 89 ratings", image: "https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?auto=format&fit=crop&w=1000&q=80", desc: "Accurate digital blood pressure monitor for home and clinic use.", bullets: ["Large display", "Memory recall", "Arm cuff included"] },
-        { id: "oximeter", title: "Pulse Oximeter", category: "Equipment", sub: "", price: "TZS 65,000", priceNum: 65000, rating: "4.5 · 112 ratings", image: "https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?auto=format&fit=crop&w=1000&q=80", desc: "Finger pulse oximeter with SpO2 and pulse readout.", bullets: ["Portable", "OLED display", "Auto power-off"] },
-        { id: "wellness-day", title: "Community Wellness Day", category: "Wellness", sub: "", price: "Enquire", priceNum: 0, rating: "4.8 · 22 ratings", image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1000&q=80", desc: "Organised wellness outreach day for communities and workplaces.", bullets: ["On-site team", "Screening options", "Custom package"] },
-        { id: "clinic-contract", title: "Clinic Supply Contract", category: "Contracts", sub: "", price: "Enquire", priceNum: 0, rating: "4.6 · 18 ratings", image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1000&q=80", desc: "Monthly replenishment contract for clinics and pharmacies.", bullets: ["Monthly delivery", "Priority support", "Flexible SKUs"] },
-        { id: "emergency-restock", title: "Emergency Restock", category: "Contracts", sub: "", price: "24/7 Order", priceNum: 0, rating: "4.7 · 35 ratings", image: "https://images.unsplash.com/photo-1631815589968-fdb8192b2a47?auto=format&fit=crop&w=1000&q=80", desc: "Urgent restock pathway for critical medical items.", bullets: ["Rapid response", "Critical items", "24/7 desk"] },
-        { id: "body-lotion", title: "Hydrating Body Lotion", category: "Skin Care", sub: "Lotion", price: "TZS 28,000", priceNum: 28000, rating: "4.6 · 140 ratings", image: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=1000&q=80", desc: "Light daily body lotion for soft, hydrated skin.", bullets: ["400ml", "Non-greasy", "For all skin types"] },
-        { id: "face-cream", title: "Daily Face Cream", category: "Skin Care", sub: "Lotion", price: "TZS 35,000", priceNum: 35000, rating: "4.5 · 96 ratings", image: "https://images.unsplash.com/photo-1570194065650-d99fb4b38b17?auto=format&fit=crop&w=1000&q=80", desc: "Day and night face cream for everyday moisture.", bullets: ["Day & night", "Lightweight", "Fragrance balanced"] },
-        { id: "shea-moisturizer", title: "Shea Butter Moisturizer", category: "Skin Care", sub: "Lotion", price: "TZS 32,000", priceNum: 32000, rating: "4.7 · 78 ratings", image: "https://images.unsplash.com/photo-1620916565916-b6b8a5f3a0d0?auto=format&fit=crop&w=1000&q=80", desc: "Rich shea butter cream for dry skin and elbows.", bullets: ["Rich cream", "Shea butter", "Deep moisture"] },
-        { id: "hand-body", title: "Hand & Body Cream", category: "Skin Care", sub: "Lotion", price: "TZS 25,000", priceNum: 25000, rating: "4.4 · 61 ratings", image: "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?auto=format&fit=crop&w=1000&q=80", desc: "Family-size hand and body cream for daily use.", bullets: ["Family pack", "Soft finish", "Everyday care"] },
-        { id: "hair-shampoo", title: "Nourishing Hair Shampoo", category: "Skin Care", sub: "Shampoo", price: "TZS 22,000", priceNum: 22000, rating: "4.5 · 120 ratings", image: "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&w=1000&q=80", desc: "Gentle nourishing shampoo for clean, soft hair.", bullets: ["500ml", "Daily use", "Suitable for most hair"] },
-        { id: "conditioner", title: "Repair Conditioner", category: "Skin Care", sub: "Shampoo", price: "TZS 24,000", priceNum: 24000, rating: "4.4 · 88 ratings", image: "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&w=1000&q=80", desc: "Repair conditioner to soften and detangle.", bullets: ["400ml", "Pairs with shampoo", "Smooth finish"] },
-        { id: "anti-dandruff", title: "Anti-Dandruff Shampoo", category: "Skin Care", sub: "Shampoo", price: "TZS 27,000", priceNum: 27000, rating: "4.3 · 74 ratings", image: "https://images.unsplash.com/photo-1571781926291-c77df8098c1f?auto=format&fit=crop&w=1000&q=80", desc: "Medicated anti-dandruff shampoo for scalp comfort.", bullets: ["Medicated", "Scalp care", "Regular use"] },
-        { id: "coconut-oil", title: "Coconut Hair Oil", category: "Skin Care", sub: "Oil", price: "TZS 18,000", priceNum: 18000, rating: "4.6 · 155 ratings", image: "https://images.unsplash.com/photo-1608248543800-ba5401bb9cb0?auto=format&fit=crop&w=1000&q=80", desc: "Pure-feel coconut oil for hair shine and softness.", bullets: ["200ml", "Hair oil", "Easy absorb"] },
-        { id: "vitamin-e-oil", title: "Vitamin E Skin Oil", category: "Skin Care", sub: "Oil", price: "TZS 26,000", priceNum: 26000, rating: "4.5 · 101 ratings", image: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=1000&q=80", desc: "Vitamin E oil for body and face nourishment.", bullets: ["Body & face", "Vitamin E", "Night care"] },
-        { id: "argan-oil", title: "Argan Beauty Oil", category: "Skin Care", sub: "Oil", price: "TZS 40,000", priceNum: 40000, rating: "4.8 · 67 ratings", image: "https://images.unsplash.com/photo-1611930022073-b7a4ba5fccb0?auto=format&fit=crop&w=1000&q=80", desc: "Argan beauty oil for hair and skin finishing.", bullets: ["Hair & skin", "Premium finish", "Small drop use"] },
-        { id: "cleanser", title: "Gentle Facial Cleanser", category: "Skin Care", sub: "Cleanser", price: "TZS 30,000", priceNum: 30000, rating: "4.5 · 93 ratings", image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=1000&q=80", desc: "Gentle facial cleanser for daily clean skin.", bullets: ["200ml", "Gentle formula", "Morning & night"] },
-        { id: "aloe-gel", title: "Aloe Vera Gel", category: "Skin Care", sub: "Gel", price: "TZS 20,000", priceNum: 20000, rating: "4.7 · 130 ratings", image: "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=1000&q=80", desc: "Soothing aloe vera gel for skin comfort after sun or dryness.", bullets: ["Soothing", "Fast absorb", "Multi-use"] }
-      ];
+      var CATEGORIES = { All: [] };
+      var PRODUCTS = [];
 
       var cart = [];
       var mainFilter = "All";
@@ -51,6 +22,10 @@
       var crumbSep = document.getElementById("crumb-product-sep");
       var cartDrawer = document.getElementById("cart-drawer");
       var checkoutModal = document.getElementById("checkout-modal");
+
+      function parsePrice(price) {
+        return parseInt(String(price).replace(/[^\d]/g, ""), 10) || 0;
+      }
 
       function formatTotal(n) {
         return "TZS " + n.toLocaleString("en-US");
@@ -115,9 +90,10 @@
         if (existing) existing.qty += 1;
         else cart.push({
           id: product.id,
+          dbId: product.dbId || null,
           title: product.title,
           price: product.price,
-          priceNum: product.priceNum,
+          priceNum: product.priceNum != null ? product.priceNum : parsePrice(product.price),
           image: product.image,
           qty: 1
         });
@@ -154,7 +130,8 @@
       function productCard(p) {
         var el = document.createElement("button");
         el.type = "button";
-        el.className = "co-product glass-card fade-up visible";
+        el.className = "co-product co-product--cover glass-card fade-up visible";
+        el.dataset.id = p.id;
         el.innerHTML =
           '<div class="co-product-media">' +
           '<img src="' + p.image + '" alt="' + p.title + '" loading="lazy">' +
@@ -365,33 +342,28 @@
           currency: "TZS",
           items: cart.map(function (item) {
             return {
+              product_id: item.dbId || null,
               product_name: item.title,
               quantity: item.qty,
-              unit_price: item.priceNum || 0
+              unit_price: item.priceNum || parsePrice(item.price)
             };
           })
         };
 
-        function openWhatsApp() {
-          var wa = window.SwiftWaveWhatsApp;
-          var url = wa.buildWhatsAppUrl(WHATSAPP_NUMBER, lines.join("\n"));
-          if (!url) {
-            err.hidden = false;
-            err.textContent = wa.UNAVAILABLE_MESSAGE;
-            return;
-          }
-          window.open(url, "_blank", "noopener,noreferrer");
+        var wa = window.SwiftWaveWhatsApp;
+        var url = wa.buildWhatsAppUrl(WHATSAPP_NUMBER, lines.join("\n"));
+        if (!url) {
+          err.hidden = false;
+          err.textContent = wa.UNAVAILABLE_MESSAGE;
+          return;
         }
 
+        wa.openWhatsAppUrl(url);
         fetch("/api/public/order", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(orderPayload)
-        })
-          .catch(function () {})
-          .then(function () {
-            openWhatsApp();
-          });
+        }).catch(function () {});
       });
 
       function bootUI() {
@@ -414,10 +386,12 @@
               data.company.whatsapp_number
             );
           }
-          if (data && Array.isArray(data.products) && data.products.length > 0) {
-            PRODUCTS = data.products;
+          if (data) {
             if (data.categories && typeof data.categories === "object") {
               CATEGORIES = data.categories;
+            }
+            if (Array.isArray(data.products)) {
+              PRODUCTS = data.products;
             }
           }
         })
