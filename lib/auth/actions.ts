@@ -51,7 +51,7 @@ export async function signInAction(
   if (!isSupabaseConfigured()) {
     return {
       error:
-        "Admin authentication is not configured for this deployment. Set Supabase environment variables in Vercel Production and redeploy.",
+        "Admin sign-in is not available in this environment yet. Please contact your system administrator.",
     };
   }
 

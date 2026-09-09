@@ -4,7 +4,7 @@ import {
   isSupabaseConfigured,
 } from "@/lib/supabase/server";
 import { getCurrentAdmin } from "@/lib/auth/get-current-admin";
-import { getAccessibleCompanies } from "@/lib/admin/companies";
+import { loadAccessibleCompanies } from "@/lib/admin/companies";
 import { filterDashboardCompanies } from "@/lib/admin/data/dashboard-stats";
 import { AdminShell } from "@/components/admin/AdminShell";
 import "../admin.css";
@@ -24,7 +24,7 @@ export default async function AdminProtectedLayout({
     redirect(`/admin/login?error=${encodeURIComponent(access.error)}`);
   }
 
-  const { companies } = await getAccessibleCompanies(access.admin);
+  const { companies } = await loadAccessibleCompanies();
   const companyCount = filterDashboardCompanies(companies).length;
 
   return (

@@ -947,6 +947,23 @@
   color: #991b1b;
 }
 
+.sw-admin-route-error {
+  max-width: 32rem;
+  margin: 1.5rem auto 0;
+  text-align: center;
+}
+
+.sw-admin-route-error-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+  color: var(--admin-heading);
+}
+
+.sw-admin-route-error-copy {
+  margin: 0 0 1rem;
+  color: var(--admin-muted);
+}
+
 .sw-admin-skeleton-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

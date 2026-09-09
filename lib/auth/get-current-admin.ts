@@ -1,3 +1,4 @@
+import { cache } from "react";
 import {
   createClient,
   isSupabaseConfigured,
@@ -27,108 +28,111 @@ export type GetCurrentAdminResult =
 /**
  * Server-only helper: authenticated user + profile + role + company access.
  * Authorization is derived from public.profiles + user_company_access (and RLS).
+ * Cached per request to avoid duplicate auth round trips in layout + pages.
  */
-export async function getCurrentAdmin(): Promise<GetCurrentAdminResult> {
-  if (!isSupabaseConfigured()) {
-    return { ok: false, error: "unauthenticated" };
-  }
-
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-
-  if (userError || !user) {
-    return { ok: false, error: "unauthenticated" };
-  }
-
-  const { data: profileRow, error: profileError } = await supabase
-    .from("profiles")
-    .select("id, full_name, role, company_id, is_active")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  if (profileError || !profileRow) {
-    return { ok: false, error: "no_profile" };
-  }
-
-  if (!profileRow.is_active) {
-    return { ok: false, error: "inactive" };
-  }
-
-  if (!isAdminRole(profileRow.role)) {
-    return { ok: false, error: "invalid_role" };
-  }
-
-  let companies: AdminCompany[] = [];
-
-  if (profileRow.role === "super_admin") {
-    const { data: allCompanies } = await supabase
-      .from("companies")
-      .select("id, name, slug, is_active")
-      .order("name", { ascending: true });
-    companies = (allCompanies as AdminCompany[]) ?? [];
-  } else {
-    const { data: accessRows } = await supabase
-      .from("user_company_access")
-      .select("company_id, company:companies(id, name, slug, is_active)")
-      .eq("user_id", user.id);
-
-    const fromAccess: AdminCompany[] = [];
-    for (const row of accessRows ?? []) {
-      const nested = row.company as
-        | AdminCompany
-        | AdminCompany[]
-        | null
-        | undefined;
-      const c = Array.isArray(nested) ? nested[0] : nested;
-      if (c?.id) fromAccess.push(c);
+export const getCurrentAdmin = cache(
+  async (): Promise<GetCurrentAdminResult> => {
+    if (!isSupabaseConfigured()) {
+      return { ok: false, error: "unauthenticated" };
     }
 
-    // Legacy fallback: profiles.company_id
-    if (!fromAccess.length && profileRow.company_id) {
-      const { data: legacy } = await supabase
+    const supabase = await createClient();
+
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return { ok: false, error: "unauthenticated" };
+    }
+
+    const { data: profileRow, error: profileError } = await supabase
+      .from("profiles")
+      .select("id, full_name, role, company_id, is_active")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (profileError || !profileRow) {
+      return { ok: false, error: "no_profile" };
+    }
+
+    if (!profileRow.is_active) {
+      return { ok: false, error: "inactive" };
+    }
+
+    if (!isAdminRole(profileRow.role)) {
+      return { ok: false, error: "invalid_role" };
+    }
+
+    let companies: AdminCompany[] = [];
+
+    if (profileRow.role === "super_admin") {
+      const { data: allCompanies } = await supabase
         .from("companies")
         .select("id, name, slug, is_active")
-        .eq("id", profileRow.company_id)
-        .maybeSingle();
-      if (legacy) fromAccess.push(legacy as AdminCompany);
+        .order("name", { ascending: true });
+      companies = (allCompanies as AdminCompany[]) ?? [];
+    } else {
+      const { data: accessRows } = await supabase
+        .from("user_company_access")
+        .select("company_id, company:companies(id, name, slug, is_active)")
+        .eq("user_id", user.id);
+
+      const fromAccess: AdminCompany[] = [];
+      for (const row of accessRows ?? []) {
+        const nested = row.company as
+          | AdminCompany
+          | AdminCompany[]
+          | null
+          | undefined;
+        const c = Array.isArray(nested) ? nested[0] : nested;
+        if (c?.id) fromAccess.push(c);
+      }
+
+      // Legacy fallback: profiles.company_id
+      if (!fromAccess.length && profileRow.company_id) {
+        const { data: legacy } = await supabase
+          .from("companies")
+          .select("id, name, slug, is_active")
+          .eq("id", profileRow.company_id)
+          .maybeSingle();
+        if (legacy) fromAccess.push(legacy as AdminCompany);
+      }
+
+      companies = fromAccess;
+
+      if (!companies.length) {
+        return { ok: false, error: "missing_company" };
+      }
     }
 
-    companies = fromAccess;
+    const primaryId = profileRow.company_id;
+    const company =
+      companies.find((c) => c.id === primaryId) ?? companies[0] ?? null;
 
-    if (!companies.length) {
-      return { ok: false, error: "missing_company" };
-    }
-  }
+    const profile: AdminProfile = {
+      id: profileRow.id,
+      full_name: profileRow.full_name,
+      role: profileRow.role,
+      company_id: profileRow.company_id,
+      is_active: profileRow.is_active,
+    };
 
-  const primaryId = profileRow.company_id;
-  const company =
-    companies.find((c) => c.id === primaryId) ?? companies[0] ?? null;
-
-  const profile: AdminProfile = {
-    id: profileRow.id,
-    full_name: profileRow.full_name,
-    role: profileRow.role,
-    company_id: profileRow.company_id,
-    is_active: profileRow.is_active,
-  };
-
-  return {
-    ok: true,
-    admin: {
-      user: {
-        id: user.id,
-        email: user.email ?? null,
+    return {
+      ok: true,
+      admin: {
+        user: {
+          id: user.id,
+          email: user.email ?? null,
+        },
+        profile,
+        company,
+        companies,
       },
-      profile,
-      company,
-      companies,
-    },
-  };
-}
+    };
+  }
+);
 
 export async function requireAdmin(): Promise<CurrentAdmin> {
   const result = await getCurrentAdmin();

@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { getCurrentAdmin } from "@/lib/auth/get-current-admin";
-import { getAccessibleCompanyBySlug } from "@/lib/admin/companies";
+import { loadAccessibleCompanyBySlug } from "@/lib/admin/companies";
 import {
   companyHasModule,
   type CompanyModuleKey,
@@ -14,6 +14,13 @@ export type CompanyAccess = {
   company: CompanyRecord;
 };
 
+export class CompanyLoadError extends Error {
+  constructor(message = "Unable to load company data right now.") {
+    super(message);
+    this.name = "CompanyLoadError";
+  }
+}
+
 /**
  * Require authenticated admin with access to the company workspace.
  * Optionally assert a ready capability module (else notFound).
@@ -25,16 +32,13 @@ export async function requireCompanyAccess(
   const access = await getCurrentAdmin();
   if (!access.ok) redirect("/admin/login");
 
-  const { company, error } = await getAccessibleCompanyBySlug(
-    access.admin,
-    companySlug
-  );
-
-  if (error === "unauthorized" || error === "not_found" || !company) {
-    notFound();
-  }
+  const { company, error } = await loadAccessibleCompanyBySlug(companySlug);
 
   if (error === "fetch_failed") {
+    throw new CompanyLoadError();
+  }
+
+  if (error === "unauthorized" || error === "not_found" || !company) {
     notFound();
   }
 

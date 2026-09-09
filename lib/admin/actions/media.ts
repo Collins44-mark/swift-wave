@@ -153,7 +153,7 @@ export async function deleteMediaAsset(
   if (error) {
     return {
       ok: false,
-      error: "Storage deleted, but the database record could not be removed.",
+      error: "The image was removed from storage, but the record could not be updated.",
     };
   }
 

@@ -8,6 +8,7 @@ import { useMemo, useState, useTransition } from "react";
 import { saveUploadedMedia } from "@/lib/admin/actions/media";
 import type { CloudinaryUploadInfo } from "@/lib/admin/types-media";
 import { cloudinaryFolderForSlug } from "@/lib/cloudinary/folders";
+import { isCloudinaryConfigured } from "@/lib/cloudinary/client-config";
 
 type Props = {
   companySlug: string;
@@ -67,6 +68,19 @@ export function MediaUploadButton({
   );
 
   const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+
+  if (!isCloudinaryConfigured()) {
+    return (
+      <div className="sw-admin-upload-wrap">
+        <button type="button" className={className || "sw-admin-btn"} disabled>
+          + {label}
+        </button>
+        <p className="sw-admin-upload-error" role="status">
+          Image uploads are not available in this environment yet.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="sw-admin-upload-wrap">

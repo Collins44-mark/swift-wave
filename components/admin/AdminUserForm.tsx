@@ -20,7 +20,7 @@ export function AdminUserForm({
   const [error, setError] = useState<string | null>(null);
   const [role, setRole] = useState<AdminRole>(user?.role ?? "company_admin");
   const [selected, setSelected] = useState<string[]>(
-    user?.companies.map((c) => c.id) ?? []
+    user?.companies?.map((c) => c.id) ?? []
   );
   const [pending, startTransition] = useTransition();
   const isEdit = Boolean(user);

@@ -86,7 +86,7 @@ export async function createAdminUser(
     return {
       ok: false,
       error:
-        "Server is missing SUPABASE_SERVICE_ROLE_KEY. Add it to .env.local (server-only) and restart.",
+        "Administrator management is not fully configured in this environment.",
     };
   }
 
@@ -99,10 +99,11 @@ export async function createAdminUser(
     });
 
   if (createError || !created.user) {
-    return {
-      ok: false,
-      error: createError?.message || "Could not create auth user.",
-    };
+    const msg = createError?.message?.toLowerCase() ?? "";
+    if (msg.includes("already") || msg.includes("registered")) {
+      return { ok: false, error: "An account with this email already exists." };
+    }
+    return { ok: false, error: "Could not create the administrator account." };
   }
 
   const userId = created.user.id;
@@ -121,7 +122,7 @@ export async function createAdminUser(
     await service.auth.admin.deleteUser(userId);
     return {
       ok: false,
-      error: profileError.message || "Could not create profile.",
+      error: "Could not finish setting up the administrator account.",
     };
   }
 

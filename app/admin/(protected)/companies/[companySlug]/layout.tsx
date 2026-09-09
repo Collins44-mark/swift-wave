@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { getCurrentAdmin } from "@/lib/auth/get-current-admin";
-import { getAccessibleCompanyBySlug } from "@/lib/admin/companies";
+import { loadAccessibleCompanyBySlug } from "@/lib/admin/companies";
+import { CompanyLoadError } from "@/lib/admin/require-company-access";
 import { CompanySubnav } from "@/components/admin/CompanySubnav";
 
 export default async function CompanyLayout({
@@ -14,21 +15,14 @@ export default async function CompanyLayout({
   if (!access.ok) redirect("/admin/login");
 
   const { companySlug } = await params;
-  const { company, error } = await getAccessibleCompanyBySlug(
-    access.admin,
-    companySlug
-  );
+  const { company, error } = await loadAccessibleCompanyBySlug(companySlug);
 
   if (error === "unauthorized" || error === "not_found" || !company) {
     notFound();
   }
 
   if (error === "fetch_failed") {
-    return (
-      <div className="sw-admin-alert is-error" role="alert">
-        Unable to load this company right now. Please try again.
-      </div>
-    );
+    throw new CompanyLoadError();
   }
 
   return (

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getCurrentAdmin } from "@/lib/auth/get-current-admin";
-import { getAccessibleCompanies } from "@/lib/admin/companies";
+import { loadAccessibleCompanies } from "@/lib/admin/companies";
 import {
   filterDashboardCompanies,
   getDashboardStats,
@@ -40,7 +40,7 @@ export default async function AdminDashboardPage() {
     admin.profile.full_name?.trim() ||
     (isSuper ? "Super Admin" : admin.user.email || "Administrator");
 
-  const { companies, error } = await getAccessibleCompanies(admin);
+  const { companies, error } = await loadAccessibleCompanies();
   const dashboardCompanies = filterDashboardCompanies(companies);
   const activeCount = dashboardCompanies.filter((c) => c.is_active).length;
 

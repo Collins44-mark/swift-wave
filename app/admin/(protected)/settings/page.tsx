@@ -42,8 +42,8 @@ export default async function SettingsPage() {
         <article className="sw-admin-hub-card is-static">
           <strong>Security</strong>
           <p>
-            Sign-in is handled by Supabase Auth. Use Logout from the sidebar or
-            profile menu to end your session.
+            Use Logout from the sidebar or profile menu to end your session
+            securely.
           </p>
         </article>
       </div>

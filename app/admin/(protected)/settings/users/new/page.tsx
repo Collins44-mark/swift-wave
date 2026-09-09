@@ -23,7 +23,7 @@ export default async function NewUserPage() {
     <>
       <PageHeader
         title="Add Administrator"
-        description="Create a Supabase Auth user and assign company access."
+        description="Create an administrator account and assign company access."
       />
       <section className="sw-admin-panel">
         <AdminUserForm

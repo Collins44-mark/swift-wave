@@ -1,15 +1,17 @@
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { CurrentAdmin } from "@/lib/auth/types";
-import { adminHasCompanyAccess, adminHasCompanySlug } from "@/lib/auth/get-current-admin";
+import {
+  adminHasCompanyAccess,
+  adminHasCompanySlug,
+  getCurrentAdmin,
+} from "@/lib/auth/get-current-admin";
 import {
   COMPANY_SELECT,
   type CompanyRecord,
 } from "@/lib/admin/company-types";
 
-/**
- * Load companies visible to the authenticated admin.
- */
-export async function getAccessibleCompanies(
+async function fetchAccessibleCompanies(
   admin: CurrentAdmin
 ): Promise<{ companies: CompanyRecord[]; error: string | null }> {
   const supabase = await createClient();
@@ -20,7 +22,10 @@ export async function getAccessibleCompanies(
       .select(COMPANY_SELECT)
       .order("name", { ascending: true });
 
-    if (error) return { companies: [], error: "fetch_failed" };
+    if (error) {
+      console.error("[getAccessibleCompanies]", error.message);
+      return { companies: [], error: "fetch_failed" };
+    }
     return { companies: (data as CompanyRecord[]) ?? [], error: null };
   }
 
@@ -35,14 +40,14 @@ export async function getAccessibleCompanies(
     .in("id", ids)
     .order("name", { ascending: true });
 
-  if (error) return { companies: [], error: "fetch_failed" };
+  if (error) {
+    console.error("[getAccessibleCompanies]", error.message);
+    return { companies: [], error: "fetch_failed" };
+  }
   return { companies: (data as CompanyRecord[]) ?? [], error: null };
 }
 
-/**
- * Load one company by slug if the admin is allowed to access it.
- */
-export async function getAccessibleCompanyBySlug(
+async function fetchAccessibleCompanyBySlug(
   admin: CurrentAdmin,
   slug: string
 ): Promise<{ company: CompanyRecord | null; error: string | null }> {
@@ -58,7 +63,10 @@ export async function getAccessibleCompanyBySlug(
     .eq("slug", slug)
     .maybeSingle();
 
-  if (error) return { company: null, error: "fetch_failed" };
+  if (error) {
+    console.error("[getAccessibleCompanyBySlug]", error.message);
+    return { company: null, error: "fetch_failed" };
+  }
   if (!data) return { company: null, error: "not_found" };
 
   const company = data as CompanyRecord;
@@ -67,4 +75,51 @@ export async function getAccessibleCompanyBySlug(
   }
 
   return { company, error: null };
+}
+
+/** Cached per request — preferred for layout + page chains. */
+export const loadAccessibleCompanies = cache(async () => {
+  const access = await getCurrentAdmin();
+  if (!access.ok) {
+    return { companies: [] as CompanyRecord[], error: "unauthenticated" };
+  }
+  return fetchAccessibleCompanies(access.admin);
+});
+
+/** Cached per request by slug — preferred for company layout + pages. */
+export const loadAccessibleCompanyBySlug = cache(async (slug: string) => {
+  const access = await getCurrentAdmin();
+  if (!access.ok) {
+    return { company: null as CompanyRecord | null, error: "unauthorized" };
+  }
+  return fetchAccessibleCompanyBySlug(access.admin, slug);
+});
+
+/**
+ * Load companies visible to the authenticated admin.
+ * Delegates to the cached loader when the admin matches the current session.
+ */
+export async function getAccessibleCompanies(
+  admin: CurrentAdmin
+): Promise<{ companies: CompanyRecord[]; error: string | null }> {
+  const access = await getCurrentAdmin();
+  if (access.ok && access.admin.user.id === admin.user.id) {
+    return loadAccessibleCompanies();
+  }
+  return fetchAccessibleCompanies(admin);
+}
+
+/**
+ * Load one company by slug if the admin is allowed to access it.
+ * Delegates to the cached loader when the admin matches the current session.
+ */
+export async function getAccessibleCompanyBySlug(
+  admin: CurrentAdmin,
+  slug: string
+): Promise<{ company: CompanyRecord | null; error: string | null }> {
+  const access = await getCurrentAdmin();
+  if (access.ok && access.admin.user.id === admin.user.id) {
+    return loadAccessibleCompanyBySlug(slug);
+  }
+  return fetchAccessibleCompanyBySlug(admin, slug);
 }
