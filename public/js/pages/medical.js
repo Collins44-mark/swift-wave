@@ -313,7 +313,8 @@
       });
 
       document.getElementById("cart-toggle").addEventListener("click", openCart);
-      document.getElementById("hero-cart-btn").addEventListener("click", openCart);
+      var heroCartBtn = document.getElementById("hero-cart-btn");
+      if (heroCartBtn) heroCartBtn.addEventListener("click", openCart);
       document.getElementById("cart-close").addEventListener("click", closeCart);
       document.getElementById("cart-backdrop").addEventListener("click", closeCart);
       document.getElementById("open-checkout").addEventListener("click", openCheckout);

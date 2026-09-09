@@ -46,27 +46,12 @@
     </div>
   </div>
 
-  <header class="co-shop-hero">
-    <div class="co-shop-hero-bg" data-cms-bg="hero.image_url" style="background-image:url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=2000&q=80')" aria-hidden="true"></div>
-    <div class="co-shop-hero-overlay" aria-hidden="true"></div>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 co-shop-hero-inner">
-      <nav class="co-breadcrumb" aria-label="Breadcrumb">
-        <a href="/companies">Companies</a>
-        <span aria-hidden="true">/</span>
-        <a href="/companies/outfit" id="crumb-shop">Outfit</a>
-        <span id="crumb-product-sep" class="co-bc-hidden" aria-hidden="true">/</span>
-        <span id="crumb-product" class="co-bc-hidden"></span>
-      </nav>
-      <div class="co-shop-title-row">
-        <div>
-          <div class="co-shop-badge"><i data-lucide="shirt" class="w-4 h-4"></i><span data-cms="hero.badge">Shop</span></div>
-          <h1 data-cms="hero.title">Swift Wave Outfit</h1>
-          <p class="co-shop-hint" data-cms="hero.hint">Men · Women · Footwear · Accessories</p>
-        </div>
-        <button type="button" class="btn-primary px-5 py-2.5 text-sm co-shop-contact" id="hero-cart-btn">View cart</button>
-      </div>
-    </div>
-  </header>
+  <div class="co-page-tools" hidden aria-hidden="true">
+    <a href="/companies/outfit" id="crumb-shop">Outfit</a>
+    <span id="crumb-product-sep" class="co-bc-hidden" aria-hidden="true">/</span>
+    <span id="crumb-product" class="co-bc-hidden"></span>
+    <button type="button" id="hero-cart-btn" hidden>View cart</button>
+  </div>
 
   <!-- Catalog view -->
   <section id="catalog-view" class="co-catalog section-premium px-4 sm:px-6 py-8 sm:py-12">

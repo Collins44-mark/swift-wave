@@ -561,6 +561,100 @@ body.menu-open {
   height: 100%;
 }
 
+/* Corporate Our Companies — full-image card with bottom content overlay */
+.companies-grid .company-card.company-card--cover {
+  position: relative;
+  display: block;
+  aspect-ratio: 5 / 6;
+  height: auto;
+  background: transparent;
+  border: none;
+  box-shadow: 0 10px 28px rgba(11, 46, 109, 0.14);
+}
+
+.companies-grid .company-card.company-card--cover.glass-card {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
+}
+
+.companies-grid .company-card.company-card--cover .company-card-media {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  z-index: 0;
+}
+
+.companies-grid .company-card.company-card--cover .company-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.companies-grid .company-card.company-card--cover .company-card-body {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  flex: none;
+  padding: 2.75rem 0.75rem 0.85rem;
+  gap: 0.2rem;
+  background: none;
+}
+
+.companies-grid .company-card.company-card--cover .company-card-body::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: -55%;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.18) 42%,
+    rgba(0, 0, 0, 0.62) 100%
+  );
+  pointer-events: none;
+  z-index: -1;
+}
+
+.companies-grid .company-card.company-card--cover .company-card-icon {
+  position: relative;
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.24);
+  color: #fff;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.companies-grid .company-card.company-card--cover:hover .company-card-icon {
+  color: var(--gold);
+  border-color: rgba(212, 175, 55, 0.45);
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.18);
+}
+
+.companies-grid .company-card.company-card--cover .company-card-title {
+  color: #fff;
+  position: relative;
+}
+
+.companies-grid .company-card.company-card--cover .company-card-desc {
+  color: rgba(255, 255, 255, 0.82);
+  position: relative;
+}
+
+.companies-grid .company-card.company-card--cover .company-card-link {
+  position: relative;
+  color: #fff;
+}
+
+.companies-grid .company-card.company-card--cover .company-card-link:hover {
+  color: var(--gold);
+}
+
 .company-card-media {
   position: relative;
   width: 100%;
@@ -646,8 +740,20 @@ body.menu-open {
     height: 10.5rem;
   }
 
+  .companies-grid .company-card.company-card--cover {
+    border-radius: var(--radius);
+  }
+
+  .companies-grid .company-card.company-card--cover .company-card-media {
+    height: 100%;
+  }
+
   .company-card-body {
     padding: 1.15rem 1.25rem 1.35rem;
+  }
+
+  .companies-grid .company-card.company-card--cover .company-card-body {
+    padding: 3rem 1.25rem 1.35rem;
   }
 
   .company-card .company-card-icon {
@@ -701,6 +807,10 @@ body.menu-open {
 
   .company-card-media {
     height: 12rem;
+  }
+
+  .companies-grid .company-card.company-card--cover .company-card-media {
+    height: 100%;
   }
 }
 
@@ -1568,6 +1678,11 @@ a:hover .icon,
     radial-gradient(ellipse 80% 50% at 10% -10%, rgba(212, 175, 55, 0.08), transparent 55%),
     radial-gradient(ellipse 70% 45% at 100% 20%, rgba(11, 46, 109, 0.07), transparent 50%),
     var(--bg);
+}
+
+.company-page--no-hero .sch-form-section,
+.company-page--no-hero .co-catalog {
+  padding-top: calc(var(--nav-h) + var(--safe-top) + 2rem);
 }
 
 .co-breadcrumb {

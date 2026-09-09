@@ -44,7 +44,7 @@ function renderCard(company: CorporateCompanyCard): string {
   );
   const alt = escapeHtml(company.name);
 
-  return `<article class="company-card glass-card fade-up">
+  return `<article class="company-card company-card--cover glass-card fade-up">
           <div class="company-card-media">
             <img src="${imageUrl}" alt="${alt}" loading="lazy">
           </div>
