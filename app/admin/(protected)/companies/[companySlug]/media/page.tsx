@@ -1,30 +1,11 @@
-import type { Metadata } from "next";
-import { requireCompanyAccess, canMutate } from "@/lib/admin/require-company-access";
-import { listMediaAssets } from "@/lib/admin/data/media";
-import { MediaLibraryClient } from "@/components/admin/MediaLibraryClient";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "Media — Swift Wave Admin",
-  robots: { index: false, follow: false },
-};
-
-export default async function MediaPage({
+/** Media is managed contextually in product/content editors — no company media library page. */
+export default async function CompanyMediaPage({
   params,
 }: {
   params: Promise<{ companySlug: string }>;
 }) {
   const { companySlug } = await params;
-  const { admin, company } = await requireCompanyAccess(companySlug, "media");
-  const assets = await listMediaAssets(company.id);
-
-  return (
-    <section className="sw-admin-panel">
-      <MediaLibraryClient
-        companySlug={company.slug}
-        companyName={company.name}
-        assets={assets}
-        canManage={canMutate(admin)}
-      />
-    </section>
-  );
+  redirect(`/admin/companies/${companySlug}`);
 }

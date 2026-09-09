@@ -412,15 +412,23 @@
             if (!result.ok || !result.data.ok) {
               throw new Error("order_failed");
             }
-            var url = wa.buildWhatsAppUrl(WHATSAPP_NUMBER, message);
-            if (!url) {
-              throw new Error("whatsapp_failed");
-            }
-            if (!wa.openWhatsAppUrl(url)) {
-              throw new Error("whatsapp_failed");
-            }
-            clearCartState();
-            closeCheckout();
+            return fetch("/api/public/company/" + COMPANY_SLUG)
+              .then(function (res) {
+                return res.ok ? res.json() : null;
+              })
+              .then(function (companyData) {
+                var number =
+                  companyData && companyData.whatsapp_number
+                    ? companyData.whatsapp_number
+                    : WHATSAPP_NUMBER;
+                number = wa.normalizeWhatsAppNumber(number);
+                var url = wa.buildWhatsAppUrl(number, message);
+                if (!url || !wa.openWhatsAppUrl(url)) {
+                  throw new Error("whatsapp_failed");
+                }
+                clearCartState();
+                closeCheckout();
+              });
           })
           .catch(function (failure) {
             err.hidden = false;

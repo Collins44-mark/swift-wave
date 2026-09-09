@@ -3104,3 +3104,131 @@ a.sw-admin-hub-card:hover {
   border-color: rgba(154, 52, 18, 0.16);
 }
 
+.sw-admin-wa-table-wrap {
+  margin-top: 0.25rem;
+}
+
+.sw-admin-wa-input {
+  width: 100%;
+  min-width: 0;
+  max-width: 18rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 12px;
+  border: 1px solid var(--admin-border);
+  background: rgba(255, 255, 255, 0.82);
+  font: inherit;
+  font-size: 0.92rem;
+}
+
+.sw-admin-wa-field-wrap {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.sw-admin-wa-field-error {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #b42318;
+}
+
+.sw-admin-wa-preview {
+  margin: 0;
+  font-size: 0.82rem;
+}
+
+.sw-admin-wa-preview a {
+  color: var(--admin-accent);
+  word-break: break-all;
+}
+
+.sw-admin-wa-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.sw-admin-row-menu {
+  position: relative;
+}
+
+.sw-admin-row-menu-btn {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 10px;
+  border: 1px solid var(--admin-border);
+  background: rgba(255, 255, 255, 0.75);
+  color: var(--admin-text);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.sw-admin-row-menu-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.sw-admin-row-menu-panel {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  right: 0;
+  z-index: 30;
+  min-width: 10.5rem;
+  padding: 0.35rem;
+  border-radius: 14px;
+  border: 1px solid var(--admin-border);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+}
+
+.sw-admin-row-menu-panel button {
+  display: block;
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.sw-admin-row-menu-panel button:hover {
+  background: rgba(15, 23, 42, 0.05);
+}
+
+.sw-admin-row-menu-panel button.is-danger {
+  color: #b42318;
+}
+
+@media (max-width: 760px) {
+  .sw-admin-wa-table thead {
+    display: none;
+  }
+
+  .sw-admin-wa-row {
+    display: block;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--admin-border);
+  }
+
+  .sw-admin-wa-row td {
+    display: block;
+    padding: 0.35rem 0;
+    border: 0;
+  }
+
+  .sw-admin-wa-row td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 0.78rem;
+    color: var(--admin-muted);
+    margin-bottom: 0.25rem;
+  }
+
+  .sw-admin-wa-input {
+    max-width: none;
+  }
+}
+

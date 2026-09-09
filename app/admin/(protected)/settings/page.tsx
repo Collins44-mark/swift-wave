@@ -82,10 +82,6 @@ export default async function SettingsPage() {
               <strong>Website Content</strong>
               <span>Edit CMS fields per company →</span>
             </Link>
-            <Link className="sw-admin-hub-card" href="/admin/media">
-              <strong>Media</strong>
-              <span>Cloudinary media library hubs →</span>
-            </Link>
             <Link className="sw-admin-hub-card" href="/admin/whatsapp">
               <strong>WhatsApp</strong>
               <span>Company WhatsApp configuration →</span>

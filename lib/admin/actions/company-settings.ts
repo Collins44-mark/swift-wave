@@ -3,7 +3,11 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { validateWhatsAppNumber } from "@/lib/whatsapp/normalize";
-import { requireCompanyAccess, canMutate } from "@/lib/admin/require-company-access";
+import {
+  requireCompanyAccess,
+  canMutate,
+} from "@/lib/admin/require-company-access";
+import { adminCan } from "@/lib/admin/permissions";
 import { getCompanySettings } from "@/lib/admin/data/company-settings";
 import type { ActionResult } from "@/lib/admin/types-catalog";
 
@@ -81,8 +85,8 @@ export async function updateWhatsappNumber(
   formData: FormData
 ): Promise<ActionResult> {
   const { admin, company } = await requireCompanyAccess(companySlug, "whatsapp");
-  if (!canMutate(admin)) {
-    return { ok: false, error: "Staff can view WhatsApp settings but cannot edit them." };
+  if (!adminCan(admin, "manage_whatsapp")) {
+    return { ok: false, error: "You do not have permission to edit WhatsApp settings." };
   }
 
   const raw = str(formData, "whatsapp_number");
@@ -109,6 +113,7 @@ export async function updateWhatsappNumber(
     };
   }
 
+  revalidatePath("/admin/whatsapp");
   revalidatePath(`/admin/companies/${companySlug}/whatsapp`);
   revalidatePath(`/admin/companies/${companySlug}`);
   revalidatePath(`/companies/${companySlug}`);

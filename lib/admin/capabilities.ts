@@ -41,7 +41,6 @@ export type CompanyCapabilityProfile = {
 const SHARED_TAIL: CompanyModuleDef[] = [
   { key: "website_content", label: "Website Content", path: "website-content", ready: true },
   { key: "corporate_profile", label: "Corporate Profile", path: "corporate-profile", ready: true },
-  { key: "media", label: "Media", path: "media", ready: true },
   { key: "whatsapp", label: "WhatsApp", path: "whatsapp", ready: true },
   { key: "settings", label: "Settings", path: "settings", ready: true },
 ];
@@ -78,7 +77,6 @@ const CORPORATE_MODULES: CompanyModuleDef[] = [
   { key: "inquiries", label: "Contact Messages", path: "inquiries", ready: true },
   { key: "website_content", label: "Website Content", path: "website-content", ready: true },
   { key: "corporate_profile", label: "Corporate Profile", path: "corporate-profile", ready: true },
-  { key: "media", label: "Media", path: "media", ready: true },
   { key: "settings", label: "Settings", path: "settings", ready: true },
 ];
 
