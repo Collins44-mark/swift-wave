@@ -22,6 +22,7 @@ Open [http://localhost:3000](http://localhost:3000).
 ## Notes
 
 - Public UI markup lives in `content/` and is rendered 1:1 via App Router pages.
-- Original static HTML/CSS/JS is preserved under `_legacy/` (and root HTML until you choose to remove it).
+- Original static HTML/CSS/JS is preserved under `_legacy/`.
+- Deploy on Vercel with Framework Preset **Next.js** (see `vercel.json`). Root Directory: `./`.
 - Static assets are served from `public/assets`, `public/css`, and `public/js`.
 - Supabase is not integrated yet (see `.env.example` for later).
