@@ -19,7 +19,7 @@
     "bodyClass": "min-h-screen w-full overflow-x-hidden",
     "bodyStyle": null,
     "bodyAttrs": {},
-    "scripts": ["/js/slideshow.js", "/js/main.js"],
+    "scripts": ["/js/main.js"],
     "robots": false,
     "refresh": null
   },
@@ -31,7 +31,7 @@
     "bodyClass": "min-h-screen w-full overflow-x-hidden",
     "bodyStyle": null,
     "bodyAttrs": {},
-    "scripts": ["/js/slideshow.js", "/js/main.js"],
+    "scripts": ["/js/main.js"],
     "robots": false,
     "refresh": null
   },
@@ -43,7 +43,7 @@
     "bodyClass": "min-h-screen w-full overflow-x-hidden",
     "bodyStyle": null,
     "bodyAttrs": {},
-    "scripts": ["globe.gl", "/js/globe.js", "/js/slideshow.js", "/js/main.js"],
+    "scripts": ["globe.gl", "/js/globe.js", "/js/main.js"],
     "robots": false,
     "refresh": null
   },
@@ -55,7 +55,7 @@
     "bodyClass": "min-h-screen w-full overflow-x-hidden",
     "bodyStyle": null,
     "bodyAttrs": {},
-    "scripts": ["/js/slideshow.js", "/js/main.js"],
+    "scripts": ["/js/main.js"],
     "robots": false,
     "refresh": null
   },

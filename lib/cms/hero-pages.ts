@@ -26,7 +26,7 @@ export const CORPORATE_HERO_PAGES: HeroPageDef[] = [
     companySlug: "corporate",
     route: "/about",
     isCorporate: true,
-    heroType: "slideshow",
+    heroType: "static",
   },
   {
     label: "Companies Hero",
@@ -34,7 +34,7 @@ export const CORPORATE_HERO_PAGES: HeroPageDef[] = [
     companySlug: "corporate",
     route: "/companies",
     isCorporate: true,
-    heroType: "slideshow",
+    heroType: "static",
   },
   {
     label: "Global Hero",
@@ -42,7 +42,7 @@ export const CORPORATE_HERO_PAGES: HeroPageDef[] = [
     companySlug: "corporate",
     route: "/global",
     isCorporate: true,
-    heroType: "slideshow",
+    heroType: "static",
   },
   {
     label: "Contact Hero",
@@ -50,7 +50,7 @@ export const CORPORATE_HERO_PAGES: HeroPageDef[] = [
     companySlug: "corporate",
     route: "/contact",
     isCorporate: true,
-    heroType: "slideshow",
+    heroType: "static",
   },
 ];
 

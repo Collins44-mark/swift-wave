@@ -1336,6 +1336,7 @@ a:hover .icon,
 }
 
 .slideshow-dots {
+  display: none !important;
   position: absolute;
   bottom: calc(1rem + var(--safe-bottom));
   left: 50%;

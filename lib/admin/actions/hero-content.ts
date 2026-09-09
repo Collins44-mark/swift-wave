@@ -89,18 +89,6 @@ export async function updateHeroImage(
     alt_text: altText,
   };
 
-  if (heroDef.heroType === "slideshow") {
-    const slides = Array.isArray(prior.slides)
-      ? [...(prior.slides as string[])]
-      : [];
-    if (slides.length) {
-      slides[0] = imageUrl;
-      merged.slides = slides;
-    } else {
-      merged.slides = [imageUrl];
-    }
-  }
-
   const payload = {
     content: merged,
     status: "published" as const,
