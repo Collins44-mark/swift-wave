@@ -5,6 +5,12 @@ const FOOTER_FIELDS = [
   { key: "copyright", label: "Copyright", type: "text" as const },
 ];
 
+const HERO_IMAGE_FIELDS = [
+  { key: "image_url", label: "Hero image", type: "image" as const },
+  { key: "image_public_id", label: "Image public ID", type: "text" as const },
+  { key: "alt_text", label: "Alt text", type: "text" as const },
+];
+
 const HERO_CORPORATE_FIELDS = [
   { key: "badge", label: "Eyebrow / badge", type: "text" as const },
   { key: "title", label: "Heading", type: "html" as const },
@@ -13,8 +19,14 @@ const HERO_CORPORATE_FIELDS = [
   { key: "primary_cta_url", label: "Primary CTA URL", type: "url" as const },
   { key: "secondary_cta_label", label: "Secondary CTA label", type: "text" as const },
   { key: "secondary_cta_url", label: "Secondary CTA URL", type: "url" as const },
-  { key: "image_url", label: "Hero background image", type: "image" as const },
-  { key: "image_public_id", label: "Image public ID", type: "text" as const },
+  ...HERO_IMAGE_FIELDS,
+];
+
+const HERO_SLIDESHOW_FIELDS = [
+  { key: "badge", label: "Eyebrow", type: "text" as const },
+  { key: "title", label: "Heading", type: "text" as const },
+  { key: "subtitle", label: "Subheading", type: "textarea" as const },
+  ...HERO_IMAGE_FIELDS,
 ];
 
 const HERO_COMPANY_FIELDS = [
@@ -22,8 +34,7 @@ const HERO_COMPANY_FIELDS = [
   { key: "title", label: "Title", type: "text" as const },
   { key: "hint", label: "Hint / subtitle", type: "textarea" as const },
   { key: "cta_label", label: "CTA label", type: "text" as const },
-  { key: "image_url", label: "Hero background", type: "image" as const },
-  { key: "image_public_id", label: "Image public ID", type: "text" as const },
+  ...HERO_IMAGE_FIELDS,
 ];
 
 export const CMS_SCOPES: Record<string, CmsScopeDef> = {
@@ -70,12 +81,7 @@ export const CMS_SCOPES: Record<string, CmsScopeDef> = {
           {
             key: "hero",
             label: "Hero",
-            fields: [
-              { key: "badge", label: "Eyebrow", type: "text" },
-              { key: "title", label: "Heading", type: "text" },
-              { key: "subtitle", label: "Subheading", type: "textarea" },
-              { key: "image_url", label: "Hero slide 1", type: "image" },
-            ],
+            fields: HERO_SLIDESHOW_FIELDS,
           },
           {
             key: "story",
@@ -116,11 +122,7 @@ export const CMS_SCOPES: Record<string, CmsScopeDef> = {
           {
             key: "hero",
             label: "Hero",
-            fields: [
-              { key: "badge", label: "Eyebrow", type: "text" },
-              { key: "title", label: "Heading", type: "text" },
-              { key: "subtitle", label: "Subheading", type: "textarea" },
-            ],
+            fields: HERO_SLIDESHOW_FIELDS,
           },
           { key: "footer", label: "Footer", fields: FOOTER_FIELDS },
         ],
@@ -133,11 +135,7 @@ export const CMS_SCOPES: Record<string, CmsScopeDef> = {
           {
             key: "hero",
             label: "Hero",
-            fields: [
-              { key: "badge", label: "Eyebrow", type: "text" },
-              { key: "title", label: "Heading", type: "text" },
-              { key: "subtitle", label: "Subheading", type: "textarea" },
-            ],
+            fields: HERO_SLIDESHOW_FIELDS,
           },
           {
             key: "locations",
@@ -162,11 +160,7 @@ export const CMS_SCOPES: Record<string, CmsScopeDef> = {
           {
             key: "hero",
             label: "Hero",
-            fields: [
-              { key: "badge", label: "Eyebrow", type: "text" },
-              { key: "title", label: "Heading", type: "text" },
-              { key: "subtitle", label: "Subheading", type: "textarea" },
-            ],
+            fields: HERO_SLIDESHOW_FIELDS,
           },
           {
             key: "contact_info",

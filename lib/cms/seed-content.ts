@@ -123,6 +123,11 @@ export const CMS_SEED_ROWS: SeedRow[] = [
         "An international multi-division organization rooted in Tanzania, building bridges across industries and continents.",
       image_url:
         "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2000&q=80",
+      slides: [
+        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2000&q=80",
+        "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=2000&q=80",
+        "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=2000&q=80",
+      ],
     },
   },
   {
@@ -215,6 +220,13 @@ export const CMS_SEED_ROWS: SeedRow[] = [
       title: "Six Divisions. One Vision.",
       subtitle:
         "Each Swift Wave company operates with independent expertise while sharing our group values of integrity, innovation, and impact.",
+      image_url:
+        "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=2000&q=80",
+      slides: [
+        "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=2000&q=80",
+        "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=2000&q=80",
+        "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=2000&q=80",
+      ],
     },
   },
   {
@@ -236,6 +248,13 @@ export const CMS_SEED_ROWS: SeedRow[] = [
       title: "Our Global Presence",
       subtitle:
         "From our headquarters in Dar es Salaam, we connect partners and clients across Africa, the Middle East, and Asia.",
+      image_url:
+        "https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=2000&q=80",
+      slides: [
+        "https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=2000&q=80",
+        "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=2000&q=80",
+        "https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=2000&q=80",
+      ],
     },
   },
   {
@@ -312,6 +331,13 @@ export const CMS_SEED_ROWS: SeedRow[] = [
       title: "Contact Us",
       subtitle:
         "Whether you are a partner, client, or future team member — we would love to hear from you.",
+      image_url:
+        "https://images.unsplash.com/photo-1423666639041-f56000c27a9a?auto=format&fit=crop&w=2000&q=80",
+      slides: [
+        "https://images.unsplash.com/photo-1423666639041-f56000c27a9a?auto=format&fit=crop&w=2000&q=80",
+        "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2000&q=80",
+        "https://images.unsplash.com/photo-1556761175-4b46a572b136?auto=format&fit=crop&w=2000&q=80",
+      ],
     },
   },
   {

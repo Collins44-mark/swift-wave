@@ -34,6 +34,10 @@ export default async function Page() {
               <strong>Swift Wave Group (Corporate)</strong>
               <span>5 pages · home, about, companies, global, contact →</span>
             </Link>
+            <Link className="sw-admin-hub-card" href="/admin/website-content/hero">
+              <strong>Hero Images</strong>
+              <span>Manage hero/banner images per page →</span>
+            </Link>
           </div>
         </>
       ) : null}

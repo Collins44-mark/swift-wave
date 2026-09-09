@@ -1,4 +1,6 @@
 import type { CmsPageContent } from "@/lib/cms/types";
+import { DEFAULT_HERO_SLIDES } from "@/lib/cms/hero-pages";
+import { optimizeHeroImageUrl } from "@/lib/cms/hero-image-url";
 
 function escapeHtml(text: string): string {
   return text
@@ -83,17 +85,82 @@ function replaceCmsBg(html: string, cmsKey: string, url: string): string {
   });
 }
 
+function escapeCssUrl(url: string): string {
+  return url.replace(/'/g, "%27");
+}
+
+function extractSlideshowUrls(html: string): string[] {
+  const urls: string[] = [];
+  const re =
+    /class="slideshow-slide[^"]*"[^>]*style="background-image:url\('([^']+)'\)"/g;
+  let match: RegExpExecArray | null;
+  while ((match = re.exec(html)) !== null) {
+    urls.push(match[1]);
+  }
+  return urls;
+}
+
 function resolveHeroBackgroundUrl(flat: Record<string, unknown>): string | null {
   const imageUrl = flat["hero.image_url"];
-  if (typeof imageUrl === "string" && imageUrl) return imageUrl;
+  if (typeof imageUrl === "string" && imageUrl) {
+    return optimizeHeroImageUrl(imageUrl);
+  }
 
   const slides = flat["hero.slides"];
   if (Array.isArray(slides) && slides.length) {
     const first = slides[0];
-    if (typeof first === "string" && first) return first;
+    if (typeof first === "string" && first) {
+      return optimizeHeroImageUrl(first);
+    }
   }
 
   return null;
+}
+
+function resolveHeroSlides(
+  flat: Record<string, unknown>,
+  html: string,
+  pageKey?: string
+): string[] | null {
+  const slides = flat["hero.slides"];
+  if (Array.isArray(slides) && slides.length) {
+    return slides
+      .filter((s): s is string => typeof s === "string" && Boolean(s))
+      .map(optimizeHeroImageUrl);
+  }
+
+  const imageUrl = flat["hero.image_url"];
+  if (typeof imageUrl === "string" && imageUrl) {
+    const existing =
+      extractSlideshowUrls(html).length > 0
+        ? extractSlideshowUrls(html)
+        : pageKey
+          ? DEFAULT_HERO_SLIDES[pageKey] ?? []
+          : [];
+    if (existing.length) {
+      const next = [...existing];
+      next[0] = optimizeHeroImageUrl(imageUrl);
+      return next;
+    }
+    return [optimizeHeroImageUrl(imageUrl)];
+  }
+
+  return null;
+}
+
+function hydrateHeroSlideshow(html: string, slides: string[]): string {
+  const slideHtml = slides
+    .map(
+      (url, index) =>
+        `<div class="slideshow-slide${index === 0 ? " is-active" : ""}" style="background-image:url('${escapeCssUrl(url)}')"></div>`
+    )
+    .join("");
+
+  const replaced = html.replace(
+    /(<div class="slideshow-track"[^>]*>)([\s\S]*?)(<\/div>)/,
+    `$1${slideHtml}$3`
+  );
+  return replaced;
 }
 
 function hydrateValuesGrid(
@@ -129,7 +196,8 @@ function hydrateValuesGrid(
  */
 export function hydrateLegacyHtml(
   html: string,
-  pageContent: CmsPageContent
+  pageContent: CmsPageContent,
+  pageKey?: string
 ): string {
   const flat = flattenPageContent(pageContent);
   let out = html;
@@ -150,10 +218,28 @@ export function hydrateLegacyHtml(
     out = replaceCmsText(out, "hero.title", heroTitle, "html");
   }
 
-  // Hero background (static single image on homepage)
+  // Hero background (static single image on homepage + company shop heroes)
   const heroBackground = resolveHeroBackgroundUrl(flat);
   if (heroBackground) {
     out = replaceCmsBg(out, "hero.image_url", heroBackground);
+  }
+
+  // Corporate slideshow heroes (about, companies, global, contact)
+  const heroSlides = resolveHeroSlides(flat, out, pageKey);
+  if (heroSlides?.length && out.includes("slideshow-track")) {
+    out = hydrateHeroSlideshow(out, heroSlides);
+  }
+
+  // Corporate slideshow hero text
+  for (const field of ["badge", "subtitle"] as const) {
+    const v = flat[`hero.${field}`];
+    if (typeof v === "string") {
+      out = replaceCmsText(out, `hero.${field}`, v, "text");
+    }
+  }
+  const heroSlideTitle = flat["hero.title"];
+  if (typeof heroSlideTitle === "string") {
+    out = replaceCmsText(out, "hero.title", heroSlideTitle, "text");
   }
 
   // CTA / link hrefs via data-cms-href="section.field"

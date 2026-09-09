@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import {
   requireCompanyAccess,
   canMutate,
 } from "@/lib/admin/require-company-access";
 import { getCompanyCapabilities } from "@/lib/admin/capabilities";
 import { getCmsScope } from "@/lib/cms/schemas";
+import { getHeroPage } from "@/lib/cms/hero-pages";
 import { CmsPageEditor } from "@/components/admin/CmsPageEditor";
 import { PageHeader } from "@/components/admin/PageHeader";
 
@@ -44,6 +46,17 @@ export default async function WebsiteContentPage({
         title="Website Content"
         description={`Edit ${company.name} public page content. Changes publish to ${caps.label}.`}
       />
+      {getHeroPage(companySlug, companySlug) ? (
+        <div className="sw-admin-hub-grid" style={{ marginBottom: "1rem" }}>
+          <Link
+            className="sw-admin-hub-card"
+            href={`/admin/companies/${companySlug}/website-content/hero`}
+          >
+            <strong>Hero Image</strong>
+            <span>Manage this page&apos;s hero/banner image →</span>
+          </Link>
+        </div>
+      ) : null}
       <CmsPageEditor
         companySlug={companySlug}
         pageKey={pageKey}

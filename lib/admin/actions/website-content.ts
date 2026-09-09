@@ -77,17 +77,20 @@ export async function upsertWebsiteSection(
   const pageKey = str(formData, "page_key") || companySlug;
   const sectionKey = str(formData, "section_key") || "hero";
   const sortOrder = Number(formData.get("sort_order") ?? 0);
-  const content = buildContentFromForm(formData);
+  const incoming = buildContentFromForm(formData);
 
   const supabase = await createClient();
 
   const { data: existing } = await supabase
     .from("website_content")
-    .select("id")
+    .select("id, content")
     .eq("company_id", company.id)
     .eq("page_key", pageKey)
     .eq("section_key", sectionKey)
     .maybeSingle();
+
+  const prior = (existing?.content ?? {}) as Record<string, unknown>;
+  const content = { ...prior, ...incoming };
 
   const payload = {
     content,

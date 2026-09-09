@@ -28,6 +28,12 @@ export default async function CorporateCmsHubPage() {
         title="Corporate Website Content"
         description="Manage the Swift Wave Group corporate website — home, about, companies, global, and contact."
       />
+      <div className="sw-admin-hub-grid" style={{ marginBottom: "1.5rem" }}>
+        <Link className="sw-admin-hub-card" href="/admin/website-content/hero">
+          <strong>Hero Images</strong>
+          <span>Manage hero/banner images for all corporate pages →</span>
+        </Link>
+      </div>
       <div className="sw-admin-hub-grid">
         {scope.pages.map((page) => (
           <Link

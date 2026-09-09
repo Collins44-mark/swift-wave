@@ -38,7 +38,7 @@ export async function LegacyPage({ slug, previewDraft = false }: LegacyPageProps
       previewDraft ? "preview" : "published"
     );
     if (Object.keys(pageContent).length) {
-      html = hydrateLegacyHtml(html, pageContent);
+      html = hydrateLegacyHtml(html, pageContent, ctx.pageKey);
     }
   }
 

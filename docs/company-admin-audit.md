@@ -310,4 +310,28 @@ Same as Travels (coming-soon workspace). **No menus/events ERP until live site e
 
 ---
 
+## Hero image CMS mapping (2026-09-10)
+
+Each public page with a hero has an independent `website_content` row: `section_key = hero`, scoped by `company_id` + `page_key`.
+
+| Public route | Admin hero editor | Hero type | CMS fields |
+|---|---|---|---|
+| `/` | Admin → Website Content → Hero → Homepage Hero | Static background | `hero.image_url`, `hero.image_public_id`, `hero.alt_text` |
+| `/about` | … → About Hero | Slideshow (3 slides; CMS manages primary) | + `hero.slides[]` |
+| `/companies` | … → Companies Hero | Slideshow | + `hero.slides[]` |
+| `/global` | … → Global Hero | Slideshow | + `hero.slides[]` |
+| `/contact` | … → Contact Hero | Slideshow | + `hero.slides[]` |
+| `/companies/scholarship` | Admin → Companies → Scholarship → Website Content → Hero | Shop hero bg | `hero.image_url` |
+| `/companies/freight` | … → Freight → Hero | Shop hero bg | `hero.image_url` |
+| `/companies/outfit` | … → Outfit → Hero | Shop hero bg | `hero.image_url` |
+| `/companies/medical` | … → Medical → Hero | Shop hero bg | `hero.image_url` |
+| `/companies/travels` | — | No hero (coming soon) | — |
+| `/companies/catering` | — | No hero (coming soon) | — |
+
+**Separate from corporate card images:** `companies.card_image_url` (Corporate Profile) ≠ page hero (`website_content.hero.image_url`).
+
+Upload flow: Admin → Change Hero Image → Cloudinary signed upload → Supabase `website_content` → server-side hydration on public page.
+
+---
+
 *End of audit.*
