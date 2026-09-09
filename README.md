@@ -24,5 +24,7 @@ Open [http://localhost:3000](http://localhost:3000).
 - Public UI markup lives in `content/` and is rendered 1:1 via App Router pages.
 - Original static HTML/CSS/JS is preserved under `_legacy/`.
 - Deploy on Vercel with Framework Preset **Next.js** (see `vercel.json`). Root Directory: `./`.
+- Set Production environment variables in Vercel (Project → Settings → Environment Variables):
+  `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and Cloudinary keys from `.env.example`.
 - Static assets are served from `public/assets`, `public/css`, and `public/js`.
 - Supabase is not integrated yet (see `.env.example` for later).
