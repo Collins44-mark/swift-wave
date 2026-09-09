@@ -167,6 +167,9 @@ export const CMS_SEED_ROWS: SeedRow[] = [
       heading: "Leadership",
       intro:
         "Experienced leaders guiding Swift Wave Group with vision, integrity, and a commitment to excellence.",
+      closing_heading: "Guided by Shared Principles",
+      closing_body:
+        "Our leadership team brings together decades of experience in logistics, education, hospitality, and healthcare. Together, they ensure every Swift Wave company operates with accountability, innovation, and a people-first mindset.",
       items: [
         {
           id: "ceo",
@@ -463,3 +466,17 @@ export const CMS_SEED_ROWS: SeedRow[] = [
     },
   },
 ];
+
+export function getSeedSectionContent(
+  companySlug: string,
+  pageKey: string,
+  sectionKey: string
+): Record<string, unknown> | null {
+  const row = CMS_SEED_ROWS.find(
+    (r) =>
+      r.companySlug === companySlug &&
+      r.pageKey === pageKey &&
+      r.sectionKey === sectionKey
+  );
+  return row?.content ?? null;
+}

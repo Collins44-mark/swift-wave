@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { CmsSectionEditor } from "@/components/admin/CmsSectionEditor";
+import { CmsStructuredSectionEditor } from "@/components/admin/CmsStructuredSectionEditor";
 import type { CmsPageDef } from "@/lib/cms/types";
 import type { ContentStatus, WebsiteContent } from "@/lib/admin/types-catalog";
 import type { MediaAsset } from "@/lib/admin/types-media";
@@ -98,20 +99,36 @@ export function CmsPageEditorClient({
       </nav>
 
       <div className="sw-admin-cms-main">
-        {visibleSections.map((section) => (
-          <CmsSectionEditor
-            key={section.key}
-            companySlug={companySlug}
-            pageKey={pageKey}
-            section={section}
-            record={sectionMap.get(section.key) ?? null}
-            mediaLibrary={mediaLibrary}
-            canUpload={canUpload}
-            previewPath={`${previewBase}?section=${section.key}`}
-            backHref={backHref}
-            onStatusChange={handleStatusChange}
-          />
-        ))}
+        {visibleSections.map((section) =>
+          section.structuredType ? (
+            <CmsStructuredSectionEditor
+              key={section.key}
+              companySlug={companySlug}
+              pageKey={pageKey}
+              section={section}
+              structuredType={section.structuredType}
+              record={sectionMap.get(section.key) ?? null}
+              mediaLibrary={mediaLibrary}
+              canUpload={canUpload}
+              previewPath={`${previewBase}?section=${section.key}`}
+              backHref={backHref}
+              onStatusChange={handleStatusChange}
+            />
+          ) : (
+            <CmsSectionEditor
+              key={section.key}
+              companySlug={companySlug}
+              pageKey={pageKey}
+              section={section}
+              record={sectionMap.get(section.key) ?? null}
+              mediaLibrary={mediaLibrary}
+              canUpload={canUpload}
+              previewPath={`${previewBase}?section=${section.key}`}
+              backHref={backHref}
+              onStatusChange={handleStatusChange}
+            />
+          )
+        )}
       </div>
     </div>
   );

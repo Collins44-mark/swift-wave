@@ -15,6 +15,8 @@ export type CmsFieldDef = {
   altKey?: string;
 };
 
+export type CmsStructuredSectionType = "stats" | "leadership" | "values";
+
 export type CmsSectionDef = {
   key: string;
   label: string;
@@ -22,6 +24,8 @@ export type CmsSectionDef = {
   fields: CmsFieldDef[];
   /** Repeatable card/list fields stored under content.items */
   repeatable?: boolean;
+  /** Use structured item editor (stats cards, leadership profiles, etc.) */
+  structuredType?: CmsStructuredSectionType;
 };
 
 export type CmsPageDef = {

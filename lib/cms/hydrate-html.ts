@@ -101,6 +101,69 @@ function resolveHeroBackgroundUrl(flat: Record<string, unknown>): string | null 
   return null;
 }
 
+function statTarget(value: unknown): string {
+  const digits = String(value ?? "").replace(/\D/g, "");
+  return digits || "0";
+}
+
+function hydrateStatsGrid(
+  html: string,
+  items: Array<Record<string, unknown>>
+): string {
+  const visible = items
+    .filter((i) => i.visible !== false)
+    .sort(
+      (a, b) => Number(a.sort_order ?? 0) - Number(b.sort_order ?? 0)
+    );
+
+  const cards = visible
+    .map((item) => {
+      const value = statTarget(item.value);
+      return `<div class="glass-white p-4 sm:p-5 text-center" data-cms-generated="true">
+              <div class="stat-counter text-2xl sm:text-3xl font-bold" data-target="${value}">0</div>
+              <p class="text-xs sm:text-sm text-muted mt-1">${escapeHtml(String(item.label ?? ""))}</p>
+            </div>`;
+    })
+    .join("");
+
+  return html.replace(
+    /(<div id="stats-section"[^>]*data-cms-list="stats\.items"[^>]*>)([\s\S]*?)(<\/div>)/,
+    `$1${cards}$3`
+  );
+}
+
+function hydrateLeadershipGrid(
+  html: string,
+  items: Array<Record<string, unknown>>
+): string {
+  const visible = items
+    .filter((i) => i.visible !== false)
+    .sort(
+      (a, b) => Number(a.sort_order ?? 0) - Number(b.sort_order ?? 0)
+    );
+
+  const cards = visible
+    .map((item) => {
+      const name = escapeHtml(String(item.name ?? ""));
+      const role = escapeHtml(String(item.role ?? ""));
+      const bio = escapeHtml(String(item.bio ?? ""));
+      const imageUrl = String(item.image_url ?? "");
+      const alt = role || name;
+      return `<div class="glass-white p-6 text-center" data-cms-generated="true">
+            <img src="${imageUrl.replace(/"/g, "%22")}" alt="${alt.replace(/"/g, "&quot;")}" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover mx-auto mb-4 ring-4 ring-[rgba(11,46,109,0.12)]" loading="lazy">
+            <h3 class="font-bold">${name}</h3>
+            <p class="text-sm mt-1" style="color:var(--royal)">${role}</p>
+            <p class="text-xs text-muted mt-3 leading-relaxed">${bio}</p>
+          </div>`;
+    })
+    .join("");
+
+  return html.replace(
+    /(<div class="grid grid-cols-1 sm:grid-cols-3[^"]*"[^>]*data-cms-list="leadership\.items"[^>]*>)([\s\S]*?)(<\/div>)/,
+    `$1${cards}$3`
+  );
+}
+
 function hydrateValuesGrid(
   html: string,
   items: Array<Record<string, unknown>>
@@ -255,6 +318,34 @@ export function hydrateLegacyHtml(
     if (typeof v === "string") {
       out = replaceCmsText(out, `story.${field}`, v, "text");
     }
+  }
+
+  // About stats
+  const statItems = flat["stats.items"];
+  if (Array.isArray(statItems)) {
+    out = hydrateStatsGrid(out, statItems as Array<Record<string, unknown>>);
+  }
+
+  // About leadership header + principles
+  for (const field of [
+    "eyebrow",
+    "heading",
+    "intro",
+    "closing_heading",
+    "closing_body",
+  ] as const) {
+    const v = flat[`leadership.${field}`];
+    if (typeof v === "string") {
+      out = replaceCmsText(out, `leadership.${field}`, v, "text");
+    }
+  }
+
+  const leaderItems = flat["leadership.items"];
+  if (Array.isArray(leaderItems)) {
+    out = hydrateLeadershipGrid(
+      out,
+      leaderItems as Array<Record<string, unknown>>
+    );
   }
 
   return out;

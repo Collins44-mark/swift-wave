@@ -95,21 +95,28 @@ export const CMS_SCOPES: Record<string, CmsScopeDef> = {
           {
             key: "stats",
             label: "Stats",
-            repeatable: true,
-            fields: [
-              { key: "value", label: "Value", type: "text" },
-              { key: "label", label: "Label", type: "text" },
-            ],
+            structuredType: "stats",
+            fields: [],
           },
           {
             key: "leadership",
             label: "Leadership",
+            structuredType: "leadership",
             fields: [
               { key: "eyebrow", label: "Eyebrow", type: "text" },
               { key: "heading", label: "Heading", type: "text" },
               { key: "intro", label: "Intro", type: "textarea" },
+              {
+                key: "closing_heading",
+                label: "Principles heading",
+                type: "text",
+              },
+              {
+                key: "closing_body",
+                label: "Principles text",
+                type: "textarea",
+              },
             ],
-            repeatable: true,
           },
           { key: "footer", label: "Footer", fields: FOOTER_FIELDS },
         ],

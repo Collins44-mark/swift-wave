@@ -77,7 +77,7 @@ export async function upsertWebsiteSection(
   const pageKey = str(formData, "page_key") || companySlug;
   const sectionKey = str(formData, "section_key") || "hero";
   const sortOrder = Number(formData.get("sort_order") ?? 0);
-  const incoming = buildContentFromForm(formData);
+  const rawJson = str(formData, "content_json");
 
   const supabase = await createClient();
 
@@ -89,8 +89,18 @@ export async function upsertWebsiteSection(
     .eq("section_key", sectionKey)
     .maybeSingle();
 
-  const prior = (existing?.content ?? {}) as Record<string, unknown>;
-  const content = { ...prior, ...incoming };
+  let content: Record<string, unknown>;
+  if (rawJson) {
+    try {
+      content = JSON.parse(rawJson) as Record<string, unknown>;
+    } catch {
+      return { ok: false, error: "Invalid content data." };
+    }
+  } else {
+    const incoming = buildContentFromForm(formData);
+    const prior = (existing?.content ?? {}) as Record<string, unknown>;
+    content = { ...prior, ...incoming };
+  }
 
   const payload = {
     content,
