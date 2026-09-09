@@ -101,16 +101,97 @@
   const contactForm = document.getElementById("contact-form");
   if (contactForm && contactForm.dataset.swBound !== "true") {
     contactForm.dataset.swBound = "true";
+    var contactSubmitting = false;
+
+    function isValidContact(value) {
+      var trimmed = String(value || "").trim();
+      if (trimmed.length < 3 || trimmed.length > 120) return false;
+      if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) return true;
+      var digits = trimmed.replace(/\D/g, "");
+      return digits.length >= 9 && digits.length <= 15;
+    }
+
     contactForm.addEventListener("submit", function (e) {
       e.preventDefault();
-      const success = document.getElementById("form-success");
-      if (success) {
-        success.classList.remove("is-hidden");
-        contactForm.reset();
-        setTimeout(function () {
-          success.classList.add("is-hidden");
-        }, 4000);
+      if (contactSubmitting) return;
+
+      var success = document.getElementById("form-success");
+      var error = document.getElementById("form-error");
+      var submitBtn = document.getElementById("contact-submit");
+      var name = (document.getElementById("cf-name").value || "").trim();
+      var contact = (document.getElementById("cf-contact").value || "").trim();
+      var subject = (document.getElementById("cf-subject").value || "general").trim();
+      var message = (document.getElementById("cf-msg").value || "").trim();
+
+      if (success) success.classList.add("is-hidden");
+      if (error) {
+        error.classList.add("is-hidden");
+        error.textContent = "";
       }
+
+      if (!name) {
+        if (error) {
+          error.textContent = "Please enter your full name.";
+          error.classList.remove("is-hidden");
+        }
+        return;
+      }
+      if (!isValidContact(contact)) {
+        if (error) {
+          error.textContent = "Please enter a valid email address or phone number.";
+          error.classList.remove("is-hidden");
+        }
+        return;
+      }
+      if (!message) {
+        if (error) {
+          error.textContent = "Please enter your message.";
+          error.classList.remove("is-hidden");
+        }
+        return;
+      }
+
+      contactSubmitting = true;
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Sending…";
+      }
+
+      fetch("/api/public/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: name,
+          contact: contact,
+          subject: subject,
+          message: message
+        })
+      })
+        .then(function (res) {
+          return res.json().then(function (data) {
+            return { ok: res.ok, data: data };
+          });
+        })
+        .then(function (result) {
+          if (!result.ok || !result.data.ok) {
+            throw new Error("failed");
+          }
+          contactForm.reset();
+          if (success) success.classList.remove("is-hidden");
+        })
+        .catch(function () {
+          if (error) {
+            error.textContent = "Something went wrong. Please try again.";
+            error.classList.remove("is-hidden");
+          }
+        })
+        .finally(function () {
+          contactSubmitting = false;
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Send Message";
+          }
+        });
     });
   }
 

@@ -7,6 +7,9 @@ export type OrderStatus =
   | "cancelled";
 export type InquiryStatus =
   | "new"
+  | "read"
+  | "replied"
+  | "resolved"
   | "contacted"
   | "in_progress"
   | "completed"

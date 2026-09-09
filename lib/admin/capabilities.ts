@@ -29,7 +29,12 @@ export type CompanyModuleDef = {
 export type CompanyCapabilityProfile = {
   slug: string;
   label: string;
-  model: "ecommerce" | "lead_form" | "booking_form" | "coming_soon";
+  model:
+    | "ecommerce"
+    | "lead_form"
+    | "booking_form"
+    | "corporate"
+    | "coming_soon";
   modules: CompanyModuleDef[];
 };
 
@@ -68,7 +73,22 @@ const COMING_SOON_MODULES: CompanyModuleDef[] = [
   ...SHARED_TAIL,
 ];
 
+const CORPORATE_MODULES: CompanyModuleDef[] = [
+  { key: "overview", label: "Overview", path: "", ready: true },
+  { key: "inquiries", label: "Contact Messages", path: "inquiries", ready: true },
+  { key: "website_content", label: "Website Content", path: "website-content", ready: true },
+  { key: "corporate_profile", label: "Corporate Profile", path: "corporate-profile", ready: true },
+  { key: "media", label: "Media", path: "media", ready: true },
+  { key: "settings", label: "Settings", path: "settings", ready: true },
+];
+
 export const COMPANY_CAPABILITIES: Record<string, CompanyCapabilityProfile> = {
+  corporate: {
+    slug: "corporate",
+    label: "Corporate",
+    model: "corporate",
+    modules: CORPORATE_MODULES,
+  },
   outfit: {
     slug: "outfit",
     label: "Outfit",

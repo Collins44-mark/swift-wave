@@ -8,6 +8,7 @@ const TOAST_MESSAGES: Record<string, string> = {
   product_updated: "Product updated",
   product_deleted: "Product deleted",
   order_status_updated: "Order status updated.",
+  inquiry_status_updated: "Status updated.",
 };
 
 export function AdminToast({

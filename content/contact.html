@@ -120,8 +120,8 @@
             <input id="cf-name" name="name" type="text" required placeholder="Your full name" class="form-input w-full px-5 py-3.5 rounded-xl outline-none">
           </div>
           <div>
-            <label for="cf-email" class="block text-sm font-medium mb-1.5">Email Address</label>
-            <input id="cf-email" name="email" type="email" required placeholder="you@example.com" class="form-input w-full px-5 py-3.5 rounded-xl outline-none">
+            <label for="cf-contact" class="block text-sm font-medium mb-1.5">Email or Phone Number</label>
+            <input id="cf-contact" name="contact" type="text" required placeholder="Email or phone number" inputmode="text" autocomplete="email tel" class="form-input w-full px-5 py-3.5 rounded-xl outline-none">
           </div>
           <div>
             <label for="cf-subject" class="block text-sm font-medium mb-1.5">Subject</label>
@@ -137,8 +137,12 @@
             <label for="cf-msg" class="block text-sm font-medium mb-1.5">Message</label>
             <textarea id="cf-msg" name="message" rows="4" required placeholder="How can we help you?" class="form-input w-full px-5 py-3.5 rounded-xl outline-none resize-none"></textarea>
           </div>
-          <button type="submit" class="w-full py-4 btn-primary">Send Message</button>
-          <p id="form-success" class="text-green-600 text-sm font-medium is-hidden text-center">Message sent successfully! We will get back to you soon.</p>
+          <button type="submit" id="contact-submit" class="w-full py-4 btn-primary">Send Message</button>
+          <p id="form-error" class="text-red-600 text-sm font-medium is-hidden text-center" role="alert"></p>
+          <div id="form-success" class="is-hidden text-center" role="status">
+            <p class="text-green-600 text-sm font-medium">Message sent successfully.</p>
+            <p class="text-sm text-muted mt-1">We'll get back to you shortly.</p>
+          </div>
         </form>
       </div>
     </div>

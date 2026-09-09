@@ -2979,3 +2979,43 @@ a.sw-admin-hub-card:hover {
   }
 }
 
+.sw-admin-inquiry-message {
+  margin: 0;
+  white-space: pre-wrap;
+  line-height: 1.6;
+  color: var(--admin-heading);
+}
+
+.sw-admin-inquiry-status.is-inquiry-new {
+  color: #1d4ed8;
+  background: rgba(29, 78, 216, 0.08);
+  border-color: rgba(29, 78, 216, 0.16);
+}
+
+.sw-admin-inquiry-status.is-inquiry-read,
+.sw-admin-inquiry-status.is-inquiry-contacted {
+  color: #0f766e;
+  background: rgba(15, 118, 110, 0.08);
+  border-color: rgba(15, 118, 110, 0.16);
+}
+
+.sw-admin-inquiry-status.is-inquiry-replied,
+.sw-admin-inquiry-status.is-inquiry-in-progress {
+  color: #7c5c10;
+  background: rgba(198, 156, 60, 0.12);
+  border-color: rgba(198, 156, 60, 0.28);
+}
+
+.sw-admin-inquiry-status.is-inquiry-resolved,
+.sw-admin-inquiry-status.is-inquiry-completed {
+  color: #166534;
+  background: rgba(22, 101, 52, 0.08);
+  border-color: rgba(22, 101, 52, 0.16);
+}
+
+.sw-admin-inquiry-status.is-inquiry-cancelled {
+  color: #9a3412;
+  background: rgba(154, 52, 18, 0.08);
+  border-color: rgba(154, 52, 18, 0.16);
+}
+

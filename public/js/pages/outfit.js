@@ -7,7 +7,9 @@
 
       let WHATSAPP_NUMBER = null;
       const COMPANY_SLUG = "outfit";
-      let cart = [];
+      const cartStore = window.SwiftWaveCart.createCartStore(COMPANY_SLUG);
+      let cart = cartStore.load();
+      let checkoutProcessing = false;
       let mainFilter = "All";
       let subFilter = "All";
 
@@ -22,6 +24,23 @@
       const crumbSep = document.getElementById("crumb-product-sep");
       const cartDrawer = document.getElementById("cart-drawer");
       const checkoutModal = document.getElementById("checkout-modal");
+      const checkoutForm = document.getElementById("checkout-form");
+      const checkoutSubmitBtn = checkoutForm
+        ? checkoutForm.querySelector('button[type="submit"]')
+        : null;
+      const checkoutSubmitDefaultHtml = checkoutSubmitBtn
+        ? checkoutSubmitBtn.innerHTML
+        : "";
+
+      function persistCart() {
+        cartStore.save(cart);
+      }
+
+      function clearCartState() {
+        cart = [];
+        persistCart();
+        renderCart();
+      }
 
       function parsePrice(price) {
         return parseInt(String(price).replace(/[^\d]/g, ""), 10) || 0;
@@ -83,6 +102,7 @@
           });
         });
         updateCartBadge();
+        persistCart();
       }
 
       function addToCart(product) {
@@ -310,8 +330,10 @@
       document.getElementById("checkout-close").addEventListener("click", closeCheckout);
       document.getElementById("checkout-backdrop").addEventListener("click", closeCheckout);
 
-      document.getElementById("checkout-form").addEventListener("submit", function (e) {
+      checkoutForm.addEventListener("submit", function (e) {
         e.preventDefault();
+        if (checkoutProcessing) return;
+
         const err = document.getElementById("checkout-error");
         err.hidden = true;
         const name = (document.getElementById("checkout-name").value || "").trim();
@@ -363,19 +385,58 @@
         };
 
         var wa = window.SwiftWaveWhatsApp;
-        var url = wa.buildWhatsAppUrl(WHATSAPP_NUMBER, lines.join("\n"));
-        if (!url) {
+        var message = lines.join("\n");
+        if (!wa.buildWhatsAppUrl(WHATSAPP_NUMBER, message)) {
           err.hidden = false;
           err.textContent = wa.UNAVAILABLE_MESSAGE;
           return;
         }
 
-        wa.openWhatsAppUrl(url);
+        checkoutProcessing = true;
+        if (checkoutSubmitBtn) {
+          checkoutSubmitBtn.disabled = true;
+          checkoutSubmitBtn.textContent = "Preparing your order...";
+        }
+
         fetch("/api/public/order", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(orderPayload)
-        }).catch(function () {});
+        })
+          .then(function (res) {
+            return res.json().then(function (data) {
+              return { ok: res.ok, data: data };
+            });
+          })
+          .then(function (result) {
+            if (!result.ok || !result.data.ok) {
+              throw new Error("order_failed");
+            }
+            var url = wa.buildWhatsAppUrl(WHATSAPP_NUMBER, message);
+            if (!url) {
+              throw new Error("whatsapp_failed");
+            }
+            if (!wa.openWhatsAppUrl(url)) {
+              throw new Error("whatsapp_failed");
+            }
+            clearCartState();
+            closeCheckout();
+          })
+          .catch(function (failure) {
+            err.hidden = false;
+            err.textContent =
+              failure && failure.message === "whatsapp_failed"
+                ? "Couldn't open WhatsApp. Your cart is still saved."
+                : "Couldn't place your order. Please try again.";
+          })
+          .finally(function () {
+            checkoutProcessing = false;
+            if (checkoutSubmitBtn) {
+              checkoutSubmitBtn.disabled = false;
+              checkoutSubmitBtn.innerHTML = checkoutSubmitDefaultHtml;
+              if (typeof lucide !== "undefined") lucide.createIcons();
+            }
+          });
       });
 
       function bootUI() {

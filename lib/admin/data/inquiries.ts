@@ -44,6 +44,22 @@ export async function countInquiriesByStatus(
   return counts;
 }
 
+export async function getInquiryById(
+  companyId: string,
+  inquiryId: string
+): Promise<Inquiry | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("inquiries")
+    .select(INQUIRY_SELECT)
+    .eq("company_id", companyId)
+    .eq("id", inquiryId)
+    .maybeSingle();
+
+  if (error || !data) return null;
+  return data as Inquiry;
+}
+
 export async function countInquiries(companyId: string): Promise<number> {
   const supabase = await createClient();
   const { count, error } = await supabase
