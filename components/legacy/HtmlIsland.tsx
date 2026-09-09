@@ -9,6 +9,7 @@ declare global {
   interface Window {
     lucide?: { createIcons: () => void };
     tailwind?: { refresh?: () => void };
+    SwiftWaveGlobe?: { mount: () => void; remount: () => void };
   }
 }
 
@@ -114,6 +115,7 @@ export function HtmlIsland({
 
         window.lucide?.createIcons();
         window.tailwind?.refresh?.();
+        window.SwiftWaveGlobe?.mount?.();
       } catch (error) {
         console.error(error);
       }
