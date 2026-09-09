@@ -1931,6 +1931,88 @@ a:hover .icon,
   padding: 0;
 }
 
+/* Outfit shop — full-image product card with bottom content overlay */
+.co-product.co-product--cover {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 5;
+  height: auto;
+  background: transparent;
+  border: none;
+  box-shadow: 0 10px 28px rgba(11, 46, 109, 0.14);
+}
+
+.co-product.co-product--cover.glass-card {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
+}
+
+.co-product.co-product--cover .co-product-media {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  z-index: 0;
+  background: var(--bg-premium);
+}
+
+.co-product.co-product--cover .co-product-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.co-product.co-product--cover .co-product-tag {
+  z-index: 3;
+}
+
+.co-product.co-product--cover .co-product-body {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  flex: none;
+  padding: 2.75rem 0.7rem 0.8rem;
+  gap: 0.2rem;
+  background: none;
+}
+
+.co-product.co-product--cover .co-product-body::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: -55%;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.18) 42%,
+    rgba(0, 0, 0, 0.62) 100%
+  );
+  pointer-events: none;
+  z-index: -1;
+}
+
+.co-product.co-product--cover .co-product-title,
+.co-product.co-product--cover .co-product-price {
+  color: #fff;
+  position: relative;
+}
+
+.co-product.co-product--cover .co-product-meta {
+  color: rgba(255, 255, 255, 0.82);
+  position: relative;
+}
+
+.co-product.co-product--cover .co-product-row {
+  margin-top: 0.35rem;
+  padding-top: 0;
+  position: relative;
+}
+
 .co-product:focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 2px;
@@ -2097,8 +2179,20 @@ a:hover .icon,
     height: 10.5rem;
   }
 
+  .co-product.co-product--cover {
+    border-radius: 20px;
+  }
+
+  .co-product.co-product--cover .co-product-media {
+    height: 100%;
+  }
+
   .co-product-body {
     padding: 1rem 1.05rem 1.1rem;
+  }
+
+  .co-product.co-product--cover .co-product-body {
+    padding: 3rem 1.05rem 1.1rem;
   }
 
   .co-product-title {
@@ -2133,6 +2227,10 @@ a:hover .icon,
 
   .co-product-media {
     height: 11.5rem;
+  }
+
+  .co-product.co-product--cover .co-product-media {
+    height: 100%;
   }
 
   .co-sister-grid {

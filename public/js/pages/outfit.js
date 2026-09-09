@@ -369,7 +369,7 @@
         opts = opts || {};
         const el = document.createElement(opts.asButton ? "button" : "article");
         el.type = opts.asButton ? "button" : undefined;
-        el.className = "co-product glass-card fade-up visible";
+        el.className = "co-product co-product--cover glass-card fade-up visible";
         el.dataset.id = p.id;
         el.innerHTML =
           '<div class="co-product-media">' +
