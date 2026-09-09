@@ -10,6 +10,8 @@ import {
   getPageContent,
 } from "@/lib/cms/get-page-content";
 import { hydrateLegacyHtml } from "@/lib/cms/hydrate-html";
+import { getCorporateCompanyCards } from "@/lib/public/corporate-companies";
+import { injectCorporateCompanyCards } from "@/lib/public/render-corporate-cards-html";
 
 type LegacyPageProps = {
   slug: string;
@@ -20,6 +22,11 @@ type LegacyPageProps = {
 export async function LegacyPage({ slug, previewDraft = false }: LegacyPageProps) {
   const page = getLegacyPage(slug);
   let html = readLegacyHtml(slug);
+
+  if (slug === "companies") {
+    const cards = await getCorporateCompanyCards();
+    html = injectCorporateCompanyCards(html, cards);
+  }
 
   const ctx = resolveCmsContext(slug);
   const companyId = await getCompanyIdBySlug(ctx.companySlug);

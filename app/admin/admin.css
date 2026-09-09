@@ -1488,6 +1488,20 @@
   justify-items: start;
 }
 
+.sw-admin-media-preview {
+  margin-top: 0.75rem;
+  max-width: 280px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.sw-admin-media-preview img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 .sw-admin-upload-status {
   margin: 0;
   font-size: 0.82rem;

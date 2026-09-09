@@ -147,6 +147,94 @@ export async function updateCompanyProfile(
   revalidatePath(`/admin/companies/${companySlug}`);
   revalidatePath("/admin/companies");
   revalidatePath("/admin/dashboard");
+  revalidatePath("/companies");
+  return { ok: true };
+}
+
+const CORPORATE_CARD_ICONS = new Set([
+  "graduation-cap",
+  "truck",
+  "shirt",
+  "heart-pulse",
+  "plane",
+  "utensils",
+  "building-2",
+  "globe",
+  "briefcase",
+]);
+
+export async function updateCorporateProfile(
+  companySlug: string,
+  formData: FormData
+): Promise<ActionResult> {
+  const { admin, company } = await requireCompanyAccess(
+    companySlug,
+    "corporate_profile"
+  );
+  if (!canMutate(admin)) {
+    return {
+      ok: false,
+      error: "Staff can view the corporate profile but cannot edit it.",
+    };
+  }
+
+  const name = str(formData, "name");
+  const card_title_short = str(formData, "card_title_short") || null;
+  const description = str(formData, "description") || null;
+  const card_image_url = str(formData, "card_image_url") || null;
+  const card_image_public_id = str(formData, "card_image_public_id") || null;
+  const card_iconRaw = str(formData, "card_icon") || null;
+  const card_icon =
+    card_iconRaw && CORPORATE_CARD_ICONS.has(card_iconRaw) ? card_iconRaw : null;
+  const card_route = str(formData, "card_route") || null;
+  const orderRaw = str(formData, "corporate_display_order");
+  const corporate_display_order = orderRaw ? Number(orderRaw) : 0;
+  const corporate_card_visible =
+    formData.get("corporate_card_visible") === "on" ||
+    formData.get("corporate_card_visible") === "true";
+  const card_coming_soon =
+    formData.get("card_coming_soon") === "on" ||
+    formData.get("card_coming_soon") === "true";
+
+  if (!name) {
+    return { ok: false, error: "Company name is required." };
+  }
+  if (
+    orderRaw &&
+    (!Number.isFinite(corporate_display_order) || corporate_display_order < 0)
+  ) {
+    return { ok: false, error: "Display order must be a non-negative number." };
+  }
+
+  const patch: Record<string, unknown> = {
+    card_title_short,
+    description,
+    card_image_url,
+    card_image_public_id,
+    card_icon,
+    card_route,
+    corporate_display_order: Math.floor(corporate_display_order),
+    corporate_card_visible,
+    card_coming_soon,
+  };
+
+  if (admin.profile.role === "super_admin") {
+    patch.name = name;
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("companies")
+    .update(patch)
+    .eq("id", company.id);
+
+  if (error) {
+    return { ok: false, error: error.message || "Failed to update corporate profile." };
+  }
+
+  revalidatePath(`/admin/companies/${companySlug}/corporate-profile`);
+  revalidatePath(`/admin/companies/${companySlug}`);
+  revalidatePath("/companies");
   return { ok: true };
 }
 
