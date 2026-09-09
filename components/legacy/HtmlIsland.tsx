@@ -8,6 +8,7 @@ const LUCIDE_SRC = "https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js";
 declare global {
   interface Window {
     lucide?: { createIcons: () => void };
+    tailwind?: { refresh?: () => void };
   }
 }
 
@@ -112,6 +113,7 @@ export function HtmlIsland({
         }
 
         window.lucide?.createIcons();
+        window.tailwind?.refresh?.();
       } catch (error) {
         console.error(error);
       }
@@ -140,6 +142,7 @@ export function HtmlIsland({
   return (
     <div
       ref={ref}
+      className="legacy-site-root"
       suppressHydrationWarning
       dangerouslySetInnerHTML={{ __html: html }}
     />

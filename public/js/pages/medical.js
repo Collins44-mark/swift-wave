@@ -236,8 +236,8 @@
       function showCatalog() {
         catalogView.hidden = false;
         detailView.hidden = true;
-        crumbProduct.classList.add("hidden");
-        crumbSep.classList.add("hidden");
+        crumbProduct.classList.add("co-bc-hidden");
+        crumbSep.classList.add("co-bc-hidden");
         document.title = "Swift Wave Medical — Swift Wave Group";
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
@@ -281,8 +281,8 @@
         };
 
         crumbProduct.textContent = product.title;
-        crumbProduct.classList.remove("hidden");
-        crumbSep.classList.remove("hidden");
+        crumbProduct.classList.remove("co-bc-hidden");
+        crumbSep.classList.remove("co-bc-hidden");
         document.title = product.title + " — Swift Wave Medical";
 
         relatedGrid.innerHTML = "";

@@ -105,10 +105,10 @@
       e.preventDefault();
       const success = document.getElementById("form-success");
       if (success) {
-        success.classList.remove("hidden");
+        success.classList.remove("is-hidden");
         contactForm.reset();
         setTimeout(function () {
-          success.classList.add("hidden");
+          success.classList.add("is-hidden");
         }, 4000);
       }
     });
