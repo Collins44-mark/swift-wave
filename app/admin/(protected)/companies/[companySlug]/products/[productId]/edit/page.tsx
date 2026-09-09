@@ -40,7 +40,7 @@ export default async function EditProductPage({
     "use server";
     const result = await updateProduct(companySlug, productId, formData);
     if (!result.ok) return { error: result.error };
-    redirect(`/admin/companies/${companySlug}/products`);
+    redirect(`/admin/companies/${companySlug}/products?toast=product_updated`);
   }
 
   return (

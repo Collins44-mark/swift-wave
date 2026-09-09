@@ -2,247 +2,8 @@
 (function(){
 
     (function () {
-      let CATEGORIES = {
-        All: [],
-        Men: ["Shirts", "Trousers", "Outerwear", "Knitwear"],
-        Women: ["Dresses", "Tops", "Bottoms", "Sets"],
-        Footwear: ["Sneakers", "Formal", "Sandals", "Boots"],
-        Accessories: ["Bags", "Belts", "Hats", "Scarves"]
-      };
-
-      let PRODUCTS = [
-        {
-          id: "linen-shirt",
-          title: "Classic Linen Shirt",
-          category: "Men",
-          sub: "Shirts",
-          price: "TZS 85,000",
-          rating: "4.6 · 94 ratings",
-          image: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=1000&q=80",
-          desc: "Breathable linen shirt with a clean collar and relaxed fit. Ideal for warm climates and smart-casual wear.",
-          bullets: ["100% linen blend", "Sizes S–XXL", "Machine wash cold", "Colour: Sand"]
-        },
-        {
-          id: "oxford-shirt",
-          title: "Oxford Button-Down",
-          category: "Men",
-          sub: "Shirts",
-          price: "TZS 72,000",
-          rating: "4.4 · 61 ratings",
-          image: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=1000&q=80",
-          desc: "Crisp oxford cotton shirt for office and evening wear. Structured yet comfortable through the day.",
-          bullets: ["Oxford cotton", "Slim & regular fits", "Easy-iron finish", "Colour: Sky blue"]
-        },
-        {
-          id: "chino-trousers",
-          title: "Slim Chino Trousers",
-          category: "Men",
-          sub: "Trousers",
-          price: "TZS 95,000",
-          rating: "4.5 · 77 ratings",
-          image: "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&w=1000&q=80",
-          desc: "Tapered chinos with stretch for all-day comfort. Pair with sneakers or formal shoes.",
-          bullets: ["Stretch twill", "Sizes 28–40", "Side & back pockets", "Colour: Olive"]
-        },
-        {
-          id: "tailored-blazer",
-          title: "Tailored Blazer",
-          category: "Men",
-          sub: "Outerwear",
-          price: "TZS 220,000",
-          rating: "4.7 · 42 ratings",
-          image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1000&q=80",
-          desc: "Lightweight structured blazer for meetings and events. Soft shoulder with a modern cut.",
-          bullets: ["Half-canvas construction", "Sizes 46–56 EU", "Unlined summer option", "Colour: Navy"]
-        },
-        {
-          id: "merino-crew",
-          title: "Merino Crew Knit",
-          category: "Men",
-          sub: "Knitwear",
-          price: "TZS 110,000",
-          rating: "4.3 · 38 ratings",
-          image: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=1000&q=80",
-          desc: "Fine-gauge merino crewneck that layers cleanly under jackets or stands alone.",
-          bullets: ["Merino wool", "Sizes S–XL", "Anti-itch finish", "Colour: Charcoal"]
-        },
-        {
-          id: "ankara-dress",
-          title: "Ankara Wrap Dress",
-          category: "Women",
-          sub: "Dresses",
-          price: "TZS 145,000",
-          rating: "4.8 · 112 ratings",
-          image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=80",
-          desc: "Statement wrap dress in bold print. Flattering silhouette for day events and evenings.",
-          bullets: ["Ankara print cotton", "Sizes XS–XL", "Adjustable wrap", "Lined bodice"]
-        },
-        {
-          id: "midi-dress",
-          title: "Satin Midi Dress",
-          category: "Women",
-          sub: "Dresses",
-          price: "TZS 168,000",
-          rating: "4.5 · 56 ratings",
-          image: "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=1000&q=80",
-          desc: "Fluid satin midi with a soft drape. Elevated piece for dinners and celebrations.",
-          bullets: ["Satin finish", "Sizes XS–L", "Side zip", "Colour: Emerald"]
-        },
-        {
-          id: "silk-blouse",
-          title: "Silk Blouse",
-          category: "Women",
-          sub: "Tops",
-          price: "TZS 95,000",
-          rating: "4.6 · 89 ratings",
-          image: "https://images.unsplash.com/photo-1564257631407-4deb1f99d992?auto=format&fit=crop&w=1000&q=80",
-          desc: "Soft silk-feel blouse with a refined neckline. Works from desk to dinner.",
-          bullets: ["Silk-feel fabric", "Sizes XS–XL", "Hidden buttons", "Colour: Ivory"]
-        },
-        {
-          id: "wide-trousers",
-          title: "Wide-Leg Trousers",
-          category: "Women",
-          sub: "Bottoms",
-          price: "TZS 98,000",
-          rating: "4.4 · 47 ratings",
-          image: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=1000&q=80",
-          desc: "High-rise wide-leg trousers with clean lines. Pair with fitted tops or blouses.",
-          bullets: ["Crepe fabric", "Sizes 24–34", "Side pockets", "Colour: Black"]
-        },
-        {
-          id: "coord-set",
-          title: "Linen Co-ord Set",
-          category: "Women",
-          sub: "Sets",
-          price: "TZS 175,000",
-          rating: "4.7 · 63 ratings",
-          image: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=1000&q=80",
-          desc: "Matching linen top and trousers set. Wear together or style as separates.",
-          bullets: ["2-piece set", "Sizes XS–L", "Breathable linen", "Colour: Clay"]
-        },
-        {
-          id: "court-sneakers",
-          title: "Court Sneakers",
-          category: "Footwear",
-          sub: "Sneakers",
-          price: "TZS 125,000",
-          rating: "4.5 · 201 ratings",
-          image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1000&q=80",
-          desc: "Everyday court sneakers with cushioned sole and durable upper. Built for city miles.",
-          bullets: ["Rubber outsole", "Sizes 36–45", "Breathable lining", "Colour: White / Red"]
-        },
-        {
-          id: "runner-sneakers",
-          title: "Urban Runner",
-          category: "Footwear",
-          sub: "Sneakers",
-          price: "TZS 140,000",
-          rating: "4.3 · 88 ratings",
-          image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&w=1000&q=80",
-          desc: "Lightweight runners with mesh panels for airflow. Casual and travel-ready.",
-          bullets: ["Mesh upper", "Sizes 36–45", "Cushion midsole", "Colour: Grey"]
-        },
-        {
-          id: "oxford-shoes",
-          title: "Leather Oxfords",
-          category: "Footwear",
-          sub: "Formal",
-          price: "TZS 210,000",
-          rating: "4.6 · 54 ratings",
-          image: "https://images.unsplash.com/photo-1614252369475-531eba835eb1?auto=format&fit=crop&w=1000&q=80",
-          desc: "Polished leather oxfords for formal occasions and office wear.",
-          bullets: ["Genuine leather", "Sizes 39–46", "Leather sole option", "Colour: Brown"]
-        },
-        {
-          id: "loafer",
-          title: "Penny Loafers",
-          category: "Footwear",
-          sub: "Formal",
-          price: "TZS 185,000",
-          rating: "4.4 · 39 ratings",
-          image: "https://images.unsplash.com/photo-1533867617858-e7b97e060509?auto=format&fit=crop&w=1000&q=80",
-          desc: "Classic penny loafers with a soft footbed. Smart without a lace-up.",
-          bullets: ["Leather upper", "Sizes 39–45", "Cushion insole", "Colour: Black"]
-        },
-        {
-          id: "slide-sandals",
-          title: "Leather Slide Sandals",
-          category: "Footwear",
-          sub: "Sandals",
-          price: "TZS 78,000",
-          rating: "4.2 · 71 ratings",
-          image: "https://images.unsplash.com/photo-1603487742131-4160ec999306?auto=format&fit=crop&w=1000&q=80",
-          desc: "Minimal leather slides for warm days. Easy on, easy off.",
-          bullets: ["Leather strap", "Sizes 36–44", "Rubber sole", "Colour: Tan"]
-        },
-        {
-          id: "chelsea-boots",
-          title: "Chelsea Boots",
-          category: "Footwear",
-          sub: "Boots",
-          price: "TZS 245,000",
-          rating: "4.7 · 48 ratings",
-          image: "https://images.unsplash.com/photo-1638247025967-b4e38f787b76?auto=format&fit=crop&w=1000&q=80",
-          desc: "Sleek chelsea boots with elastic side panels. Versatile with jeans or trousers.",
-          bullets: ["Leather finish", "Sizes 39–46", "Pull tab", "Colour: Black"]
-        },
-        {
-          id: "canvas-tote",
-          title: "Canvas Tote",
-          category: "Accessories",
-          sub: "Bags",
-          price: "TZS 38,000",
-          rating: "4.5 · 133 ratings",
-          image: "https://images.unsplash.com/photo-1590874103328-eac38a67437a?auto=format&fit=crop&w=1000&q=80",
-          desc: "Sturdy canvas tote for daily carry. Spacious enough for laptop and essentials.",
-          bullets: ["Heavy canvas", "Inner pocket", "Reinforced handles", "Colour: Natural"]
-        },
-        {
-          id: "crossbody",
-          title: "Crossbody Bag",
-          category: "Accessories",
-          sub: "Bags",
-          price: "TZS 92,000",
-          rating: "4.4 · 67 ratings",
-          image: "https://images.unsplash.com/photo-1548036328-c9fa89d128ac?auto=format&fit=crop&w=1000&q=80",
-          desc: "Compact crossbody with adjustable strap. Hands-free for city days.",
-          bullets: ["Vegan leather", "Zip close", "Adjustable strap", "Colour: Cognac"]
-        },
-        {
-          id: "leather-belt",
-          title: "Leather Belt",
-          category: "Accessories",
-          sub: "Belts",
-          price: "TZS 45,000",
-          rating: "4.6 · 90 ratings",
-          image: "https://images.unsplash.com/photo-1624222247344-550fb60583fd?auto=format&fit=crop&w=1000&q=80",
-          desc: "Full-grain leather belt with brushed buckle. Essential finishing piece.",
-          bullets: ["Full-grain leather", "Sizes 80–110 cm", "Reversible option", "Colour: Black / Brown"]
-        },
-        {
-          id: "cap",
-          title: "Structured Cap",
-          category: "Accessories",
-          sub: "Hats",
-          price: "TZS 32,000",
-          rating: "4.3 · 55 ratings",
-          image: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=1000&q=80",
-          desc: "Clean structured cap with adjustable strap. Everyday sun cover.",
-          bullets: ["Cotton twill", "One size", "Adjustable", "Colour: Navy"]
-        },
-        {
-          id: "scarf",
-          title: "Lightweight Scarf",
-          category: "Accessories",
-          sub: "Scarves",
-          price: "TZS 42,000",
-          rating: "4.5 · 41 ratings",
-          image: "https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?auto=format&fit=crop&w=1000&q=80",
-          desc: "Soft lightweight scarf for layering and travel. Packs flat in any bag.",
-          bullets: ["Viscose blend", "180 × 70 cm", "Fringe edge", "Print assortment"]
-        }
-      ];
+      let CATEGORIES = { All: [] };
+      let PRODUCTS = [];
 
       let WHATSAPP_NUMBER = null;
       const COMPANY_SLUG = "outfit";
@@ -329,9 +90,10 @@
         if (existing) existing.qty += 1;
         else cart.push({
           id: product.id,
+          dbId: product.dbId || null,
           title: product.title,
           price: product.price,
-          priceNum: parsePrice(product.price),
+          priceNum: product.priceNum != null ? product.priceNum : parsePrice(product.price),
           image: product.image,
           qty: 1
         });
@@ -592,6 +354,7 @@
           currency: "TZS",
           items: cart.map(function (item) {
             return {
+              product_id: item.dbId || null,
               product_name: item.title,
               quantity: item.qty,
               unit_price: item.priceNum || parsePrice(item.price)
@@ -641,10 +404,12 @@
               data.company.whatsapp_number
             );
           }
-          if (data && Array.isArray(data.products) && data.products.length > 0) {
-            PRODUCTS = data.products;
+          if (data) {
             if (data.categories && typeof data.categories === "object") {
               CATEGORIES = data.categories;
+            }
+            if (Array.isArray(data.products)) {
+              PRODUCTS = data.products;
             }
           }
         })

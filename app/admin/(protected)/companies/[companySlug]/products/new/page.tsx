@@ -36,7 +36,7 @@ export default async function NewProductPage({
     "use server";
     const result = await createProduct(companySlug, formData);
     if (!result.ok) return { error: result.error };
-    redirect(`/admin/companies/${companySlug}/products`);
+    redirect(`/admin/companies/${companySlug}/products?toast=product_created`);
   }
 
   return (

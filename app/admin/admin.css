@@ -1918,6 +1918,41 @@ a.sw-admin-hub-card:hover {
   font-weight: 600;
 }
 
+.sw-admin-toast {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 1200;
+  max-width: min(22rem, calc(100vw - 2rem));
+  padding: 0.65rem 1rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(11, 46, 109, 0.1);
+  box-shadow: 0 12px 32px rgba(11, 46, 109, 0.14);
+  color: var(--admin-heading);
+  font-size: 0.875rem;
+  font-weight: 600;
+  animation: sw-admin-toast-in 0.22s ease;
+}
+
+.sw-admin-toast.is-error {
+  border-color: rgba(185, 28, 28, 0.18);
+  color: #991b1b;
+}
+
+@keyframes sw-admin-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (max-width: 720px) {
   .sw-admin-hub-grid {
     grid-template-columns: 1fr;

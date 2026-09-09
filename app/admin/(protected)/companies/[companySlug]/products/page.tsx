@@ -3,7 +3,8 @@ import Link from "next/link";
 import { requireCompanyAccess } from "@/lib/admin/require-company-access";
 import { listProducts } from "@/lib/admin/data/products";
 import { listCategories } from "@/lib/admin/data/categories";
-import { DeleteProductButton } from "@/components/admin/DeleteButtons";
+import { ProductDeleteButton } from "@/components/admin/ProductDeleteButton";
+import { ProductsPageToasts } from "@/components/admin/ProductsPageClient";
 import type { Product } from "@/lib/admin/types-catalog";
 
 export const metadata: Metadata = {
@@ -38,7 +39,9 @@ export default async function ProductsPage({
   const categoryName = new Map(categories.map((c) => [c.id, c.name]));
 
   return (
-    <section className="sw-admin-panel">
+    <>
+      <ProductsPageToasts />
+      <section className="sw-admin-panel">
       <div className="sw-admin-toolbar">
         <div>
           <h2 style={{ margin: 0 }}>Products</h2>
@@ -82,7 +85,16 @@ export default async function ProductsPage({
 
       {products.length === 0 ? (
         <div className="sw-admin-empty" style={{ marginTop: "1rem" }}>
-          No products yet. Add your first product to populate the storefront.
+          <p style={{ margin: "0 0 0.35rem", fontWeight: 600 }}>No products yet.</p>
+          <p style={{ margin: "0 0 1rem", color: "var(--admin-muted)" }}>
+            Add your first product to start building the Outfit catalog.
+          </p>
+          <Link
+            className="sw-admin-btn"
+            href={`/admin/companies/${companySlug}/products/new`}
+          >
+            + Add product
+          </Link>
         </div>
       ) : (
         <div className="sw-admin-table-wrap" style={{ marginTop: "1rem" }}>
@@ -122,7 +134,7 @@ export default async function ProductsPage({
                       >
                         Edit
                       </Link>
-                      <DeleteProductButton
+                      <ProductDeleteButton
                         companySlug={companySlug}
                         productId={p.id}
                         productName={p.name}
@@ -136,5 +148,6 @@ export default async function ProductsPage({
         </div>
       )}
     </section>
+    </>
   );
 }

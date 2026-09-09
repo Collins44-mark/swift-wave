@@ -3,8 +3,20 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { requireCompanyAccess, canMutate } from "@/lib/admin/require-company-access";
+import { countOrderItemsForProduct } from "@/lib/admin/data/products";
 import { slugify } from "@/lib/admin/slugify";
 import type { ActionResult, ProductStatus } from "@/lib/admin/types-catalog";
+
+function friendlyProductError(
+  error: { code?: string; message?: string } | null,
+  fallback: string
+): string {
+  if (!error) return fallback;
+  if (error.code === "23505") {
+    return "A product with this URL slug already exists. Choose a different slug.";
+  }
+  return fallback;
+}
 
 function str(formData: FormData, key: string): string {
   return String(formData.get(key) ?? "").trim();
@@ -65,11 +77,15 @@ export async function createProduct(
     .single();
 
   if (error) {
-    return { ok: false, error: error.message || "Failed to create product." };
+    return {
+      ok: false,
+      error: friendlyProductError(error, "Unable to create product. Please try again."),
+    };
   }
 
   revalidatePath(`/admin/companies/${companySlug}/products`);
   revalidatePath(`/admin/companies/${companySlug}`);
+  revalidatePath(`/companies/${companySlug}`);
   return { ok: true, id: data.id };
 }
 
@@ -114,12 +130,16 @@ export async function updateProduct(
     .eq("company_id", company.id);
 
   if (error) {
-    return { ok: false, error: error.message || "Failed to update product." };
+    return {
+      ok: false,
+      error: friendlyProductError(error, "Unable to update product. Please try again."),
+    };
   }
 
   revalidatePath(`/admin/companies/${companySlug}/products`);
   revalidatePath(`/admin/companies/${companySlug}/products/${productId}/edit`);
   revalidatePath(`/admin/companies/${companySlug}`);
+  revalidatePath(`/companies/${companySlug}`);
   return { ok: true };
 }
 
@@ -132,6 +152,14 @@ export async function deleteProduct(
     return { ok: false, error: "Staff can view products but cannot delete them." };
   }
 
+  const orderItemCount = await countOrderItemsForProduct(company.id, productId);
+  if (orderItemCount > 0) {
+    return {
+      ok: false,
+      error: `This product appears in ${orderItemCount} past order${orderItemCount === 1 ? "" : "s"} and cannot be permanently deleted. Change its status to Archived to hide it from the shop while preserving order history.`,
+    };
+  }
+
   const supabase = await createClient();
   const { error } = await supabase
     .from("products")
@@ -140,11 +168,15 @@ export async function deleteProduct(
     .eq("company_id", company.id);
 
   if (error) {
-    return { ok: false, error: error.message || "Failed to delete product." };
+    return {
+      ok: false,
+      error: "Unable to delete product. Please try again.",
+    };
   }
 
   revalidatePath(`/admin/companies/${companySlug}/products`);
   revalidatePath(`/admin/companies/${companySlug}`);
+  revalidatePath(`/companies/${companySlug}`);
   return { ok: true };
 }
 
