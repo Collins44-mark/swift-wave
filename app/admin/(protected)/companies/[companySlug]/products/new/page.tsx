@@ -36,7 +36,7 @@ export default async function NewProductPage({
     const result = await createProduct(companySlug, formData);
     if (!result.ok) return { error: result.error };
     return {
-      success: "Product added.",
+      success: "Product created successfully",
       redirectTo: `/admin/companies/${companySlug}/products`,
     };
   }

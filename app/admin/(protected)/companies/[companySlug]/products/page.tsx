@@ -26,7 +26,13 @@ export default async function ProductsPage({
     listCategories(company.id),
   ]);
 
-  const categoryName = new Map(categories.map((c) => [c.id, c.name]));
+  const categoryName = new Map(
+    categories.map((c) => {
+      if (!c.parent_id) return [c.id, c.name] as const;
+      const parent = categories.find((p) => p.id === c.parent_id);
+      return [c.id, parent ? `${parent.name} / ${c.name}` : c.name] as const;
+    })
+  );
 
   return (
     <section className="sw-admin-panel">

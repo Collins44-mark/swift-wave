@@ -1,11 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { SubmitButton } from "@/components/admin/SubmitButton";
 import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
 import { ImageFieldPicker } from "@/components/admin/ImageFieldPicker";
+import {
+  PRODUCT_CURRENCIES,
+  defaultProductCurrency,
+  isProductCurrency,
+} from "@/lib/admin/product-currencies";
 import type { Product } from "@/lib/admin/types-catalog";
 import type { MediaAsset } from "@/lib/admin/types-media";
 
@@ -15,11 +20,33 @@ function bulletsText(bullets: Product["bullets"] | undefined): string {
   return "";
 }
 
+type CategoryOption = { id: string; name: string; parent_id: string | null };
+
 type FormState = {
   error?: string;
   success?: string;
   redirectTo?: string;
 } | null;
+
+function initialParentId(
+  product: Product | null | undefined,
+  categories: CategoryOption[]
+): string {
+  if (!product?.category_id) return "";
+  const selected = categories.find((c) => c.id === product.category_id);
+  if (!selected) return "";
+  return selected.parent_id ?? selected.id;
+}
+
+function initialChildId(
+  product: Product | null | undefined,
+  categories: CategoryOption[]
+): string {
+  if (!product?.category_id) return "";
+  const selected = categories.find((c) => c.id === product.category_id);
+  if (!selected?.parent_id) return "";
+  return selected.id;
+}
 
 export function ProductForm({
   companySlug,
@@ -31,7 +58,7 @@ export function ProductForm({
 }: {
   companySlug: string;
   product?: Product | null;
-  categories: { id: string; name: string; parent_id: string | null }[];
+  categories: CategoryOption[];
   mediaLibrary: MediaAsset[];
   canUpload: boolean;
   action: (prev: FormState, formData: FormData) => Promise<FormState>;
@@ -40,6 +67,27 @@ export function ProductForm({
   const { showSuccess } = useAdminToastContext();
   const router = useRouter();
   const isEdit = Boolean(product);
+  const currencyDefault = product?.currency || defaultProductCurrency(companySlug);
+  const currencyOptions = isProductCurrency(currencyDefault)
+    ? [...PRODUCT_CURRENCIES]
+    : [currencyDefault, ...PRODUCT_CURRENCIES];
+
+  const parents = useMemo(
+    () => categories.filter((c) => !c.parent_id),
+    [categories]
+  );
+
+  const [parentId, setParentId] = useState(() =>
+    initialParentId(product, categories)
+  );
+  const [categoryId, setCategoryId] = useState(() =>
+    initialChildId(product, categories)
+  );
+
+  const children = useMemo(
+    () => categories.filter((c) => c.parent_id === parentId),
+    [categories, parentId]
+  );
 
   useEffect(() => {
     if (!state?.success) return;
@@ -66,8 +114,13 @@ export function ProductForm({
         />
       </div>
       <div className="sw-admin-field">
-        <label htmlFor="slug">Slug (auto if blank)</label>
-        <input id="slug" name="slug" defaultValue={product?.slug ?? ""} />
+        <label htmlFor="slug">Slug</label>
+        <input
+          id="slug"
+          name="slug"
+          defaultValue={product?.slug ?? ""}
+          placeholder="Auto if blank"
+        />
       </div>
       <div className="sw-admin-field sw-admin-field-span">
         <label htmlFor="description">Description</label>
@@ -75,6 +128,7 @@ export function ProductForm({
           id="description"
           name="description"
           rows={3}
+          required
           defaultValue={product?.description ?? ""}
         />
       </div>
@@ -84,6 +138,7 @@ export function ProductForm({
           id="price"
           name="price"
           inputMode="decimal"
+          required
           defaultValue={product?.price != null ? String(product.price) : ""}
           placeholder="85000"
         />
@@ -94,39 +149,63 @@ export function ProductForm({
           id="price_label"
           name="price_label"
           defaultValue={product?.price_label ?? ""}
-          placeholder="Get Quote / Enquire"
+          placeholder="Optional display label"
         />
       </div>
       <div className="sw-admin-field">
         <label htmlFor="currency">Currency</label>
-        <input
+        <select
           id="currency"
           name="currency"
-          defaultValue={product?.currency ?? "TZS"}
-        />
+          required
+          defaultValue={currencyDefault}
+        >
+          {currencyOptions.map((code) => (
+            <option key={code} value={code}>
+              {code}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="sw-admin-field">
+        <label htmlFor="parent_category_id">Parent category</label>
+        <select
+          id="parent_category_id"
+          name="parent_category_id"
+          required
+          value={parentId}
+          onChange={(event) => {
+            setParentId(event.target.value);
+            setCategoryId("");
+          }}
+        >
+          <option value="">Select parent category</option>
+          {parents.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
       </div>
       <div className="sw-admin-field">
         <label htmlFor="category_id">Category</label>
         <select
           id="category_id"
           name="category_id"
-          defaultValue={product?.category_id ?? ""}
+          required
+          disabled={!parentId}
+          value={categoryId}
+          onChange={(event) => setCategoryId(event.target.value)}
         >
-          <option value="">— None —</option>
-          {categories.map((c) => (
+          <option value="">
+            {parentId ? "Select category" : "Select a parent category first"}
+          </option>
+          {children.map((c) => (
             <option key={c.id} value={c.id}>
-              {c.parent_id ? `↳ ${c.name}` : c.name}
+              {c.name}
             </option>
           ))}
         </select>
-      </div>
-      <div className="sw-admin-field">
-        <label htmlFor="subcategory">Subcategory</label>
-        <input
-          id="subcategory"
-          name="subcategory"
-          defaultValue={product?.subcategory ?? ""}
-        />
       </div>
       <div className="sw-admin-field">
         <label htmlFor="rating">Rating</label>
@@ -136,18 +215,6 @@ export function ProductForm({
           defaultValue={product?.rating ?? ""}
           placeholder="4.6 · 94 ratings"
         />
-      </div>
-      <div className="sw-admin-field">
-        <label htmlFor="status">Status</label>
-        <select
-          id="status"
-          name="status"
-          defaultValue={product?.status ?? "draft"}
-        >
-          <option value="draft">Draft</option>
-          <option value="published">Published</option>
-          <option value="archived">Archived</option>
-        </select>
       </div>
       <div className="sw-admin-field">
         <label htmlFor="sort_order">Sort order</label>
@@ -190,7 +257,9 @@ export function ProductForm({
       />
 
       <div className="sw-admin-toolbar sw-admin-field-span">
-        <SubmitButton>{isEdit ? "Save product" : "Create product"}</SubmitButton>
+        <SubmitButton>
+          {isEdit ? "Save product" : "Create product"}
+        </SubmitButton>
         <Link
           className="sw-admin-btn sw-admin-btn-ghost"
           href={`/admin/companies/${companySlug}/products`}

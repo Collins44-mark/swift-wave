@@ -65,9 +65,6 @@ export function ProductsTableClient({
             <tr key={p.id}>
               <td>
                 <strong>{p.name}</strong>
-                {p.subcategory ? (
-                  <div className="sw-admin-muted-sm">{p.subcategory}</div>
-                ) : null}
               </td>
               <td>
                 {p.category_id ? categoryName.get(p.category_id) ?? "—" : "—"}

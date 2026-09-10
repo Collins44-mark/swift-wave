@@ -5,7 +5,11 @@ import { createClient } from "@/lib/supabase/server";
 import { requireCompanyAccess, canMutate } from "@/lib/admin/require-company-access";
 import { countOrderItemsForProduct } from "@/lib/admin/data/products";
 import { slugify } from "@/lib/admin/slugify";
-import type { ActionResult, ProductStatus } from "@/lib/admin/types-catalog";
+import {
+  defaultProductCurrency,
+  isProductCurrency,
+} from "@/lib/admin/product-currencies";
+import type { ActionResult } from "@/lib/admin/types-catalog";
 
 function friendlyProductError(
   error: { code?: string; message?: string } | null,
@@ -35,6 +39,116 @@ function parsePrice(raw: string): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
+function revalidateProductSurfaces(companySlug: string, productId?: string) {
+  revalidatePath(`/admin/companies/${companySlug}/products`);
+  revalidatePath(`/admin/companies/${companySlug}`);
+  revalidatePath(`/companies/${companySlug}`);
+  revalidatePath(`/api/public/catalog/${companySlug}`);
+  if (productId) {
+    revalidatePath(
+      `/admin/companies/${companySlug}/products/${productId}/edit`
+    );
+  }
+}
+
+async function resolveChildCategory(opts: {
+  companyId: string;
+  parentCategoryId: string;
+  categoryId: string;
+}): Promise<
+  | { ok: true; categoryId: string; subcategory: string }
+  | { ok: false; error: string }
+> {
+  const { companyId, parentCategoryId, categoryId } = opts;
+  if (!parentCategoryId) {
+    return { ok: false, error: "Parent category is required." };
+  }
+  if (!categoryId) {
+    return { ok: false, error: "Category is required." };
+  }
+
+  const supabase = await createClient();
+  const { data: child, error } = await supabase
+    .from("categories")
+    .select("id, name, parent_id, company_id")
+    .eq("id", categoryId)
+    .eq("company_id", companyId)
+    .maybeSingle();
+
+  if (error || !child) {
+    return { ok: false, error: "Selected category was not found for this company." };
+  }
+
+  if (child.parent_id !== parentCategoryId) {
+    return {
+      ok: false,
+      error: "The selected category does not belong to that parent category.",
+    };
+  }
+
+  return { ok: true, categoryId: child.id, subcategory: child.name };
+}
+
+function readProductFields(
+  formData: FormData,
+  companySlug: string
+):
+  | {
+      ok: true;
+      name: string;
+      slug: string;
+      description: string;
+      price: number;
+      price_label: string | null;
+      currency: string;
+      parentCategoryId: string;
+      categoryId: string;
+      rating: string | null;
+      bullets: string[];
+      image_url: string | null;
+      image_public_id: string | null;
+      featured: boolean;
+      sort_order: number;
+    }
+  | { ok: false; error: string } {
+  const name = str(formData, "name");
+  if (!name) return { ok: false, error: "Name is required." };
+
+  const description = str(formData, "description");
+  if (!description) return { ok: false, error: "Description is required." };
+
+  const price = parsePrice(str(formData, "price"));
+  if (price == null) return { ok: false, error: "Price is required." };
+  if (price < 0) return { ok: false, error: "Price must be zero or greater." };
+
+  const currency = str(formData, "currency") || defaultProductCurrency(companySlug);
+  if (!isProductCurrency(currency)) {
+    return { ok: false, error: "Select a valid currency." };
+  }
+
+  let slug = str(formData, "slug") || slugify(name);
+  if (!slug) slug = `product-${Date.now()}`;
+
+  return {
+    ok: true,
+    name,
+    slug,
+    description,
+    price,
+    price_label: str(formData, "price_label") || null,
+    currency,
+    parentCategoryId: str(formData, "parent_category_id"),
+    categoryId: str(formData, "category_id"),
+    rating: str(formData, "rating") || null,
+    bullets: parseBullets(str(formData, "bullets")),
+    image_url: str(formData, "image_url") || null,
+    image_public_id: str(formData, "image_public_id") || null,
+    featured:
+      formData.get("featured") === "on" || formData.get("featured") === "true",
+    sort_order: Number(str(formData, "sort_order") || "0") || 0,
+  };
+}
+
 export async function createProduct(
   companySlug: string,
   formData: FormData
@@ -44,35 +158,37 @@ export async function createProduct(
     return { ok: false, error: "Staff can view products but cannot create them." };
   }
 
-  const name = str(formData, "name");
-  if (!name) return { ok: false, error: "Name is required." };
+  const fields = readProductFields(formData, company.slug);
+  if (!fields.ok) return fields;
 
-  let slug = str(formData, "slug") || slugify(name);
-  if (!slug) slug = `product-${Date.now()}`;
+  const category = await resolveChildCategory({
+    companyId: company.id,
+    parentCategoryId: fields.parentCategoryId,
+    categoryId: fields.categoryId,
+  });
+  if (!category.ok) return category;
 
   const supabase = await createClient();
-  const payload = {
-    company_id: company.id,
-    name,
-    slug,
-    description: str(formData, "description") || null,
-    price: parsePrice(str(formData, "price")),
-    price_label: str(formData, "price_label") || null,
-    currency: str(formData, "currency") || "TZS",
-    category_id: str(formData, "category_id") || null,
-    subcategory: str(formData, "subcategory") || null,
-    rating: str(formData, "rating") || null,
-    bullets: parseBullets(str(formData, "bullets")),
-    image_url: str(formData, "image_url") || null,
-    image_public_id: str(formData, "image_public_id") || null,
-    status: (str(formData, "status") || "draft") as ProductStatus,
-    featured: formData.get("featured") === "on" || formData.get("featured") === "true",
-    sort_order: Number(str(formData, "sort_order") || "0") || 0,
-  };
-
   const { data, error } = await supabase
     .from("products")
-    .insert(payload)
+    .insert({
+      company_id: company.id,
+      name: fields.name,
+      slug: fields.slug,
+      description: fields.description,
+      price: fields.price,
+      price_label: fields.price_label,
+      currency: fields.currency,
+      category_id: category.categoryId,
+      subcategory: category.subcategory,
+      rating: fields.rating,
+      bullets: fields.bullets,
+      image_url: fields.image_url,
+      image_public_id: fields.image_public_id,
+      status: "published",
+      featured: fields.featured,
+      sort_order: fields.sort_order,
+    })
     .select("id")
     .single();
 
@@ -83,9 +199,7 @@ export async function createProduct(
     };
   }
 
-  revalidatePath(`/admin/companies/${companySlug}/products`);
-  revalidatePath(`/admin/companies/${companySlug}`);
-  revalidatePath(`/companies/${companySlug}`);
+  revalidateProductSurfaces(company.slug);
   return { ok: true, id: data.id };
 }
 
@@ -99,32 +213,35 @@ export async function updateProduct(
     return { ok: false, error: "Staff can view products but cannot edit them." };
   }
 
-  const name = str(formData, "name");
-  if (!name) return { ok: false, error: "Name is required." };
+  const fields = readProductFields(formData, company.slug);
+  if (!fields.ok) return fields;
 
-  let slug = str(formData, "slug") || slugify(name);
-  if (!slug) slug = `product-${Date.now()}`;
+  const category = await resolveChildCategory({
+    companyId: company.id,
+    parentCategoryId: fields.parentCategoryId,
+    categoryId: fields.categoryId,
+  });
+  if (!category.ok) return category;
 
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("products")
     .update({
-      name,
-      slug,
-      description: str(formData, "description") || null,
-      price: parsePrice(str(formData, "price")),
-      price_label: str(formData, "price_label") || null,
-      currency: str(formData, "currency") || "TZS",
-      category_id: str(formData, "category_id") || null,
-      subcategory: str(formData, "subcategory") || null,
-      rating: str(formData, "rating") || null,
-      bullets: parseBullets(str(formData, "bullets")),
-      image_url: str(formData, "image_url") || null,
-      image_public_id: str(formData, "image_public_id") || null,
-      status: (str(formData, "status") || "draft") as ProductStatus,
-      featured:
-        formData.get("featured") === "on" || formData.get("featured") === "true",
-      sort_order: Number(str(formData, "sort_order") || "0") || 0,
+      name: fields.name,
+      slug: fields.slug,
+      description: fields.description,
+      price: fields.price,
+      price_label: fields.price_label,
+      currency: fields.currency,
+      category_id: category.categoryId,
+      subcategory: category.subcategory,
+      rating: fields.rating,
+      bullets: fields.bullets,
+      image_url: fields.image_url,
+      image_public_id: fields.image_public_id,
+      status: "published",
+      featured: fields.featured,
+      sort_order: fields.sort_order,
     })
     .eq("id", productId)
     .eq("company_id", company.id)
@@ -137,10 +254,7 @@ export async function updateProduct(
     };
   }
 
-  revalidatePath(`/admin/companies/${companySlug}/products`);
-  revalidatePath(`/admin/companies/${companySlug}/products/${productId}/edit`);
-  revalidatePath(`/admin/companies/${companySlug}`);
-  revalidatePath(`/companies/${companySlug}`);
+  revalidateProductSurfaces(company.slug, productId);
   return { ok: true };
 }
 
@@ -176,16 +290,13 @@ export async function deleteProduct(
     };
   }
 
-  revalidatePath(`/admin/companies/${companySlug}/products`);
-  revalidatePath(`/admin/companies/${companySlug}`);
-  revalidatePath(`/companies/${companySlug}`);
+  revalidateProductSurfaces(company.slug);
   return { ok: true };
 }
 
 export async function publishProduct(
   companySlug: string,
-  productId: string,
-  status: ProductStatus = "published"
+  productId: string
 ): Promise<ActionResult> {
   const { admin, company } = await requireCompanyAccess(companySlug, "products");
   if (!canMutate(admin)) {
@@ -195,7 +306,7 @@ export async function publishProduct(
   const supabase = await createClient();
   const { error } = await supabase
     .from("products")
-    .update({ status })
+    .update({ status: "published" })
     .eq("id", productId)
     .eq("company_id", company.id);
 
@@ -203,6 +314,6 @@ export async function publishProduct(
     return { ok: false, error: error.message || "Failed to update status." };
   }
 
-  revalidatePath(`/admin/companies/${companySlug}/products`);
+  revalidateProductSurfaces(company.slug);
   return { ok: true };
 }

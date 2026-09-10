@@ -72,20 +72,25 @@ export async function GET(
 
   const mappedProducts = (products ?? []).map((p) => {
     const cat = p.category_id ? byId.get(p.category_id) : null;
+    const parent = cat?.parent_id ? byId.get(cat.parent_id) : null;
+    const categoryName = parent?.name ?? cat?.name ?? "All";
+    const subName = parent ? cat?.name ?? "" : p.subcategory ?? "";
+    const currency = (p.currency || "").trim() || "TZS";
     const priceNum =
       p.price != null && Number(p.price) > 0 ? Number(p.price) : 0;
     const priceLabel =
       p.price_label ||
       (priceNum > 0
-        ? `${p.currency} ${priceNum.toLocaleString("en-US")}`
+        ? `${currency} ${priceNum.toLocaleString("en-US")}`
         : "Enquire");
 
     return {
       id: p.slug,
       dbId: p.id,
       title: p.name,
-      category: cat?.name ?? "All",
-      sub: p.subcategory ?? "",
+      category: categoryName,
+      sub: subName,
+      currency,
       price: priceLabel,
       priceNum,
       rating: p.rating ?? "",
@@ -95,13 +100,20 @@ export async function GET(
     };
   });
 
-  return NextResponse.json({
-    company: {
-      name: company.name,
-      slug: company.slug,
-      whatsapp_number: normalizeWhatsAppNumber(company.whatsapp_number),
+  return NextResponse.json(
+    {
+      company: {
+        name: company.name,
+        slug: company.slug,
+        whatsapp_number: normalizeWhatsAppNumber(company.whatsapp_number),
+      },
+      categories: categoryMap,
+      products: mappedProducts,
     },
-    categories: categoryMap,
-    products: mappedProducts,
-  });
+    {
+      headers: {
+        "Cache-Control": "no-store",
+      },
+    }
+  );
 }

@@ -46,8 +46,13 @@
         return parseInt(String(price).replace(/[^\d]/g, ""), 10) || 0;
       }
 
+      function cartCurrency() {
+        const item = cart.find(function (i) { return i.currency; });
+        return (item && item.currency) || "INR";
+      }
+
       function formatTotal(n) {
-        return "TZS " + n.toLocaleString("en-US");
+        return cartCurrency() + " " + n.toLocaleString("en-US");
       }
 
       function cartCount() {
@@ -114,6 +119,7 @@
           title: product.title,
           price: product.price,
           priceNum: product.priceNum != null ? product.priceNum : parsePrice(product.price),
+          currency: product.currency || cartCurrency(),
           image: product.image,
           qty: 1
         });
@@ -373,7 +379,7 @@
           company_slug: COMPANY_SLUG,
           customer_name: name,
           customer_phone: mobile,
-          currency: "TZS",
+          currency: cartCurrency(),
           items: cart.map(function (item) {
             return {
               product_id: item.dbId || null,
@@ -457,7 +463,7 @@
         if (typeof lucide !== "undefined") lucide.createIcons();
       }
 
-      fetch("/api/public/catalog/" + COMPANY_SLUG)
+      fetch("/api/public/catalog/" + COMPANY_SLUG, { cache: "no-store" })
         .then(function (res) {
           return res.ok ? res.json() : null;
         })
