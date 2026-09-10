@@ -24,6 +24,7 @@ function friendlyProductError(
   if (error.code === "23505") {
     return "A product with this URL slug already exists. Choose a different slug.";
   }
+  if (error.message) return error.message;
   return fallback;
 }
 
@@ -47,7 +48,7 @@ function parsePrice(raw: string): number | null {
 function revalidateProductSurfaces(companySlug: string, productId?: string) {
   revalidatePath(`/admin/companies/${companySlug}/products`);
   revalidatePath(`/admin/companies/${companySlug}`);
-  revalidatePath(`/companies/${companySlug}`);
+  revalidatePath(`/companies/${companySlug}`, "layout");
   revalidatePath(`/api/public/catalog/${companySlug}`);
   if (productId) {
     revalidatePath(
@@ -197,10 +198,13 @@ export async function createProduct(
     .select("id")
     .single();
 
-  if (error) {
+  if (error || !data?.id) {
     return {
       ok: false,
-      error: friendlyProductError(error, "Unable to create product. Please try again."),
+      error: friendlyProductError(
+        error,
+        "Unable to create product. Please try again."
+      ),
     };
   }
 
@@ -227,17 +231,26 @@ export async function createProduct(
   }
 
   if (variants.coverUrl && !fields.image_url) {
-    await supabase
+    const { error: coverError, data: coverRows } = await supabase
       .from("products")
       .update({
         image_url: variants.coverUrl,
         image_public_id: variants.coverPublicId,
       })
       .eq("id", data.id)
-      .eq("company_id", company.id);
+      .eq("company_id", company.id)
+      .select("id");
+    if (coverError || !coverRows?.length) {
+      revalidateProductSurfaces(company.slug, data.id);
+      return {
+        ok: false,
+        error:
+          "Image uploaded, but product changes could not be saved. Please try again.",
+      };
+    }
   }
 
-  revalidateProductSurfaces(company.slug);
+  revalidateProductSurfaces(company.slug, data.id);
   return { ok: true, id: data.id };
 }
 
@@ -262,6 +275,17 @@ export async function updateProduct(
   if (!category.ok) return category;
 
   const supabase = await createClient();
+  const { data: existing, error: existingError } = await supabase
+    .from("products")
+    .select("id")
+    .eq("id", productId)
+    .eq("company_id", company.id)
+    .maybeSingle();
+
+  if (existingError || !existing) {
+    return { ok: false, error: "Product was not found for this company." };
+  }
+
   const { data, error } = await supabase
     .from("products")
     .update({
@@ -288,7 +312,10 @@ export async function updateProduct(
   if (error || !data?.length) {
     return {
       ok: false,
-      error: friendlyProductError(error, "Unable to update product. Please try again."),
+      error: friendlyProductError(
+        error,
+        "Unable to update product. Please try again."
+      ),
     };
   }
 
@@ -306,14 +333,22 @@ export async function updateProduct(
   if (!variants.ok) return variants;
 
   if (variants.coverUrl && !fields.image_url) {
-    await supabase
+    const { error: coverError, data: coverRows } = await supabase
       .from("products")
       .update({
         image_url: variants.coverUrl,
         image_public_id: variants.coverPublicId,
       })
       .eq("id", productId)
-      .eq("company_id", company.id);
+      .eq("company_id", company.id)
+      .select("id");
+    if (coverError || !coverRows?.length) {
+      return {
+        ok: false,
+        error:
+          "Image uploaded, but product changes could not be saved. Please try again.",
+      };
+    }
   }
 
   revalidateProductSurfaces(company.slug, productId);
@@ -366,14 +401,15 @@ export async function publishProduct(
   }
 
   const supabase = await createClient();
-  const { error } = await supabase
+  const { error, data } = await supabase
     .from("products")
     .update({ status: "published" })
     .eq("id", productId)
-    .eq("company_id", company.id);
+    .eq("company_id", company.id)
+    .select("id");
 
-  if (error) {
-    return { ok: false, error: error.message || "Failed to update status." };
+  if (error || !data?.length) {
+    return { ok: false, error: error?.message || "Failed to update status." };
   }
 
   revalidateProductSurfaces(company.slug);

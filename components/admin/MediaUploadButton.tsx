@@ -4,7 +4,7 @@ import {
   CldUploadWidget,
   type CloudinaryUploadWidgetResults,
 } from "next-cloudinary";
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useState } from "react";
 import { saveUploadedMedia } from "@/lib/admin/actions/media";
 import type { CloudinaryUploadInfo } from "@/lib/admin/types-media";
 import { cloudinaryFolderForSlug } from "@/lib/cloudinary/folders";
@@ -18,6 +18,7 @@ type Props = {
     secure_url: string;
     public_id: string;
   }) => void;
+  onBusyChange?: (busy: boolean) => void;
   className?: string;
 };
 
@@ -50,11 +51,12 @@ export function MediaUploadButton({
   companySlug,
   label = "Upload Image",
   onSaved,
+  onBusyChange,
   className,
 }: Props) {
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [pending, startTransition] = useTransition();
+  const [pending, setPending] = useState(false);
 
   const folder = useMemo(
     () => cloudinaryFolderForSlug(companySlug),
@@ -91,7 +93,6 @@ export function MediaUploadButton({
           sources: ["local"],
           multiple: false,
           maxFiles: 1,
-          // Must match server-derived folder; sign route overwrites/forces this path
           folder,
           resourceType: "image",
           clientAllowedFormats: ["jpg", "jpeg", "png", "webp", "avif"],
@@ -119,29 +120,43 @@ export function MediaUploadButton({
         onSuccess={(results) => {
           const info = extractInfo(results);
           if (!info) {
-            setError("Upload completed but no image data was returned.");
+            setError("Image upload failed. Please try again.");
             return;
           }
           setError(null);
-          setMessage("Saving…");
-          startTransition(async () => {
-            const result = await saveUploadedMedia(companySlug, info);
-            if (!result.ok) {
-              setMessage(null);
-              setError(result.error);
-              return;
-            }
-            setMessage("Image uploaded successfully.");
-            onSaved?.({
-              id: result.id,
-              secure_url: info.secure_url,
-              public_id: info.public_id,
-            });
+          setPending(true);
+          onBusyChange?.(true);
+          setMessage("Uploading…");
+          onSaved?.({
+            secure_url: info.secure_url,
+            public_id: info.public_id,
           });
+          void (async () => {
+            try {
+              const result = await saveUploadedMedia(companySlug, info);
+              setMessage("Image selected. Save the product to persist it.");
+              if (result.ok) {
+                onSaved?.({
+                  id: result.id,
+                  secure_url: info.secure_url,
+                  public_id: info.public_id,
+                });
+              }
+            } catch {
+              setError(
+                "Image selected. If the product does not save, try uploading again."
+              );
+            } finally {
+              setPending(false);
+              onBusyChange?.(false);
+            }
+          })();
         }}
         onError={() => {
+          setPending(false);
+          onBusyChange?.(false);
           setMessage(null);
-          setError("Upload failed. Please try again.");
+          setError("Image upload failed. Please try again.");
         }}
       >
         {({ open }) => (

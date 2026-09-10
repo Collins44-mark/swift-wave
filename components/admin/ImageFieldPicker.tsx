@@ -15,6 +15,7 @@ export function ImageFieldPicker({
   initialUrl,
   initialPublicId,
   label = "Image",
+  onBusyChange,
 }: {
   companySlug: string;
   library: MediaAsset[];
@@ -22,6 +23,7 @@ export function ImageFieldPicker({
   initialUrl?: string | null;
   initialPublicId?: string | null;
   label?: string;
+  onBusyChange?: (busy: boolean) => void;
 }) {
   const [url, setUrl] = useState(initialUrl ?? "");
   const [publicId, setPublicId] = useState(initialPublicId ?? "");
@@ -48,6 +50,7 @@ export function ImageFieldPicker({
             companySlug={companySlug}
             label="Upload Image"
             className="sw-admin-btn"
+            onBusyChange={onBusyChange}
             onSaved={(asset) => {
               setUrl(asset.secure_url);
               setPublicId(asset.public_id);

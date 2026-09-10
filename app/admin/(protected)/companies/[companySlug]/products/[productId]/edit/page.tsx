@@ -41,7 +41,7 @@ export default async function EditProductPage({
     "use server";
     const result = await updateProduct(companySlug, productId, formData);
     if (!result.ok) return { error: result.error };
-    return { success: "Product updated." };
+    return { success: "Product updated successfully" };
   }
 
   return (

@@ -127,12 +127,28 @@ export async function replaceProductVariants(
       is_active: color.is_active !== false,
     };
     if (color.id) {
-      const { error } = await supabase
+      const updatePayload = {
+        product_id: productId,
+        name: color.name,
+        hex_code: color.hex_code,
+        sort_order: index,
+        is_active: color.is_active !== false,
+        ...(color.image_url
+          ? {
+              image_url: color.image_url,
+              image_public_id: color.image_public_id || null,
+            }
+          : {}),
+      };
+      const { data: updated, error } = await supabase
         .from("product_colors")
-        .update(payload)
+        .update(updatePayload)
         .eq("id", color.id)
-        .eq("product_id", productId);
-      if (error) return { ok: false, error: "Unable to update product colors." };
+        .eq("product_id", productId)
+        .select("id");
+      if (error || !updated?.length) {
+        return { ok: false, error: "Unable to update product colors." };
+      }
     } else {
       const { error } = await supabase.from("product_colors").insert(payload);
       if (error) return { ok: false, error: "Unable to save product colors." };

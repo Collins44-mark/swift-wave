@@ -21,7 +21,7 @@ export async function saveUploadedMedia(
   info: CloudinaryUploadInfo,
   altText?: string
 ): Promise<MediaActionResult> {
-  const { admin, company } = await requireCompanyAccess(companySlug, "media");
+  const { admin, company } = await requireCompanyAccess(companySlug);
   if (!canMutate(admin)) {
     return { ok: false, error: "You do not have permission to upload media." };
   }
@@ -92,7 +92,7 @@ export async function updateMediaAltText(
   mediaId: string,
   altText: string
 ): Promise<MediaActionResult> {
-  const { admin, company } = await requireCompanyAccess(companySlug, "media");
+  const { admin, company } = await requireCompanyAccess(companySlug);
   if (!canMutate(admin)) {
     return { ok: false, error: "You do not have permission to edit media." };
   }
@@ -113,7 +113,7 @@ export async function deleteMediaAsset(
   companySlug: string,
   mediaId: string
 ): Promise<MediaActionResult> {
-  const { admin, company } = await requireCompanyAccess(companySlug, "media");
+  const { admin, company } = await requireCompanyAccess(companySlug);
   if (!canMutate(admin)) {
     return { ok: false, error: "You do not have permission to delete media." };
   }

@@ -70,9 +70,14 @@ export function ProductForm({
   action: (prev: FormState, formData: FormData) => Promise<FormState>;
 }) {
   const [state, formAction] = useActionState(action, null);
-  const { showSuccess } = useAdminToastContext();
+  const { showSuccess, showError } = useAdminToastContext();
   const router = useRouter();
   const isEdit = Boolean(product);
+  const [uploadsInFlight, setUploadsInFlight] = useState(0);
+
+  function handleUploadBusy(busy: boolean) {
+    setUploadsInFlight((count) => Math.max(0, count + (busy ? 1 : -1)));
+  }
   const currencyDefault = product?.currency || defaultProductCurrency(companySlug);
   const currencyOptions = isProductCurrency(currencyDefault)
     ? [...PRODUCT_CURRENCIES]
@@ -96,15 +101,29 @@ export function ProductForm({
   );
 
   useEffect(() => {
+    if (state?.error) {
+      showError(state.error);
+      return;
+    }
     if (!state?.success) return;
     showSuccess(state.success);
+    router.refresh();
     if (state.redirectTo) {
       router.push(state.redirectTo);
     }
-  }, [state, showSuccess, router]);
+  }, [state, showSuccess, showError, router]);
 
   return (
-    <form action={formAction} className="sw-admin-form-grid">
+    <form
+      action={formAction}
+      className="sw-admin-form-grid"
+      onSubmit={(event) => {
+        if (uploadsInFlight > 0) {
+          event.preventDefault();
+          showError("Wait for the image upload to finish, then save.");
+        }
+      }}
+    >
       {state?.error ? (
         <div className="sw-admin-alert is-error sw-admin-field-span" role="alert">
           {state.error}
@@ -193,11 +212,11 @@ export function ProductForm({
           ))}
         </select>
       </div>
+      <input type="hidden" name="category_id" value={categoryId} />
       <div className="sw-admin-field">
         <label htmlFor="category_id">Category</label>
         <select
           id="category_id"
-          name="category_id"
           required
           disabled={!parentId}
           value={categoryId}
@@ -220,6 +239,7 @@ export function ProductForm({
         initialColors={product?.colors}
         initialSizes={product?.sizes}
         sizeLibrary={sizeLibrary}
+        onBusyChange={handleUploadBusy}
       />
 
       <div className="sw-admin-field">
@@ -269,11 +289,15 @@ export function ProductForm({
         initialUrl={product?.image_url}
         initialPublicId={product?.image_public_id}
         label="Cover image (used if a color has no photo)"
+        onBusyChange={handleUploadBusy}
       />
 
       <div className="sw-admin-toolbar sw-admin-field-span">
-        <SubmitButton>
-          {isEdit ? "Save product" : "Create product"}
+        <SubmitButton
+          pendingLabel="Saving..."
+          disabled={uploadsInFlight > 0}
+        >
+          {isEdit ? "Save Changes" : "Create Product"}
         </SubmitButton>
         <Link
           className="sw-admin-btn sw-admin-btn-ghost"

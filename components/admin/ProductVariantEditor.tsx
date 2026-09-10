@@ -24,12 +24,14 @@ export function ProductVariantEditor({
   initialColors,
   initialSizes,
   sizeLibrary,
+  onBusyChange,
 }: {
   companySlug: string;
   canUpload: boolean;
   initialColors?: ProductColor[];
   initialSizes?: ProductSizeOption[];
   sizeLibrary: SizeDefinition[];
+  onBusyChange?: (busy: boolean) => void;
 }) {
   const { showSuccess, showError } = useAdminToastContext();
   const [colors, setColors] = useState<ColorDraft[]>(() =>
@@ -152,6 +154,7 @@ export function ProductVariantEditor({
                       companySlug={companySlug}
                       label="Upload Image"
                       className="sw-admin-btn sw-admin-btn-ghost"
+                      onBusyChange={onBusyChange}
                       onSaved={(asset) =>
                         setColors((prev) =>
                           prev.map((c) =>
