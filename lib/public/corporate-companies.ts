@@ -4,6 +4,7 @@ export type CorporateCompanyCard = {
   name: string;
   slug: string;
   description: string | null;
+  website_url: string | null;
   card_title_short: string | null;
   card_image_url: string | null;
   card_icon: string | null;
@@ -12,7 +13,7 @@ export type CorporateCompanyCard = {
 };
 
 const CORPORATE_CARD_SELECT =
-  "name, slug, description, card_title_short, card_image_url, card_icon, card_route, card_coming_soon, corporate_display_order, corporate_card_visible" as const;
+  "name, slug, description, website_url, card_title_short, card_image_url, card_icon, card_route, card_coming_soon, corporate_display_order, corporate_card_visible" as const;
 
 const LEGACY_CARD_DEFAULTS: Record<
   string,
@@ -96,6 +97,7 @@ function withLegacyDefaults(
     name: row.name,
     slug: row.slug,
     description: row.description,
+    website_url: row.website_url ?? null,
     card_title_short: row.card_title_short ?? defaults.card_title_short,
     card_image_url: row.card_image_url ?? defaults.card_image_url,
     card_icon: row.card_icon ?? defaults.card_icon,

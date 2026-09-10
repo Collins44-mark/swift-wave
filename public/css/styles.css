@@ -651,7 +651,19 @@ body.menu-open {
   color: #fff;
 }
 
-.companies-grid .company-card.company-card--cover .company-card-link:hover {
+.companies-grid a.company-card {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.companies-grid a.company-card:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.companies-grid .company-card.company-card--cover:hover .company-card-link,
+.companies-grid .company-card.company-card--cover:focus-visible .company-card-link {
   color: var(--gold);
 }
 

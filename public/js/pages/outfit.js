@@ -173,8 +173,7 @@
         el.type = opts.asButton ? "button" : undefined;
         el.className = "co-product co-product--cover glass-card fade-up visible";
         el.dataset.id = p.id;
-        const colors = Array.isArray(p.colors) ? p.colors : [];
-        const cover = (colors[0] && colors[0].image) || p.image || "";
+        const cover = p.image || "";
         el.innerHTML =
           '<div class="co-product-media">' +
           '<img src="' + cover + '" alt="' + p.title + '" loading="lazy">' +
@@ -183,35 +182,10 @@
           '<div class="co-product-body">' +
           '<h3 class="co-product-title">' + p.title + "</h3>" +
           '<p class="co-product-meta">' + p.category + " · " + p.sub + "</p>" +
-          (colors.length
-            ? '<div class="co-swatches co-swatches--card" data-swatches></div>'
-            : "") +
           '<div class="co-product-row">' +
           '<span class="co-product-price">' + p.price + "</span>" +
           '<span class="co-product-cta">' + (opts.cta || "View") + "</span>" +
           "</div></div>";
-        const img = el.querySelector("img");
-        const swatchWrap = el.querySelector("[data-swatches]");
-        if (swatchWrap) {
-          colors.forEach(function (color, index) {
-            const swatch = document.createElement("button");
-            swatch.type = "button";
-            swatch.className = "co-swatch" + (index === 0 ? " is-selected" : "");
-            swatch.style.background = color.hex || "#111";
-            swatch.setAttribute("aria-label", color.name);
-            swatch.title = color.name;
-            swatch.addEventListener("click", function (event) {
-              event.preventDefault();
-              event.stopPropagation();
-              swatchWrap.querySelectorAll(".co-swatch").forEach(function (n) {
-                n.classList.remove("is-selected");
-              });
-              swatch.classList.add("is-selected");
-              if (color.image && img) img.src = color.image;
-            });
-            swatchWrap.appendChild(swatch);
-          });
-        }
         el.addEventListener("click", function () {
           openProduct(p.id, true);
         });

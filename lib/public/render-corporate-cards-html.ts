@@ -1,4 +1,5 @@
 import type { CorporateCompanyCard } from "@/lib/public/corporate-companies";
+import { companySiteHref } from "@/lib/public/company-site-href";
 
 function escapeHtml(text: string): string {
   return text
@@ -25,38 +26,32 @@ function shortTitle(company: CorporateCompanyCard): string {
   return company.name.replace(/^Swift Wave\s+/i, "").trim() || company.name;
 }
 
-function cardHref(company: CorporateCompanyCard): string {
-  if (company.card_coming_soon) return "#";
-  if (company.card_route?.trim()) return company.card_route.trim();
-  return `/companies/${company.slug}`;
-}
-
 function renderCard(company: CorporateCompanyCard): string {
   const icon = escapeHtml(company.card_icon?.trim() || defaultIcon(company.slug));
   const fullTitle = escapeHtml(company.name);
   const short = escapeHtml(shortTitle(company));
   const desc = escapeHtml(company.description?.trim() || "");
-  const href = escapeHtml(cardHref(company));
-  const comingSoon = company.card_coming_soon ? ' data-coming-soon' : "";
+  const href = escapeHtml(companySiteHref(company));
+  const comingSoon = company.card_coming_soon ? " data-coming-soon" : "";
   const imageUrl = escapeHtml(
     company.card_image_url?.trim() ||
       "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80"
   );
-  const alt = escapeHtml(company.name);
+  const label = escapeHtml(`Explore ${company.name} website`);
 
-  return `<article class="company-card company-card--cover glass-card fade-up">
+  return `<a href="${href}" class="company-card company-card--cover glass-card fade-up"${comingSoon} aria-label="${label}">
           <div class="company-card-media">
-            <img src="${imageUrl}" alt="${alt}" loading="lazy">
+            <img src="${imageUrl}" alt="" loading="lazy">
           </div>
           <div class="company-card-body">
             <div class="icon-box company-card-icon"><i data-lucide="${icon}" class="w-4 h-4"></i></div>
             <h3 class="company-card-title"><span class="company-card-title-full">${fullTitle}</span><span class="company-card-title-short">${short}</span></h3>
             <p class="company-card-desc">${desc}</p>
-            <a href="${href}" class="company-card-link link-accent"${comingSoon}>
+            <span class="company-card-link link-accent">
               Explore <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
-            </a>
+            </span>
           </div>
-        </article>`;
+        </a>`;
 }
 
 export function renderCorporateCompanyCardsHtml(
