@@ -3364,19 +3364,35 @@ a.sw-admin-hub-card:has(.sw-link-pending) {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
+  max-width: 100%;
 }
 
 .sw-admin-size-chip {
   border: 1px solid var(--admin-border);
-  background: rgba(11, 46, 109, 0.06);
+  background: var(--admin-white);
+  color: var(--admin-heading);
   border-radius: 999px;
-  padding: 0.35rem 0.7rem;
-  font-size: 0.82rem;
+  min-height: 2.25rem;
+  min-width: 2.5rem;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.8rem;
   font-weight: 600;
+  line-height: 1;
   cursor: pointer;
 }
 
+.sw-admin-size-chip.is-selected {
+  background: var(--admin-royal);
+  border-color: var(--admin-royal);
+  color: #fff;
+}
+
 @media (max-width: 800px) {
+  .sw-admin-size-chip {
+    min-height: 2.4rem;
+    min-width: 2.75rem;
+  }
+
   .sw-admin-color-row {
     grid-template-columns: 1fr;
   }

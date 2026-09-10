@@ -47,19 +47,41 @@ export function ProductVariantEditor({
   const [sizeNames, setSizeNames] = useState<string[]>(() =>
     (initialSizes ?? []).map((s) => s.name)
   );
+  const [extraSizeNames, setExtraSizeNames] = useState<string[]>([]);
   const [newColorName, setNewColorName] = useState("");
   const [newColorHex, setNewColorHex] = useState("#111111");
   const [newSizeName, setNewSizeName] = useState("");
+  const [addingSize, setAddingSize] = useState(false);
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
 
-  const unusedLibrary = useMemo(
-    () =>
-      sizeLibrary.filter(
-        (s) =>
-          !sizeNames.some((name) => name.toLowerCase() === s.name.toLowerCase())
-      ),
-    [sizeLibrary, sizeNames]
-  );
+  const sizeOptions = useMemo(() => {
+    const seen = new Set<string>();
+    const options: string[] = [];
+    function addOption(name: string) {
+      const trimmed = name.trim();
+      if (!trimmed) return;
+      const key = trimmed.toLowerCase();
+      if (seen.has(key)) return;
+      seen.add(key);
+      options.push(trimmed);
+    }
+    for (const size of sizeLibrary) addOption(size.name);
+    for (const name of extraSizeNames) addOption(name);
+    for (const name of sizeNames) addOption(name);
+    return options;
+  }, [sizeLibrary, extraSizeNames, sizeNames]);
+
+  function isSizeSelected(name: string) {
+    return sizeNames.some((s) => s.toLowerCase() === name.toLowerCase());
+  }
+
+  function toggleSize(name: string) {
+    setSizeNames((prev) =>
+      prev.some((s) => s.toLowerCase() === name.toLowerCase())
+        ? prev.filter((s) => s.toLowerCase() !== name.toLowerCase())
+        : [...prev, name]
+    );
+  }
 
   function addColor() {
     const name = newColorName.trim();
@@ -84,10 +106,21 @@ export function ProductVariantEditor({
 
   function addSize(name: string) {
     const next = name.trim();
-    if (!next) return;
-    if (sizeNames.some((s) => s.toLowerCase() === next.toLowerCase())) return;
-    setSizeNames((prev) => [...prev, next]);
+    if (!next) {
+      showError("Enter a size name.");
+      return;
+    }
+    const exists = sizeOptions.some((s) => s.toLowerCase() === next.toLowerCase());
+    if (!exists) {
+      setExtraSizeNames((prev) => [...prev, next]);
+    }
+    setSizeNames((prev) =>
+      prev.some((s) => s.toLowerCase() === next.toLowerCase())
+        ? prev
+        : [...prev, next]
+    );
     setNewSizeName("");
+    setAddingSize(false);
   }
 
   return (
@@ -205,57 +238,53 @@ export function ProductVariantEditor({
 
       <div className="sw-admin-variant-panel">
         <h3>Sizes</h3>
-        <div className="sw-admin-size-chips">
-          {sizeNames.length ? (
-            sizeNames.map((name) => (
-              <button
-                key={name}
-                type="button"
-                className="sw-admin-size-chip"
-                onClick={() =>
-                  setSizeNames((prev) => prev.filter((s) => s !== name))
-                }
-              >
-                {name} ×
-              </button>
-            ))
+        <div className="sw-admin-size-chips" role="group" aria-label="Product sizes">
+          {sizeOptions.length ? (
+            sizeOptions.map((name) => {
+              const selected = isSizeSelected(name);
+              return (
+                <button
+                  key={name}
+                  type="button"
+                  className={`sw-admin-size-chip${selected ? " is-selected" : ""}`}
+                  aria-pressed={selected}
+                  onClick={() => toggleSize(name)}
+                >
+                  {name}
+                  {selected ? <span aria-hidden="true"> ✓</span> : null}
+                </button>
+              );
+            })
           ) : (
-            <p className="sw-admin-muted-sm">No sizes selected yet.</p>
+            <p className="sw-admin-muted-sm">No sizes in the library yet.</p>
           )}
         </div>
         <div className="sw-admin-size-add">
-          {unusedLibrary.length ? (
-            <select
-              aria-label="Select size"
-              defaultValue=""
-              onChange={(e) => {
-                if (e.target.value) addSize(e.target.value);
-                e.target.value = "";
+          {addingSize ? (
+            <input
+              autoFocus
+              aria-label="New size name"
+              placeholder="New size"
+              value={newSizeName}
+              onChange={(e) => setNewSizeName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  addSize(newSizeName);
+                }
               }}
-            >
-              <option value="">Select existing size</option>
-              {unusedLibrary.map((s) => (
-                <option key={s.id} value={s.name}>
-                  {s.name}
-                </option>
-              ))}
-            </select>
+            />
           ) : null}
-          <input
-            placeholder="Or add a size"
-            value={newSizeName}
-            onChange={(e) => setNewSizeName(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                addSize(newSizeName);
-              }
-            }}
-          />
           <button
             type="button"
             className="sw-admin-btn"
-            onClick={() => addSize(newSizeName)}
+            onClick={() => {
+              if (!addingSize) {
+                setAddingSize(true);
+                return;
+              }
+              addSize(newSizeName);
+            }}
           >
             + Add Size
           </button>
