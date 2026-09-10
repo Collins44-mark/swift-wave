@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentAdmin } from "@/lib/auth/get-current-admin";
 import { ModuleCompanyHub } from "@/components/admin/ModuleCompanyHub";
 import { PageHeader } from "@/components/admin/PageHeader";
+import { AdminHubLink } from "@/components/navigation/AdminHubLink";
 
 export const metadata: Metadata = {
   title: "Website Content — Swift Wave Admin",
@@ -30,14 +30,14 @@ export default async function Page() {
             </div>
           </div>
           <div className="sw-admin-hub-grid" style={{ marginBottom: "1.5rem" }}>
-            <Link className="sw-admin-hub-card" href="/admin/website-content/corporate">
+            <AdminHubLink href="/admin/website-content/corporate">
               <strong>Swift Wave Group (Corporate)</strong>
               <span>5 pages · home, about, companies, global, contact →</span>
-            </Link>
-            <Link className="sw-admin-hub-card" href="/admin/website-content/hero">
+            </AdminHubLink>
+            <AdminHubLink href="/admin/website-content/hero">
               <strong>Hero Images</strong>
               <span>Manage hero/banner images per page →</span>
-            </Link>
+            </AdminHubLink>
           </div>
         </>
       ) : null}

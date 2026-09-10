@@ -23,13 +23,15 @@ export async function LegacyPage({ slug, previewDraft = false }: LegacyPageProps
   const page = getLegacyPage(slug);
   let html = readLegacyHtml(slug);
 
-  if (slug === "companies") {
-    const cards = await getCorporateCompanyCards();
+  const ctx = resolveCmsContext(slug);
+  const [cards, companyId] = await Promise.all([
+    slug === "companies" ? getCorporateCompanyCards() : Promise.resolve(null),
+    getCompanyIdBySlug(ctx.companySlug),
+  ]);
+
+  if (cards) {
     html = injectCorporateCompanyCards(html, cards);
   }
-
-  const ctx = resolveCmsContext(slug);
-  const companyId = await getCompanyIdBySlug(ctx.companySlug);
 
   if (companyId) {
     const pageContent = await getPageContent(

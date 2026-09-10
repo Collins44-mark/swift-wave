@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentAdmin } from "@/lib/auth/get-current-admin";
 import { ModuleCompanyHub } from "@/components/admin/ModuleCompanyHub";
@@ -8,6 +7,7 @@ import {
   COMPANY_HERO_PAGES,
   CORPORATE_HERO_PAGES,
 } from "@/lib/cms/hero-pages";
+import { AdminHubLink } from "@/components/navigation/AdminHubLink";
 
 export const metadata: Metadata = {
   title: "Hero Images — Swift Wave Admin",
@@ -37,16 +37,15 @@ export default async function HeroManagementHubPage() {
           </div>
           <div className="sw-admin-hub-grid" style={{ marginBottom: "1.5rem" }}>
             {CORPORATE_HERO_PAGES.map((hero) => (
-              <Link
+              <AdminHubLink
                 key={hero.pageKey}
-                className="sw-admin-hub-card"
                 href={`/admin/website-content/hero/${hero.pageKey}`}
               >
                 <strong>{hero.label}</strong>
                 <span>
                   {hero.route} · {hero.heroType} hero →
                 </span>
-              </Link>
+              </AdminHubLink>
             ))}
           </div>
         </>
@@ -60,16 +59,15 @@ export default async function HeroManagementHubPage() {
       </div>
       <div className="sw-admin-hub-grid" style={{ marginBottom: "1.5rem" }}>
         {COMPANY_HERO_PAGES.map((hero) => (
-          <Link
+          <AdminHubLink
             key={hero.pageKey}
-            className="sw-admin-hub-card"
             href={`/admin/companies/${hero.companySlug}/website-content/hero`}
           >
             <strong>{hero.label}</strong>
             <span>
               {hero.route} · shop hero →
             </span>
-          </Link>
+          </AdminHubLink>
         ))}
       </div>
 

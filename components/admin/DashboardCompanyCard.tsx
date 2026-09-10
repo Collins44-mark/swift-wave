@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
 import type { CompanyRecord } from "@/lib/admin/company-types";
 import { CompanyMark } from "@/components/admin/CompanyMark";
+import { LinkPendingFlag } from "@/components/navigation/LinkPendingFlag";
 
 export function DashboardCompanyCard({ company }: { company: CompanyRecord }) {
   const [open, setOpen] = useState(false);
@@ -47,6 +48,7 @@ export function DashboardCompanyCard({ company }: { company: CompanyRecord }) {
           className="sw-dash-manage-btn"
           href={`/admin/companies/${company.slug}`}
         >
+          <LinkPendingFlag />
           Manage Company
           <span aria-hidden="true">→</span>
         </Link>

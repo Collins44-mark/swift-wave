@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { Suspense } from "react";
+import { NavigationProgress } from "@/components/navigation/NavigationProgress";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -39,6 +41,9 @@ export default function RootLayout({
           src="https://cdn.tailwindcss.com"
           strategy="beforeInteractive"
         />
+        <Suspense fallback={null}>
+          <NavigationProgress />
+        </Suspense>
         {children}
       </body>
     </html>

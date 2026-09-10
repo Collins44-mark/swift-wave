@@ -2,16 +2,20 @@
 
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import { useNavigationProgress } from "@/components/navigation/NavigationProgress";
 
 export function AdminGlobalSearch() {
   const router = useRouter();
+  const progress = useNavigationProgress();
   const [query, setQuery] = useState("");
 
   const submit = useCallback(() => {
     const q = query.trim();
     if (!q) return;
-    router.push(`/admin/companies?q=${encodeURIComponent(q)}`);
-  }, [query, router]);
+    const href = `/admin/companies?q=${encodeURIComponent(q)}`;
+    progress?.markStart(href);
+    router.push(href);
+  }, [query, router, progress]);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {

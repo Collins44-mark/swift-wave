@@ -4,3 +4,41 @@ body {
   margin: 0;
   padding: 0;
 }
+
+.sw-nav-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100000;
+  height: 2px;
+  width: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: #d4af37;
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.45);
+}
+
+.sw-nav-progress.is-active {
+  opacity: 1;
+  animation: sw-nav-progress 0.5s ease-out forwards;
+}
+
+@keyframes sw-nav-progress {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 72%;
+  }
+}
+
+.sw-link-pending {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}

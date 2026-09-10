@@ -7,6 +7,7 @@ import { CmsStructuredSectionEditor } from "@/components/admin/CmsStructuredSect
 import type { CmsPageDef } from "@/lib/cms/types";
 import type { ContentStatus, WebsiteContent } from "@/lib/admin/types-catalog";
 import type { MediaAsset } from "@/lib/admin/types-media";
+import { LinkPendingFlag } from "@/components/navigation/LinkPendingFlag";
 
 type Props = {
   companySlug: string;
@@ -79,6 +80,7 @@ export function CmsPageEditorClient({
                       : undefined
                   }
                 >
+                  <LinkPendingFlag />
                   {s.label}
                   {status === "draft" ? (
                     <span className="sw-admin-pill">Draft</span>

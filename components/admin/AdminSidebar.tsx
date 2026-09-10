@@ -6,6 +6,7 @@ import type { CurrentAdmin } from "@/lib/auth/types";
 import { signOutAction } from "@/lib/auth/actions";
 import { useAdminShell } from "@/components/admin/AdminShell";
 import { userInitials, roleLabel } from "@/lib/admin/labels";
+import { LinkPendingFlag } from "@/components/navigation/LinkPendingFlag";
 
 type NavItem = {
   href: string;
@@ -86,6 +87,16 @@ const ADMIN_NAV: NavItem[] = [
   },
 ];
 
+function isSidebarActive(href: string, pathname: string) {
+  if (href === "/admin/dashboard") {
+    return pathname === href || pathname === "/admin" || pathname === "/admin/";
+  }
+  if (href === "/admin/settings") {
+    return pathname === href || pathname === `${href}/`;
+  }
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 function NavLink({
   item,
   pathname,
@@ -95,18 +106,18 @@ function NavLink({
   pathname: string;
   onNavigate?: () => void;
 }) {
-  const active =
-    pathname === item.href ||
-    (item.href !== "/admin/dashboard" && pathname.startsWith(`${item.href}/`));
+  const active = isSidebarActive(item.href, pathname);
 
   return (
     <Link
       href={item.href}
+      prefetch
       className={active ? "is-active" : undefined}
       aria-current={active ? "page" : undefined}
       title={item.label}
       onClick={onNavigate}
     >
+      <LinkPendingFlag />
       {item.icon}
       <span className="sw-admin-nav-label">{item.label}</span>
     </Link>

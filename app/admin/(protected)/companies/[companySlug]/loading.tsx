@@ -1,5 +1,5 @@
-import { CompanyWorkspaceSkeleton } from "@/components/admin/AdminSkeletons";
+import { TablePageSkeleton } from "@/components/admin/AdminSkeletons";
 
-export default function CompanyLoading() {
-  return <CompanyWorkspaceSkeleton />;
+export default function CompanyWorkspaceLoading() {
+  return <TablePageSkeleton rows={5} />;
 }

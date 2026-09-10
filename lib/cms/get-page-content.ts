@@ -1,3 +1,4 @@
+import { cache } from "react";
 import {
   createClient,
   isSupabaseConfigured,
@@ -46,7 +47,7 @@ export async function getPageContent(
   return result;
 }
 
-export async function getCompanyIdBySlug(
+export const getCompanyIdBySlug = cache(async function getCompanyIdBySlug(
   slug: string
 ): Promise<string | null> {
   if (!isSupabaseConfigured()) return null;
@@ -58,4 +59,4 @@ export async function getCompanyIdBySlug(
     .eq("slug", slug)
     .maybeSingle();
   return data?.id ?? null;
-}
+});

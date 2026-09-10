@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentAdmin } from "@/lib/auth/get-current-admin";
 import { getCmsScope } from "@/lib/cms/schemas";
 import { PageHeader } from "@/components/admin/PageHeader";
+import { AdminHubLink } from "@/components/navigation/AdminHubLink";
 
 export const metadata: Metadata = {
   title: "Corporate Website Content — Swift Wave Admin",
@@ -29,23 +29,22 @@ export default async function CorporateCmsHubPage() {
         description="Manage the Swift Wave Group corporate website — home, about, companies, global, and contact."
       />
       <div className="sw-admin-hub-grid" style={{ marginBottom: "1.5rem" }}>
-        <Link className="sw-admin-hub-card" href="/admin/website-content/hero">
+        <AdminHubLink href="/admin/website-content/hero">
           <strong>Hero Images</strong>
           <span>Manage hero/banner images for all corporate pages →</span>
-        </Link>
+        </AdminHubLink>
       </div>
       <div className="sw-admin-hub-grid">
         {scope.pages.map((page) => (
-          <Link
+          <AdminHubLink
             key={page.key}
-            className="sw-admin-hub-card"
             href={`/admin/website-content/corporate/${page.key}`}
           >
             <strong>{page.label}</strong>
             <span>
               {page.sections.length} sections · {page.route} →
             </span>
-          </Link>
+          </AdminHubLink>
         ))}
       </div>
     </>

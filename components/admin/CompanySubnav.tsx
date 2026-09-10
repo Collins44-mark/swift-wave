@@ -6,6 +6,7 @@ import {
   getCompanyCapabilities,
   companyModuleHref,
 } from "@/lib/admin/capabilities";
+import { LinkPendingFlag } from "@/components/navigation/LinkPendingFlag";
 
 export function CompanySubnav({ companySlug }: { companySlug: string }) {
   const pathname = usePathname();
@@ -34,9 +35,11 @@ export function CompanySubnav({ companySlug }: { companySlug: string }) {
           <Link
             key={item.key}
             href={href}
+            prefetch
             className={active ? "is-active" : undefined}
             aria-current={active ? "page" : undefined}
           >
+            <LinkPendingFlag />
             {item.label}
           </Link>
         );

@@ -1,9 +1,7 @@
 import { getCompanyCapabilities } from "@/lib/admin/capabilities";
 import type { CompanyModuleKey } from "@/lib/admin/capabilities";
 import type { CurrentAdmin } from "@/lib/auth/types";
-import type { CompanyRecord } from "@/lib/admin/company-types";
-import { getAccessibleCompanies } from "@/lib/admin/companies";
-import Link from "next/link";
+import { AdminHubLink } from "@/components/navigation/AdminHubLink";
 
 const MODULE_META: Record<
   string,
@@ -47,7 +45,7 @@ const MODULE_META: Record<
   },
 };
 
-export async function ModuleCompanyHub({
+export function ModuleCompanyHub({
   admin,
   hubKey,
 }: {
@@ -55,9 +53,7 @@ export async function ModuleCompanyHub({
   hubKey: keyof typeof MODULE_META;
 }) {
   const meta = MODULE_META[hubKey];
-  const { companies } = await getAccessibleCompanies(admin);
-
-  const eligible = companies.filter((c) => {
+  const eligible = admin.companies.filter((c) => {
     const caps = getCompanyCapabilities(c.slug);
     return caps.modules.some((m) => m.key === meta.module && m.ready);
   });
@@ -75,15 +71,14 @@ export async function ModuleCompanyHub({
         </div>
       ) : (
         <div className="sw-admin-hub-grid">
-          {eligible.map((c: CompanyRecord) => (
-            <Link
+          {eligible.map((c) => (
+            <AdminHubLink
               key={c.id}
-              className="sw-admin-hub-card"
               href={`/admin/companies/${c.slug}/${meta.path}`}
             >
               <strong>{c.name}</strong>
               <span>Open {meta.title} →</span>
-            </Link>
+            </AdminHubLink>
           ))}
         </div>
       )}

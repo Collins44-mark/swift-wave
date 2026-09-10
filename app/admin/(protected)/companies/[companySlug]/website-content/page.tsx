@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import {
   requireCompanyAccess,
   canMutate,
@@ -9,6 +8,7 @@ import { getCmsScope } from "@/lib/cms/schemas";
 import { getHeroPage } from "@/lib/cms/hero-pages";
 import { CmsPageEditor } from "@/components/admin/CmsPageEditor";
 import { PageHeader } from "@/components/admin/PageHeader";
+import { AdminHubLink } from "@/components/navigation/AdminHubLink";
 
 export const metadata: Metadata = {
   title: "Website Content — Swift Wave Admin",
@@ -48,13 +48,10 @@ export default async function WebsiteContentPage({
       />
       {getHeroPage(companySlug, companySlug) ? (
         <div className="sw-admin-hub-grid" style={{ marginBottom: "1rem" }}>
-          <Link
-            className="sw-admin-hub-card"
-            href={`/admin/companies/${companySlug}/website-content/hero`}
-          >
+          <AdminHubLink href={`/admin/companies/${companySlug}/website-content/hero`}>
             <strong>Hero Image</strong>
             <span>Manage this page&apos;s hero/banner image →</span>
-          </Link>
+          </AdminHubLink>
         </div>
       ) : null}
       <CmsPageEditor

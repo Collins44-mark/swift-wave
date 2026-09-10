@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentAdmin } from "@/lib/auth/get-current-admin";
 import { roleLabel } from "@/lib/admin/labels";
 import { PageHeader } from "@/components/admin/PageHeader";
+import { AdminHubLink } from "@/components/navigation/AdminHubLink";
 
 export const metadata: Metadata = {
   title: "Settings — Swift Wave Admin",
@@ -57,14 +57,14 @@ export default async function SettingsPage() {
             </div>
           </div>
           <div className="sw-admin-hub-grid">
-            <Link className="sw-admin-hub-card" href="/admin/settings/users">
+            <AdminHubLink href="/admin/settings/users">
               <strong>Administrators</strong>
               <span>View, create, edit, disable, or delete admin accounts →</span>
-            </Link>
-            <Link className="sw-admin-hub-card" href="/admin/settings/users/new">
+            </AdminHubLink>
+            <AdminHubLink href="/admin/settings/users/new">
               <strong>Add Administrator</strong>
               <span>Create Auth user + assign companies →</span>
-            </Link>
+            </AdminHubLink>
           </div>
 
           <div className="sw-admin-section-head" style={{ marginTop: "1.5rem" }}>
@@ -74,18 +74,18 @@ export default async function SettingsPage() {
             </div>
           </div>
           <div className="sw-admin-hub-grid">
-            <Link className="sw-admin-hub-card" href="/admin/companies">
+            <AdminHubLink href="/admin/companies">
               <strong>Company Management</strong>
               <span>Open any of the six company workspaces →</span>
-            </Link>
-            <Link className="sw-admin-hub-card" href="/admin/website-content">
+            </AdminHubLink>
+            <AdminHubLink href="/admin/website-content">
               <strong>Website Content</strong>
               <span>Edit CMS fields per company →</span>
-            </Link>
-            <Link className="sw-admin-hub-card" href="/admin/whatsapp">
+            </AdminHubLink>
+            <AdminHubLink href="/admin/whatsapp">
               <strong>WhatsApp</strong>
               <span>Company WhatsApp configuration →</span>
-            </Link>
+            </AdminHubLink>
           </div>
         </>
       ) : (
@@ -98,19 +98,15 @@ export default async function SettingsPage() {
           </div>
           <div className="sw-admin-hub-grid">
             {admin.companies.map((c) => (
-              <Link
-                key={c.id}
-                className="sw-admin-hub-card"
-                href={`/admin/companies/${c.slug}`}
-              >
+              <AdminHubLink key={c.id} href={`/admin/companies/${c.slug}`}>
                 <strong>{c.name}</strong>
                 <span>Open workspace →</span>
-              </Link>
+              </AdminHubLink>
             ))}
-            <Link className="sw-admin-hub-card" href="/admin/companies">
+            <AdminHubLink href="/admin/companies">
               <strong>All assigned companies</strong>
               <span>Company list →</span>
-            </Link>
+            </AdminHubLink>
           </div>
         </>
       )}

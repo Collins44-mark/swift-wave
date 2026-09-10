@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { CompanyRecord } from "@/lib/admin/company-types";
 import { companyCategoryLabel } from "@/lib/admin/labels";
+import { LinkPendingFlag } from "@/components/navigation/LinkPendingFlag";
 
 function CompanyMark({ slug }: { slug: string }) {
   const s = slug.toLowerCase();
@@ -125,11 +126,13 @@ export function CompanyCard({ company }: { company: CompanyRecord }) {
 
       <h3 className="sw-admin-company-name">{company.name}</h3>
 
-      <Link
-        className="sw-admin-company-action"
-        href={`/admin/companies/${company.slug}`}
-      >
-        Manage Company
+        <Link
+          className="sw-admin-company-action"
+          href={`/admin/companies/${company.slug}`}
+          prefetch
+        >
+          <LinkPendingFlag />
+          Manage Company
         <span aria-hidden="true">→</span>
       </Link>
     </article>

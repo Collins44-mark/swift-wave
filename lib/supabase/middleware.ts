@@ -8,6 +8,11 @@ export async function updateSession(request: NextRequest) {
   const isAdminRoute = pathname.startsWith("/admin");
   const isLoginRoute = pathname === "/admin/login";
 
+  // Public pages and APIs do not need a session refresh on every navigation.
+  if (!isAdminRoute) {
+    return NextResponse.next();
+  }
+
   if (!supabaseUrl || !supabaseKey) {
     if (isAdminRoute && !isLoginRoute) {
       const url = request.nextUrl.clone();

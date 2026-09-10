@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { useNavigationProgress } from "@/components/navigation/NavigationProgress";
 
 const GLOBE_SRC = "https://unpkg.com/globe.gl@2.33.1/dist/globe.gl.min.js";
 const LUCIDE_SRC = "https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js";
@@ -14,6 +16,7 @@ declare global {
 }
 
 const loadedLibraries = new Set<string>();
+const siteScriptCache = new Map<string, string>();
 
 function loadLibraryOnce(src: string): Promise<void> {
   if (loadedLibraries.has(src)) return Promise.resolve();
@@ -48,9 +51,13 @@ function loadLibraryOnce(src: string): Promise<void> {
 }
 
 async function runSiteScript(src: string): Promise<void> {
-  const response = await fetch(src, { cache: "no-store" });
-  if (!response.ok) throw new Error(`Failed to fetch script: ${src}`);
-  const code = await response.text();
+  let code = siteScriptCache.get(src);
+  if (!code) {
+    const response = await fetch(src, { cache: "force-cache" });
+    if (!response.ok) throw new Error(`Failed to fetch script: ${src}`);
+    code = await response.text();
+    siteScriptCache.set(src, code);
+  }
   const script = document.createElement("script");
   script.text = code;
   document.body.appendChild(script);
@@ -60,6 +67,32 @@ async function runSiteScript(src: string): Promise<void> {
 function resolveScriptSrc(src: string): string {
   if (src === "globe.gl") return GLOBE_SRC;
   return src;
+}
+
+function internalNavigationPath(anchor: HTMLAnchorElement): string | null {
+  if (anchor.target && anchor.target !== "_self") return null;
+  if (anchor.hasAttribute("download")) return null;
+  if (anchor.hasAttribute("data-coming-soon")) return null;
+  const href = anchor.getAttribute("href");
+  if (!href) return null;
+  if (
+    href.startsWith("mailto:") ||
+    href.startsWith("tel:") ||
+    href.startsWith("javascript:")
+  ) {
+    return null;
+  }
+  if (href.startsWith("#")) return null;
+  try {
+    const url = new URL(href, window.location.href);
+    if (url.origin !== window.location.origin) return null;
+    const next = `${url.pathname}${url.search}`;
+    const current = `${window.location.pathname}${window.location.search}`;
+    if (next === current) return null;
+    return next;
+  } catch {
+    return null;
+  }
 }
 
 type HtmlIslandProps = {
@@ -78,6 +111,8 @@ export function HtmlIsland({
   bodyAttrs = {},
 }: HtmlIslandProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  const progress = useNavigationProgress();
   const attrsKey = JSON.stringify(bodyAttrs);
   const scriptsKey = scripts.join("|");
 
@@ -134,12 +169,50 @@ export function HtmlIsland({
         else document.body.setAttribute(key, value);
       });
 
-      // Clear body attrs we added that weren't present before
       Object.keys(parsedAttrs).forEach((key) => {
         if (!previousAttrs.has(key)) document.body.removeAttribute(key);
       });
     };
   }, [attrsKey, scriptsKey, bodyClassName, bodyStyle]);
+
+  useEffect(() => {
+    const root = ref.current;
+    if (!root) return;
+
+    const onClick = (event: MouseEvent) => {
+      if (event.defaultPrevented) return;
+      if (event.button !== 0) return;
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+        return;
+      }
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const anchor = target.closest("a[href]");
+      if (!(anchor instanceof HTMLAnchorElement)) return;
+      const next = internalNavigationPath(anchor);
+      if (!next) return;
+      event.preventDefault();
+      progress?.markStart(next);
+      router.push(next);
+    };
+
+    const onPointerOver = (event: PointerEvent) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const anchor = target.closest("a[href]");
+      if (!(anchor instanceof HTMLAnchorElement)) return;
+      const next = internalNavigationPath(anchor);
+      if (!next) return;
+      router.prefetch(next);
+    };
+
+    root.addEventListener("click", onClick);
+    root.addEventListener("pointerover", onPointerOver);
+    return () => {
+      root.removeEventListener("click", onClick);
+      root.removeEventListener("pointerover", onPointerOver);
+    };
+  }, [html, progress, router]);
 
   return (
     <div

@@ -4,10 +4,12 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import type { CurrentAdmin } from "@/lib/auth/types";
+import { useNavigationProgress } from "@/components/navigation/NavigationProgress";
 
 export function CompanySwitcher({ admin }: { admin: CurrentAdmin }) {
   const pathname = usePathname();
   const router = useRouter();
+  const progress = useNavigationProgress();
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -51,8 +53,10 @@ export function CompanySwitcher({ admin }: { admin: CurrentAdmin }) {
 
   function goToCompany(slug: string) {
     setOpen(false);
+    if (slug === currentSlug) return;
     const rest = pathname.replace(/^\/admin\/companies\/[^/]+/, "");
     const next = `/admin/companies/${slug}${rest || ""}`;
+    progress?.markStart(next);
     router.push(next);
   }
 
