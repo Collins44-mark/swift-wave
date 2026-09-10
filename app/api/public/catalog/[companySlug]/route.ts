@@ -58,7 +58,9 @@ export async function GET(
     ? await Promise.all([
         supabase
           .from("product_colors")
-          .select("id, product_id, name, hex_code, image_url, sort_order, is_active")
+          .select(
+            "id, product_id, name, hex_code, image_url, sort_order, is_active, color:colors(name, hex_code)"
+          )
           .in("product_id", productIds)
           .eq("is_active", true)
           .order("sort_order", { ascending: true }),
@@ -76,8 +78,18 @@ export async function GET(
     { id: string; name: string; hex_code: string | null; image_url: string | null }[]
   >();
   for (const row of colorRows ?? []) {
+    const nested = (row as { color?: unknown }).color as
+      | { name: string; hex_code: string | null }
+      | { name: string; hex_code: string | null }[]
+      | null;
+    const lib = Array.isArray(nested) ? nested[0] : nested;
     const list = colorsByProduct.get(row.product_id) ?? [];
-    list.push(row);
+    list.push({
+      id: row.id,
+      name: lib?.name || row.name,
+      hex_code: lib?.hex_code ?? row.hex_code,
+      image_url: row.image_url,
+    });
     colorsByProduct.set(row.product_id, list);
   }
 

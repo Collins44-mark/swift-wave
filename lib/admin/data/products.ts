@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import {
   PRODUCT_SELECT,
+  type ColorDefinition,
   type Product,
   type ProductColor,
   type ProductSizeOption,
@@ -19,6 +20,18 @@ export async function listSizeLibrary(): Promise<SizeDefinition[]> {
   return (data as SizeDefinition[]) ?? [];
 }
 
+export async function listColorLibrary(): Promise<ColorDefinition[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("colors")
+    .select("id, name, hex_code, sort_order, is_active")
+    .eq("is_active", true)
+    .order("sort_order", { ascending: true })
+    .order("name", { ascending: true });
+  if (error) return [];
+  return (data as ColorDefinition[]) ?? [];
+}
+
 async function loadProductVariants(
   productId: string
 ): Promise<{ colors: ProductColor[]; sizes: ProductSizeOption[] }> {
@@ -27,7 +40,7 @@ async function loadProductVariants(
     supabase
       .from("product_colors")
       .select(
-        "id, product_id, name, hex_code, image_url, image_public_id, sort_order, is_active"
+        "id, product_id, color_id, name, hex_code, image_url, image_public_id, sort_order, is_active, color:colors(id, name, hex_code)"
       )
       .eq("product_id", productId)
       .order("sort_order", { ascending: true }),
@@ -55,8 +68,25 @@ async function loadProductVariants(
     }
   }
 
+  const mappedColors: ProductColor[] = [];
+  for (const row of colors ?? []) {
+    const nested = (row as { color?: unknown }).color as
+      | { id: string; name: string; hex_code: string | null }
+      | { id: string; name: string; hex_code: string | null }[]
+      | null
+      | undefined;
+    const lib = Array.isArray(nested) ? nested[0] : nested;
+    const pc = row as ProductColor;
+    mappedColors.push({
+      ...pc,
+      color_id: pc.color_id || lib?.id || null,
+      name: lib?.name || pc.name,
+      hex_code: lib?.hex_code ?? pc.hex_code,
+    });
+  }
+
   return {
-    colors: ((colors as ProductColor[]) ?? []).filter((c) => c.is_active),
+    colors: mappedColors.filter((c) => c.is_active),
     sizes,
   };
 }

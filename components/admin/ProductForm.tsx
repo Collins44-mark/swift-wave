@@ -13,6 +13,7 @@ import {
   isProductCurrency,
 } from "@/lib/admin/product-currencies";
 import type {
+  ColorDefinition,
   Product,
   SizeDefinition,
 } from "@/lib/admin/types-catalog";
@@ -58,6 +59,7 @@ export function ProductForm({
   categories,
   mediaLibrary,
   sizeLibrary,
+  colorLibrary,
   canUpload,
   action,
 }: {
@@ -66,6 +68,7 @@ export function ProductForm({
   categories: CategoryOption[];
   mediaLibrary: MediaAsset[];
   sizeLibrary: SizeDefinition[];
+  colorLibrary: ColorDefinition[];
   canUpload: boolean;
   action: (prev: FormState, formData: FormData) => Promise<FormState>;
 }) {
@@ -239,6 +242,7 @@ export function ProductForm({
         initialColors={product?.colors}
         initialSizes={product?.sizes}
         sizeLibrary={sizeLibrary}
+        colorLibrary={colorLibrary}
         onBusyChange={handleUploadBusy}
       />
 

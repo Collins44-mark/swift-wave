@@ -5,7 +5,7 @@ import {
 } from "@/lib/admin/require-company-access";
 import { listCategories } from "@/lib/admin/data/categories";
 import { listMediaAssets } from "@/lib/admin/data/media";
-import { listSizeLibrary } from "@/lib/admin/data/products";
+import { listColorLibrary, listSizeLibrary } from "@/lib/admin/data/products";
 import { createProduct } from "@/lib/admin/actions/products";
 import { ProductForm } from "@/components/admin/ProductForm";
 
@@ -24,10 +24,11 @@ export default async function NewProductPage({
     companySlug,
     "products"
   );
-  const [categories, mediaLibrary, sizeLibrary] = await Promise.all([
+  const [categories, mediaLibrary, sizeLibrary, colorLibrary] = await Promise.all([
     listCategories(company.id),
     listMediaAssets(company.id),
     listSizeLibrary(),
+    listColorLibrary(),
   ]);
 
   async function action(
@@ -51,6 +52,7 @@ export default async function NewProductPage({
         categories={categories}
         mediaLibrary={mediaLibrary}
         sizeLibrary={sizeLibrary}
+        colorLibrary={colorLibrary}
         canUpload={canMutate(admin)}
         action={action}
       />

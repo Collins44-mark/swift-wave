@@ -23,6 +23,7 @@ export type ContentStatus = "draft" | "published";
 export type ProductColor = {
   id: string;
   product_id: string;
+  color_id?: string | null;
   name: string;
   hex_code: string | null;
   image_url: string | null;
@@ -64,6 +65,14 @@ export type Product = {
 export type SizeDefinition = {
   id: string;
   name: string;
+  sort_order: number;
+  is_active: boolean;
+};
+
+export type ColorDefinition = {
+  id: string;
+  name: string;
+  hex_code: string | null;
   sort_order: number;
   is_active: boolean;
 };

@@ -1,0 +1,80 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { createClient } from "@/lib/supabase/server";
+import { requireCompanyAccess, canMutate } from "@/lib/admin/require-company-access";
+
+function normalizeHex(raw: string): string | null {
+  const value = raw.trim();
+  if (!value) return null;
+  const withHash = value.startsWith("#") ? value : `#${value}`;
+  if (!/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/.test(withHash)) {
+    return null;
+  }
+  return withHash.toLowerCase();
+}
+
+export async function createLibraryColor(
+  companySlug: string,
+  name: string,
+  hexCode: string
+): Promise<
+  | { ok: true; id: string; name: string; hex_code: string | null }
+  | { ok: false; error: string }
+> {
+  const { admin } = await requireCompanyAccess(companySlug, "products");
+  if (!canMutate(admin)) {
+    return { ok: false, error: "You do not have permission to add colors." };
+  }
+
+  const trimmed = name.trim();
+  if (!trimmed) return { ok: false, error: "Color name is required." };
+  const hex = normalizeHex(hexCode);
+
+  const supabase = await createClient();
+  const { data: existing } = await supabase
+    .from("colors")
+    .select("id, name, hex_code")
+    .ilike("name", trimmed)
+    .limit(1)
+    .maybeSingle();
+
+  if (existing?.id) {
+    return {
+      ok: true,
+      id: existing.id as string,
+      name: existing.name as string,
+      hex_code: (existing.hex_code as string | null) ?? hex,
+    };
+  }
+
+  const { data: maxRow } = await supabase
+    .from("colors")
+    .select("sort_order")
+    .order("sort_order", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const { data, error } = await supabase
+    .from("colors")
+    .insert({
+      name: trimmed,
+      hex_code: hex,
+      is_active: true,
+      sort_order: (Number(maxRow?.sort_order) || 0) + 10,
+    })
+    .select("id, name, hex_code")
+    .single();
+
+  if (error || !data?.id) {
+    return { ok: false, error: error?.message || "Unable to save color." };
+  }
+
+  revalidatePath(`/admin/companies/${companySlug}/products`);
+  return {
+    ok: true,
+    id: data.id as string,
+    name: data.name as string,
+    hex_code: (data.hex_code as string | null) ?? hex,
+  };
+}

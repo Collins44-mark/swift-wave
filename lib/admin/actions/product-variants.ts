@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 export type ColorDraft = {
   id?: string;
+  color_id: string;
   name: string;
   hex_code: string;
   image_url: string;
@@ -31,9 +32,18 @@ export function parseColorDrafts(raw: string): ColorDraft[] | { error: string } 
   if (!Array.isArray(parsed)) return { error: "Color data is invalid." };
 
   const colors: ColorDraft[] = [];
+  const seen = new Set<string>();
   for (const [index, item] of parsed.entries()) {
     if (!item || typeof item !== "object") continue;
     const row = item as Record<string, unknown>;
+    const colorId = String(row.color_id ?? "").trim();
+    if (!colorId) {
+      return { error: `Color ${index + 1} is missing a library color.` };
+    }
+    if (seen.has(colorId)) {
+      return { error: "Each color can only be added once to a product." };
+    }
+    seen.add(colorId);
     const name = String(row.name ?? "").trim();
     if (!name) {
       return { error: `Color ${index + 1} needs a name.` };
@@ -41,6 +51,7 @@ export function parseColorDrafts(raw: string): ColorDraft[] | { error: string } 
     const hex = normalizeHex(String(row.hex_code ?? ""));
     colors.push({
       id: row.id ? String(row.id) : undefined,
+      color_id: colorId,
       name,
       hex_code: hex ?? "#111111",
       image_url: String(row.image_url ?? "").trim(),
@@ -116,11 +127,30 @@ export async function replaceProductVariants(
     }
   }
 
+  const libraryIds = [...new Set(colors.map((c) => c.color_id))];
+  const { data: libraryRows, error: libraryError } = libraryIds.length
+    ? await supabase
+        .from("colors")
+        .select("id, name, hex_code")
+        .in("id", libraryIds)
+    : { data: [], error: null };
+  if (libraryError) {
+    return { ok: false, error: "Unable to load the color library." };
+  }
+  const libraryById = new Map(
+    (libraryRows ?? []).map((row) => [row.id as string, row])
+  );
+
   for (const [index, color] of colors.entries()) {
+    const lib = libraryById.get(color.color_id);
+    if (!lib) {
+      return { ok: false, error: "A selected color was not found in the library." };
+    }
     const payload = {
       product_id: productId,
-      name: color.name,
-      hex_code: color.hex_code,
+      color_id: color.color_id,
+      name: lib.name,
+      hex_code: lib.hex_code || color.hex_code || null,
       image_url: color.image_url || null,
       image_public_id: color.image_public_id || null,
       sort_order: index,
@@ -129,8 +159,9 @@ export async function replaceProductVariants(
     if (color.id) {
       const updatePayload = {
         product_id: productId,
-        name: color.name,
-        hex_code: color.hex_code,
+        color_id: color.color_id,
+        name: lib.name,
+        hex_code: lib.hex_code || color.hex_code || null,
         sort_order: index,
         is_active: color.is_active !== false,
         ...(color.image_url
