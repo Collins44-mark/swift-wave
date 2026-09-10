@@ -6,6 +6,9 @@ type OrderItemInput = {
   product_name: string;
   quantity: number;
   unit_price: number;
+  product_color_id?: string | null;
+  selected_color?: string | null;
+  selected_size?: string | null;
 };
 
 type OrderBody = {
@@ -46,6 +49,9 @@ export async function POST(request: Request) {
       product_name: item.product_name,
       quantity: item.quantity,
       unit_price: item.unit_price,
+      product_color_id: item.product_color_id || null,
+      selected_color: item.selected_color || null,
+      selected_size: item.selected_size || null,
     })),
     p_customer_location: body.customer_location || null,
     p_customer_email: body.customer_email || null,

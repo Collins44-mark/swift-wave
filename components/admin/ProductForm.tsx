@@ -6,12 +6,16 @@ import { useRouter } from "next/navigation";
 import { SubmitButton } from "@/components/admin/SubmitButton";
 import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
 import { ImageFieldPicker } from "@/components/admin/ImageFieldPicker";
+import { ProductVariantEditor } from "@/components/admin/ProductVariantEditor";
 import {
   PRODUCT_CURRENCIES,
   defaultProductCurrency,
   isProductCurrency,
 } from "@/lib/admin/product-currencies";
-import type { Product } from "@/lib/admin/types-catalog";
+import type {
+  Product,
+  SizeDefinition,
+} from "@/lib/admin/types-catalog";
 import type { MediaAsset } from "@/lib/admin/types-media";
 
 function bulletsText(bullets: Product["bullets"] | undefined): string {
@@ -53,6 +57,7 @@ export function ProductForm({
   product,
   categories,
   mediaLibrary,
+  sizeLibrary,
   canUpload,
   action,
 }: {
@@ -60,6 +65,7 @@ export function ProductForm({
   product?: Product | null;
   categories: CategoryOption[];
   mediaLibrary: MediaAsset[];
+  sizeLibrary: SizeDefinition[];
   canUpload: boolean;
   action: (prev: FormState, formData: FormData) => Promise<FormState>;
 }) {
@@ -207,6 +213,15 @@ export function ProductForm({
           ))}
         </select>
       </div>
+
+      <ProductVariantEditor
+        companySlug={companySlug}
+        canUpload={canUpload}
+        initialColors={product?.colors}
+        initialSizes={product?.sizes}
+        sizeLibrary={sizeLibrary}
+      />
+
       <div className="sw-admin-field">
         <label htmlFor="rating">Rating</label>
         <input
@@ -253,7 +268,7 @@ export function ProductForm({
         canUpload={canUpload}
         initialUrl={product?.image_url}
         initialPublicId={product?.image_public_id}
-        label="Product image"
+        label="Cover image (used if a color has no photo)"
       />
 
       <div className="sw-admin-toolbar sw-admin-field-span">

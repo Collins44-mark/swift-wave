@@ -52,6 +52,47 @@ export async function GET(
 
   const cats = categories ?? [];
   const byId = new Map(cats.map((c) => [c.id, c]));
+  const productIds = (products ?? []).map((p) => p.id);
+
+  const [{ data: colorRows }, { data: sizeRows }] = productIds.length
+    ? await Promise.all([
+        supabase
+          .from("product_colors")
+          .select("id, product_id, name, hex_code, image_url, sort_order, is_active")
+          .in("product_id", productIds)
+          .eq("is_active", true)
+          .order("sort_order", { ascending: true }),
+        supabase
+          .from("product_sizes")
+          .select("id, product_id, sort_order, is_active, size:sizes(id, name)")
+          .in("product_id", productIds)
+          .eq("is_active", true)
+          .order("sort_order", { ascending: true }),
+      ])
+    : [{ data: [] }, { data: [] }];
+
+  const colorsByProduct = new Map<
+    string,
+    { id: string; name: string; hex_code: string | null; image_url: string | null }[]
+  >();
+  for (const row of colorRows ?? []) {
+    const list = colorsByProduct.get(row.product_id) ?? [];
+    list.push(row);
+    colorsByProduct.set(row.product_id, list);
+  }
+
+  const sizesByProduct = new Map<string, { id: string; name: string }[]>();
+  for (const row of sizeRows ?? []) {
+    const nested = row.size as
+      | { id: string; name: string }
+      | { id: string; name: string }[]
+      | null;
+    const size = Array.isArray(nested) ? nested[0] : nested;
+    if (!size?.id) continue;
+    const list = sizesByProduct.get(row.product_id) ?? [];
+    list.push({ id: size.id, name: size.name });
+    sizesByProduct.set(row.product_id, list);
+  }
 
   // Build CATEGORIES-like map: parent name -> subcategory names
   const categoryMap: Record<string, string[]> = { All: [] };
@@ -83,6 +124,17 @@ export async function GET(
       (priceNum > 0
         ? `${currency} ${priceNum.toLocaleString("en-US")}`
         : "Enquire");
+    const colors = (colorsByProduct.get(p.id) ?? []).map((c) => ({
+      id: c.id,
+      name: c.name,
+      hex: c.hex_code || "#111111",
+      image: c.image_url || p.image_url || "",
+    }));
+    const sizes = (sizesByProduct.get(p.id) ?? []).map((s) => ({
+      id: s.id,
+      name: s.name,
+    }));
+    const cover = colors.find((c) => c.image)?.image || p.image_url || "";
 
     return {
       id: p.slug,
@@ -94,9 +146,11 @@ export async function GET(
       price: priceLabel,
       priceNum,
       rating: p.rating ?? "",
-      image: p.image_url ?? "",
+      image: cover,
       desc: p.description ?? "",
       bullets: Array.isArray(p.bullets) ? p.bullets : [],
+      colors,
+      sizes,
     };
   });
 

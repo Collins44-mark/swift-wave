@@ -9,6 +9,11 @@ import {
   defaultProductCurrency,
   isProductCurrency,
 } from "@/lib/admin/product-currencies";
+import {
+  parseColorDrafts,
+  parseSizeNames,
+  replaceProductVariants,
+} from "@/lib/admin/actions/product-variants";
 import type { ActionResult } from "@/lib/admin/types-catalog";
 
 function friendlyProductError(
@@ -199,6 +204,39 @@ export async function createProduct(
     };
   }
 
+  const colors = parseColorDrafts(str(formData, "colors_json"));
+  if ("error" in colors) {
+    await supabase.from("products").delete().eq("id", data.id);
+    return { ok: false, error: colors.error };
+  }
+  const sizeNames = parseSizeNames(str(formData, "sizes_json"));
+  if ("error" in sizeNames) {
+    await supabase.from("products").delete().eq("id", data.id);
+    return { ok: false, error: sizeNames.error };
+  }
+
+  const variants = await replaceProductVariants(
+    supabase,
+    data.id,
+    colors,
+    sizeNames
+  );
+  if (!variants.ok) {
+    await supabase.from("products").delete().eq("id", data.id);
+    return variants;
+  }
+
+  if (variants.coverUrl && !fields.image_url) {
+    await supabase
+      .from("products")
+      .update({
+        image_url: variants.coverUrl,
+        image_public_id: variants.coverPublicId,
+      })
+      .eq("id", data.id)
+      .eq("company_id", company.id);
+  }
+
   revalidateProductSurfaces(company.slug);
   return { ok: true, id: data.id };
 }
@@ -252,6 +290,30 @@ export async function updateProduct(
       ok: false,
       error: friendlyProductError(error, "Unable to update product. Please try again."),
     };
+  }
+
+  const colors = parseColorDrafts(str(formData, "colors_json"));
+  if ("error" in colors) return { ok: false, error: colors.error };
+  const sizeNames = parseSizeNames(str(formData, "sizes_json"));
+  if ("error" in sizeNames) return { ok: false, error: sizeNames.error };
+
+  const variants = await replaceProductVariants(
+    supabase,
+    productId,
+    colors,
+    sizeNames
+  );
+  if (!variants.ok) return variants;
+
+  if (variants.coverUrl && !fields.image_url) {
+    await supabase
+      .from("products")
+      .update({
+        image_url: variants.coverUrl,
+        image_public_id: variants.coverPublicId,
+      })
+      .eq("id", productId)
+      .eq("company_id", company.id);
   }
 
   revalidateProductSurfaces(company.slug, productId);

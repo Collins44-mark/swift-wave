@@ -6,7 +6,7 @@ import {
 } from "@/lib/admin/require-company-access";
 import { listCategories } from "@/lib/admin/data/categories";
 import { listMediaAssets } from "@/lib/admin/data/media";
-import { getProduct } from "@/lib/admin/data/products";
+import { getProduct, listSizeLibrary } from "@/lib/admin/data/products";
 import { updateProduct } from "@/lib/admin/actions/products";
 import { ProductForm } from "@/components/admin/ProductForm";
 
@@ -25,10 +25,11 @@ export default async function EditProductPage({
     companySlug,
     "products"
   );
-  const [product, categories, mediaLibrary] = await Promise.all([
+  const [product, categories, mediaLibrary, sizeLibrary] = await Promise.all([
     getProduct(company.id, productId),
     listCategories(company.id),
     listMediaAssets(company.id),
+    listSizeLibrary(),
   ]);
 
   if (!product) notFound();
@@ -52,6 +53,7 @@ export default async function EditProductPage({
         product={product}
         categories={categories}
         mediaLibrary={mediaLibrary}
+        sizeLibrary={sizeLibrary}
         canUpload={canMutate(admin)}
         action={action}
       />

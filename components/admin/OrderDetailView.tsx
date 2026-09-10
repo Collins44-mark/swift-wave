@@ -149,6 +149,20 @@ export function OrderDetailView({
                       {item.product_category}
                     </span>
                   ) : null}
+                  {item.selected_color || item.selected_size ? (
+                    <span className="sw-admin-order-item-category">
+                      {[
+                        item.selected_color
+                          ? `Color: ${item.selected_color}`
+                          : null,
+                        item.selected_size
+                          ? `Size: ${item.selected_size}`
+                          : null,
+                      ]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </span>
+                  ) : null}
                   <p className="sw-admin-order-item-qty">
                     Qty {item.quantity} ×{" "}
                     {formatMoney(order.currency, Number(item.unit_price))}

@@ -20,6 +20,23 @@ export type InquiryType =
   | "general";
 export type ContentStatus = "draft" | "published";
 
+export type ProductColor = {
+  id: string;
+  product_id: string;
+  name: string;
+  hex_code: string | null;
+  image_url: string | null;
+  image_public_id: string | null;
+  sort_order: number;
+  is_active: boolean;
+};
+
+export type ProductSizeOption = {
+  id: string;
+  name: string;
+  sort_order: number;
+};
+
 export type Product = {
   id: string;
   company_id: string;
@@ -40,6 +57,15 @@ export type Product = {
   sort_order: number;
   created_at?: string;
   updated_at?: string;
+  colors?: ProductColor[];
+  sizes?: ProductSizeOption[];
+};
+
+export type SizeDefinition = {
+  id: string;
+  name: string;
+  sort_order: number;
+  is_active: boolean;
 };
 
 export type Category = {
@@ -78,6 +104,9 @@ export type OrderItem = {
   quantity: number;
   unit_price: number;
   subtotal: number;
+  product_color_id?: string | null;
+  selected_color?: string | null;
+  selected_size?: string | null;
 };
 
 export type OrderItemEnriched = OrderItem & {

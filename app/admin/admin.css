@@ -3298,3 +3298,87 @@ a.sw-admin-hub-card:has(.sw-link-pending) {
   }
 }
 
+.sw-admin-variant-block {
+  display: grid;
+  gap: 1rem;
+}
+
+.sw-admin-variant-panel {
+  border: 1px solid var(--admin-border);
+  border-radius: 14px;
+  background: #fff;
+  padding: 0.9rem 1rem;
+}
+
+.sw-admin-variant-panel h3 {
+  margin: 0 0 0.7rem;
+  font-size: 0.95rem;
+  color: var(--admin-royal);
+}
+
+.sw-admin-color-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.sw-admin-color-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) 3rem minmax(8rem, 1.4fr) auto;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.sw-admin-color-dot {
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  border: 1px solid rgba(8, 31, 77, 0.2);
+}
+
+.sw-admin-color-image {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.sw-admin-color-image img {
+  width: 2.4rem;
+  height: 2.4rem;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.sw-admin-color-add,
+.sw-admin-size-add {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  align-items: center;
+}
+
+.sw-admin-size-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.sw-admin-size-chip {
+  border: 1px solid var(--admin-border);
+  background: rgba(11, 46, 109, 0.06);
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@media (max-width: 800px) {
+  .sw-admin-color-row {
+    grid-template-columns: 1fr;
+  }
+}
+
