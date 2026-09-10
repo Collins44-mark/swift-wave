@@ -106,7 +106,7 @@ export async function updateProduct(
   if (!slug) slug = `product-${Date.now()}`;
 
   const supabase = await createClient();
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("products")
     .update({
       name,
@@ -127,9 +127,10 @@ export async function updateProduct(
       sort_order: Number(str(formData, "sort_order") || "0") || 0,
     })
     .eq("id", productId)
-    .eq("company_id", company.id);
+    .eq("company_id", company.id)
+    .select("id");
 
-  if (error) {
+  if (error || !data?.length) {
     return {
       ok: false,
       error: friendlyProductError(error, "Unable to update product. Please try again."),
@@ -161,13 +162,14 @@ export async function deleteProduct(
   }
 
   const supabase = await createClient();
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("products")
     .delete()
     .eq("id", productId)
-    .eq("company_id", company.id);
+    .eq("company_id", company.id)
+    .select("id");
 
-  if (error) {
+  if (error || !data?.length) {
     return {
       ok: false,
       error: "Unable to delete product. Please try again.",

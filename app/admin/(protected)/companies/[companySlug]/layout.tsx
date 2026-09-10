@@ -17,12 +17,12 @@ export default async function CompanyLayout({
   const { companySlug } = await params;
   const { company, error } = await loadAccessibleCompanyBySlug(companySlug);
 
-  if (error === "unauthorized" || error === "not_found" || !company) {
-    notFound();
-  }
-
   if (error === "fetch_failed") {
     throw new CompanyLoadError();
+  }
+
+  if (error === "unauthorized" || error === "not_found" || !company) {
+    notFound();
   }
 
   return (

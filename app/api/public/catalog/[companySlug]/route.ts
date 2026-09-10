@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { normalizeWhatsAppNumber } from "@/lib/whatsapp/normalize";
+import { normalizeCompanySlug } from "@/lib/admin/company-slug";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +12,7 @@ export async function GET(
   _request: Request,
   context: { params: Promise<{ companySlug: string }> }
 ) {
-  const { companySlug } = await context.params;
+  const companySlug = normalizeCompanySlug((await context.params).companySlug);
   const allowed = new Set(["outfit", "medical"]);
   if (!allowed.has(companySlug)) {
     return NextResponse.json({ error: "not_found" }, { status: 404 });
@@ -19,12 +20,14 @@ export async function GET(
 
   const supabase = await createClient();
 
-  const { data: company, error: companyError } = await supabase
+  const { data: companyRows, error: companyError } = await supabase
     .from("companies")
     .select("id, name, slug, whatsapp_number, is_active")
     .eq("slug", companySlug)
     .eq("is_active", true)
-    .maybeSingle();
+    .limit(1);
+
+  const company = companyRows?.[0] ?? null;
 
   if (companyError || !company) {
     return NextResponse.json({ error: "not_found" }, { status: 404 });

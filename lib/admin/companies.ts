@@ -3,30 +3,75 @@ import { createClient } from "@/lib/supabase/server";
 import type { CurrentAdmin } from "@/lib/auth/types";
 import {
   adminHasCompanyAccess,
-  adminHasCompanySlug,
   getCurrentAdmin,
 } from "@/lib/auth/get-current-admin";
+import { normalizeCompanySlug } from "@/lib/admin/company-slug";
 import {
   COMPANY_SELECT,
+  COMPANY_SELECT_CORE,
+  hydrateCompanyRecord,
   type CompanyRecord,
 } from "@/lib/admin/company-types";
 
-async function fetchAccessibleCompanies(
-  admin: CurrentAdmin
-): Promise<{ companies: CompanyRecord[]; error: string | null }> {
+type CompanyQueryResult = {
+  companies: CompanyRecord[];
+  error: string | null;
+};
+
+async function selectCompanies(query: {
+  eq?: [string, string];
+  in?: [string, string[]];
+  orderName?: boolean;
+  limit?: number;
+}): Promise<{ data: CompanyRecord[]; error: string | null }> {
   const supabase = await createClient();
 
-  if (admin.profile.role === "super_admin") {
-    const { data, error } = await supabase
-      .from("companies")
-      .select(COMPANY_SELECT)
-      .order("name", { ascending: true });
+  let fullQuery = supabase.from("companies").select(COMPANY_SELECT);
+  if (query.eq) fullQuery = fullQuery.eq(query.eq[0], query.eq[1]);
+  if (query.in) fullQuery = fullQuery.in(query.in[0], query.in[1]);
+  if (query.orderName) fullQuery = fullQuery.order("name", { ascending: true });
+  if (query.limit) fullQuery = fullQuery.limit(query.limit);
 
-    if (error) {
-      console.error("[getAccessibleCompanies]", error.message);
-      return { companies: [], error: "fetch_failed" };
-    }
-    return { companies: (data as CompanyRecord[]) ?? [], error: null };
+  const full = await fullQuery;
+  if (!full.error) {
+    return {
+      data: (full.data ?? []).map((row) => hydrateCompanyRecord(row)),
+      error: null,
+    };
+  }
+
+  console.error(
+    "[companies] full select failed, retrying core columns:",
+    full.error.message
+  );
+
+  let coreQuery = supabase.from("companies").select(COMPANY_SELECT_CORE);
+  if (query.eq) coreQuery = coreQuery.eq(query.eq[0], query.eq[1]);
+  if (query.in) coreQuery = coreQuery.in(query.in[0], query.in[1]);
+  if (query.orderName) {
+    coreQuery = coreQuery.order("name", { ascending: true });
+  }
+  if (query.limit) coreQuery = coreQuery.limit(query.limit);
+
+  const core = await coreQuery;
+  if (core.error) {
+    console.error("[companies] core select failed:", core.error.message);
+    return { data: [], error: core.error.message };
+  }
+
+  return {
+    data: (core.data ?? []).map((row) => hydrateCompanyRecord(row)),
+    error: null,
+  };
+}
+
+async function fetchAccessibleCompanies(
+  admin: CurrentAdmin
+): Promise<CompanyQueryResult> {
+  if (admin.profile.role === "super_admin") {
+    const { data, error } = await selectCompanies({ orderName: true });
+    if (error) return { companies: [], error: "fetch_failed" };
+    return { companies: data, error: null };
   }
 
   const ids = admin.companies.map((c) => c.id);
@@ -34,42 +79,67 @@ async function fetchAccessibleCompanies(
     return { companies: [], error: "missing_company" };
   }
 
-  const { data, error } = await supabase
-    .from("companies")
-    .select(COMPANY_SELECT)
-    .in("id", ids)
-    .order("name", { ascending: true });
+  const { data, error } = await selectCompanies({
+    in: ["id", ids],
+    orderName: true,
+  });
+  if (error) return { companies: [], error: "fetch_failed" };
+  return { companies: data, error: null };
+}
 
-  if (error) {
-    console.error("[getAccessibleCompanies]", error.message);
-    return { companies: [], error: "fetch_failed" };
-  }
-  return { companies: (data as CompanyRecord[]) ?? [], error: null };
+function pickCompanyRow(
+  rows: CompanyRecord[],
+  slug: string
+): CompanyRecord | null {
+  const exact = rows.filter((c) => c.slug.toLowerCase() === slug);
+  const pool = exact.length ? exact : rows;
+  return pool.find((c) => c.is_active) ?? pool[0] ?? null;
 }
 
 async function fetchAccessibleCompanyBySlug(
   admin: CurrentAdmin,
   slug: string
 ): Promise<{ company: CompanyRecord | null; error: string | null }> {
-  if (!adminHasCompanySlug(admin, slug)) {
-    return { company: null, error: "unauthorized" };
+  const normalized = normalizeCompanySlug(slug);
+  if (!normalized) {
+    return { company: null, error: "not_found" };
   }
 
-  const supabase = await createClient();
+  const bySlug = await selectCompanies({
+    eq: ["slug", normalized],
+    limit: 5,
+  });
 
-  const { data, error } = await supabase
-    .from("companies")
-    .select(COMPANY_SELECT)
-    .eq("slug", slug)
-    .maybeSingle();
+  let company = pickCompanyRow(bySlug.data, normalized);
 
-  if (error) {
-    console.error("[getAccessibleCompanyBySlug]", error.message);
+  if (!company) {
+    const known = admin.companies.find(
+      (c) => c.slug.toLowerCase() === normalized
+    );
+    if (known?.id) {
+      const byId = await selectCompanies({
+        eq: ["id", known.id],
+        limit: 1,
+      });
+      company = byId.data[0] ?? null;
+      if (byId.error && !company) {
+        return { company: null, error: "fetch_failed" };
+      }
+    }
+  }
+
+  if (bySlug.error && !company) {
     return { company: null, error: "fetch_failed" };
   }
-  if (!data) return { company: null, error: "not_found" };
 
-  const company = data as CompanyRecord;
+  if (!company) {
+    return { company: null, error: "not_found" };
+  }
+
+  if (admin.profile.role === "super_admin") {
+    return { company, error: null };
+  }
+
   if (!adminHasCompanyAccess(admin, company.id)) {
     return { company: null, error: "unauthorized" };
   }
@@ -92,7 +162,10 @@ export const loadAccessibleCompanyBySlug = cache(async (slug: string) => {
   if (!access.ok) {
     return { company: null as CompanyRecord | null, error: "unauthorized" };
   }
-  return fetchAccessibleCompanyBySlug(access.admin, slug);
+  return fetchAccessibleCompanyBySlug(
+    access.admin,
+    normalizeCompanySlug(slug)
+  );
 });
 
 /**

@@ -42,8 +42,8 @@ export async function requireCompanyAccess(
     notFound();
   }
 
-  if (module && !companyHasModule(companySlug, module)) {
-    notFound();
+  if (module && !companyHasModule(company.slug, module)) {
+    redirect(`/admin/companies/${company.slug}`);
   }
 
   return { admin: access.admin, company };

@@ -21,7 +21,10 @@ export async function listProducts(
   }
 
   const { data, error } = await query;
-  if (error) return [];
+  if (error) {
+    console.error("[listProducts]", error.message);
+    return [];
+  }
   return (data as Product[]) ?? [];
 }
 

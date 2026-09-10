@@ -128,9 +128,10 @@ export const COMPANY_CAPABILITIES: Record<string, CompanyCapabilityProfile> = {
 export function getCompanyCapabilities(
   slug: string
 ): CompanyCapabilityProfile {
+  const key = slug.trim().toLowerCase();
   return (
-    COMPANY_CAPABILITIES[slug] ?? {
-      slug,
+    COMPANY_CAPABILITIES[key] ?? {
+      slug: key,
       label: slug,
       model: "coming_soon",
       modules: COMING_SOON_MODULES,
