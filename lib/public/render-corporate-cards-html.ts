@@ -1,5 +1,8 @@
 import type { CorporateCompanyCard } from "@/lib/public/corporate-companies";
-import { companySiteHref } from "@/lib/public/company-site-href";
+import {
+  companySiteHref,
+  subdomainCompanyLinksEnabled,
+} from "@/lib/public/company-site-href";
 
 function escapeHtml(text: string): string {
   return text
@@ -32,7 +35,10 @@ function renderCard(company: CorporateCompanyCard): string {
   const short = escapeHtml(shortTitle(company));
   const desc = escapeHtml(company.description?.trim() || "");
   const href = escapeHtml(companySiteHref(company));
-  const comingSoon = company.card_coming_soon ? " data-coming-soon" : "";
+  const comingSoon =
+    subdomainCompanyLinksEnabled() && company.card_coming_soon
+      ? " data-coming-soon"
+      : "";
   const imageUrl = escapeHtml(
     company.card_image_url?.trim() ||
       "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80"

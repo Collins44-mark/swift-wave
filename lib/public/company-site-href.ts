@@ -5,25 +5,34 @@ export type CompanySiteLinkInput = {
   card_coming_soon?: boolean;
 };
 
-function preferLocalPaths(): boolean {
-  if (process.env.NEXT_PUBLIC_COMPANY_LINKS === "subdomains") return false;
-  if (process.env.NEXT_PUBLIC_COMPANY_LINKS === "paths") return true;
-  return process.env.NODE_ENV !== "production";
+/**
+ * Future subdomain mode is opt-in only.
+ * DNS/Vercel subdomains are not configured yet, so production and preview
+ * must keep using internal Next.js routes unless this flag is set.
+ */
+export function subdomainCompanyLinksEnabled(): boolean {
+  return process.env.NEXT_PUBLIC_COMPANY_LINKS === "subdomains";
+}
+
+function internalCompanyPath(company: CompanySiteLinkInput): string {
+  const route = company.card_route?.trim();
+  if (route?.startsWith("/") && !route.startsWith("//")) {
+    return route;
+  }
+  return `/companies/${company.slug}`;
 }
 
 /**
  * Public destination for a company card.
- * Local/dev keeps path routes (/companies/{slug}).
- * Production uses website_url, then slug.swiftwavegroup.com.
+ * Default: internal /companies/{slug} (or card_route if it is a path).
+ * Opt-in NEXT_PUBLIC_COMPANY_LINKS=subdomains: website_url, then slug host.
  */
 export function companySiteHref(company: CompanySiteLinkInput): string {
-  if (company.card_coming_soon) return "#";
-
-  if (preferLocalPaths()) {
-    const route = company.card_route?.trim();
-    if (route) return route;
-    return `/companies/${company.slug}`;
+  if (!subdomainCompanyLinksEnabled()) {
+    return internalCompanyPath(company);
   }
+
+  if (company.card_coming_soon) return "#";
 
   const configured = company.website_url?.trim();
   if (configured) return configured;

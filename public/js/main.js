@@ -231,7 +231,7 @@
 
     document.addEventListener("click", function (e) {
       const link = e.target.closest(
-        "a[data-coming-soon], a.coming-soon-link, a[href*='catering.html'], a[href*='travels.html'], a[href='/companies/catering'], a[href='/companies/travels']"
+        "a[data-coming-soon], a.coming-soon-link, a[href*='catering.html'], a[href*='travels.html']"
       );
       if (!link) return;
       e.preventDefault();
