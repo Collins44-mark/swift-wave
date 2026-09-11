@@ -8,8 +8,110 @@ import {
   discountLabel,
   formatMoneyAmount,
 } from "@/lib/catalog/pricing";
+import { isMissingColumnError } from "@/lib/admin/supabase-error";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 export const dynamic = "force-dynamic";
+
+const PRODUCT_CORE =
+  "id, name, slug, description, price, currency, image_url, subcategory, bullets, rating, price_label, sort_order, category_id, status";
+const PRODUCT_FULL = `${PRODUCT_CORE}, primary_color_id, discount_type, discount_value`;
+const COLOR_CORE =
+  "id, product_id, name, hex_code, image_url, sort_order, is_active, color_id, color:colors(name, hex_code)";
+const COLOR_FULL = `${COLOR_CORE}, is_primary`;
+
+type CatalogProduct = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  price: number | null;
+  currency: string | null;
+  image_url: string | null;
+  subcategory: string | null;
+  bullets: unknown;
+  rating: string | null;
+  price_label: string | null;
+  sort_order: number | null;
+  category_id: string | null;
+  status: string;
+  primary_color_id?: string | null;
+  discount_type?: string | null;
+  discount_value?: number | null;
+};
+
+async function loadPublishedProducts(
+  supabase: SupabaseClient,
+  companyId: string
+): Promise<{ data: CatalogProduct[]; error: { code?: string; message?: string } | null }> {
+  const full = await supabase
+    .from("products")
+    .select(PRODUCT_FULL)
+    .eq("company_id", companyId)
+    .eq("status", "published")
+    .order("sort_order", { ascending: true });
+  if (!full.error) {
+    return { data: (full.data as CatalogProduct[]) ?? [], error: null };
+  }
+  console.error("[catalog.products]", {
+    code: full.error.code,
+    message: full.error.message,
+    companyId,
+  });
+  if (
+    isMissingColumnError(full.error, "primary_color_id") ||
+    isMissingColumnError(full.error, "discount_type") ||
+    isMissingColumnError(full.error, "discount_value")
+  ) {
+    const core = await supabase
+      .from("products")
+      .select(PRODUCT_CORE)
+      .eq("company_id", companyId)
+      .eq("status", "published")
+      .order("sort_order", { ascending: true });
+    if (core.error) {
+      console.error("[catalog.products.core]", {
+        code: core.error.code,
+        message: core.error.message,
+        companyId,
+      });
+    }
+    return {
+      data: (core.data as CatalogProduct[]) ?? [],
+      error: core.error,
+    };
+  }
+  return { data: [], error: full.error };
+}
+
+async function loadProductColors(
+  supabase: SupabaseClient,
+  productIds: string[]
+) {
+  const full = await supabase
+    .from("product_colors")
+    .select(COLOR_FULL)
+    .in("product_id", productIds)
+    .eq("is_active", true)
+    .order("sort_order", { ascending: true });
+  if (!full.error) return full.data ?? [];
+  console.error("[catalog.product_colors]", {
+    code: full.error.code,
+    message: full.error.message,
+  });
+  if (isMissingColumnError(full.error, "is_primary") || isMissingColumnError(full.error, "color_id")) {
+    const core = await supabase
+      .from("product_colors")
+      .select(
+        "id, product_id, name, hex_code, image_url, sort_order, is_active, color:colors(name, hex_code)"
+      )
+      .in("product_id", productIds)
+      .eq("is_active", true)
+      .order("sort_order", { ascending: true });
+    return core.data ?? [];
+  }
+  return [];
+}
 
 /**
  * GET published catalog for outfit/medical storefronts.
@@ -39,51 +141,56 @@ export async function GET(
     return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
 
-  const [{ data: categories }, { data: products }] = await Promise.all([
+  const [{ data: categories }, productsResult] = await Promise.all([
     supabase
       .from("categories")
       .select("id, name, slug, parent_id, sort_order, is_active")
       .eq("company_id", company.id)
       .eq("is_active", true)
       .order("sort_order", { ascending: true }),
-    supabase
-      .from("products")
-      .select(
-        "id, name, slug, description, price, currency, image_url, subcategory, bullets, rating, price_label, sort_order, category_id, status, primary_color_id, discount_type, discount_value"
-      )
-      .eq("company_id", company.id)
-      .eq("status", "published")
-      .order("sort_order", { ascending: true }),
+    loadPublishedProducts(supabase, company.id),
   ]);
+
+  if (productsResult.error) {
+    return NextResponse.json(
+      {
+        error: "catalog_unavailable",
+        message: productsResult.error.message,
+        code: productsResult.error.code ?? null,
+      },
+      { status: 500 }
+    );
+  }
 
   const cats = categories ?? [];
   const byId = new Map(cats.map((c) => [c.id, c]));
-  const productIds = (products ?? []).map((p) => p.id);
+  const products = productsResult.data;
+  const productIds = products.map((p) => p.id);
 
-  const [{ data: colorRows }, { data: sizeRows }] = productIds.length
+  const [{ data: sizeRows }, colorRows] = productIds.length
     ? await Promise.all([
-        supabase
-          .from("product_colors")
-          .select(
-            "id, product_id, name, hex_code, image_url, sort_order, is_active, color:colors(name, hex_code)"
-          )
-          .in("product_id", productIds)
-          .eq("is_active", true)
-          .order("sort_order", { ascending: true }),
         supabase
           .from("product_sizes")
           .select("id, product_id, sort_order, is_active, size:sizes(id, name)")
           .in("product_id", productIds)
           .eq("is_active", true)
           .order("sort_order", { ascending: true }),
+        loadProductColors(supabase, productIds),
       ])
-    : [{ data: [] }, { data: [] }];
+    : [{ data: [] }, [] as Awaited<ReturnType<typeof loadProductColors>>];
 
   const colorsByProduct = new Map<
     string,
-    { id: string; name: string; hex_code: string | null; image_url: string | null }[]
+    {
+      id: string;
+      libraryColorId: string | null;
+      name: string;
+      hex_code: string | null;
+      image_url: string | null;
+      isPrimary: boolean;
+    }[]
   >();
-  for (const row of colorRows ?? []) {
+  for (const row of colorRows) {
     const nested = (row as { color?: unknown }).color as
       | { name: string; hex_code: string | null }
       | { name: string; hex_code: string | null }[]
@@ -92,9 +199,11 @@ export async function GET(
     const list = colorsByProduct.get(row.product_id) ?? [];
     list.push({
       id: row.id,
+      libraryColorId: ((row as { color_id?: string | null }).color_id as string | null) ?? null,
       name: lib?.name || row.name,
       hex_code: lib?.hex_code ?? row.hex_code,
       image_url: row.image_url,
+      isPrimary: Boolean((row as { is_primary?: boolean }).is_primary),
     });
     colorsByProduct.set(row.product_id, list);
   }
@@ -112,7 +221,6 @@ export async function GET(
     sizesByProduct.set(row.product_id, list);
   }
 
-  // Build CATEGORIES-like map: parent name -> subcategory names
   const categoryMap: Record<string, string[]> = { All: [] };
   for (const c of cats) {
     if (!c.parent_id) {
@@ -129,7 +237,7 @@ export async function GET(
     }
   }
 
-  const mappedProducts = (products ?? []).map((p) => {
+  const mappedProducts = products.map((p) => {
     const cat = p.category_id ? byId.get(p.category_id) : null;
     const parent = cat?.parent_id ? byId.get(cat.parent_id) : null;
     const categoryName = parent?.name ?? cat?.name ?? "All";
@@ -139,8 +247,8 @@ export async function GET(
       p.price != null && Number(p.price) > 0 ? Number(p.price) : 0;
     const pricing = applyProductDiscount(
       originalPrice,
-      (p as { discount_type?: string }).discount_type,
-      (p as { discount_value?: number }).discount_value
+      p.discount_type,
+      p.discount_value
     );
     const salePrice = pricing.sale;
     const offLabel = discountLabel(pricing, currency);
@@ -152,10 +260,12 @@ export async function GET(
       const hex = resolvedSwatchHex(c.hex_code);
       return {
         id: c.id,
+        libraryColorId: c.libraryColorId,
         name: c.name,
         hex,
         light: isLightHex(hex),
         image: c.image_url || "",
+        isPrimary: c.isPrimary,
       };
     });
     const sizes = (sizesByProduct.get(p.id) ?? []).map((s) => ({
@@ -163,8 +273,11 @@ export async function GET(
       name: s.name,
     }));
     const primary =
-      colors.find((c) => c.id === p.primary_color_id) ??
-      colors.find((c) => c.image) ??
+      colors.find((c) => c.isPrimary) ||
+      colors.find((c) => c.libraryColorId && c.libraryColorId === p.primary_color_id) ||
+      colors.find((c) => c.id === p.primary_color_id) ||
+      colors.find((c) => c.image) ||
+      colors[0] ||
       null;
     const cover = primary?.image || p.image_url || "";
 
@@ -183,7 +296,7 @@ export async function GET(
       discountAmount: offLabel ? pricing.discountAmount : 0,
       rating: p.rating ?? "",
       image: cover,
-      primaryColorId: primary?.id ?? p.primary_color_id ?? null,
+      primaryColorId: primary?.id ?? null,
       desc: p.description ?? "",
       bullets: Array.isArray(p.bullets) ? p.bullets : [],
       colors,

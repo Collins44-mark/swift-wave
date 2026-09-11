@@ -32,6 +32,7 @@ export type ProductColor = {
   image_public_id: string | null;
   sort_order: number;
   is_active: boolean;
+  is_primary?: boolean;
 };
 
 export type ProductSizeOption = {
@@ -171,8 +172,11 @@ export type BulkDeleteResult =
   | { ok: true; deletedIds: string[] }
   | { ok: false; error: string };
 
+export const PRODUCT_SELECT_CORE =
+  "id, company_id, category_id, name, slug, description, price, currency, image_url, image_public_id, status, featured, subcategory, bullets, rating, price_label, sort_order, created_at, updated_at" as const;
+
 export const PRODUCT_SELECT =
-  "id, company_id, category_id, name, slug, description, price, currency, image_url, image_public_id, primary_color_id, status, featured, subcategory, bullets, rating, price_label, discount_type, discount_value, sort_order, created_at, updated_at" as const;
+  `${PRODUCT_SELECT_CORE}, primary_color_id, discount_type, discount_value` as const;
 
 export const CATEGORY_SELECT =
   "id, company_id, name, slug, description, parent_id, is_active, sort_order, created_at, updated_at" as const;

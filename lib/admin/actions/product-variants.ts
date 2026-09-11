@@ -1,5 +1,9 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { normalizeHex, resolvedSwatchHex } from "@/lib/catalog/color-display";
+import {
+  formatSupabaseError,
+  isMissingColumnError,
+} from "@/lib/admin/supabase-error";
 
 export type ColorDraft = {
   id?: string;
@@ -75,6 +79,16 @@ export function parseSizeNames(raw: string): string[] | { error: string } {
   return [...new Set(names)];
 }
 
+export function orderColorsForPrimary(
+  colors: ColorDraft[],
+  primaryLibraryId: string
+): ColorDraft[] {
+  if (!primaryLibraryId) return colors.map((c, index) => ({ ...c, sort_order: index }));
+  const primary = colors.filter((c) => c.color_id === primaryLibraryId);
+  const rest = colors.filter((c) => c.color_id !== primaryLibraryId);
+  return [...primary, ...rest].map((c, index) => ({ ...c, sort_order: index }));
+}
+
 async function resolveSizeIds(
   supabase: SupabaseClient,
   sizeNames: string[]
@@ -85,7 +99,14 @@ async function resolveSizeIds(
     .from("sizes")
     .select("id, name");
   if (existingError) {
-    return { ok: false, error: "Unable to save product sizes." };
+    return {
+      ok: false,
+      error: formatSupabaseError(
+        "loadSizes",
+        existingError,
+        "Unable to save product sizes."
+      ),
+    };
   }
 
   const byName = new Map(
@@ -114,7 +135,14 @@ async function resolveSizeIds(
       .insert(toCreate)
       .select("id, name");
     if (error || !created?.length) {
-      return { ok: false, error: "Unable to save product sizes." };
+      return {
+        ok: false,
+        error: formatSupabaseError(
+          "createSizes",
+          error,
+          "Unable to save product sizes."
+        ),
+      };
     }
     for (const row of created) {
       byName.set(String(row.name).trim().toLowerCase(), row.id as string);
@@ -133,16 +161,159 @@ async function resolveSizeIds(
   return { ok: true, ids };
 }
 
+function colorWritePayload(
+  color: ColorDraft,
+  index: number,
+  lib: { name: unknown; hex_code: unknown },
+  opts: { includePrimaryFlag: boolean; primaryLibraryId: string }
+): Record<string, unknown> {
+  const hex =
+    resolvedSwatchHex(lib.hex_code as string | null) ||
+    resolvedSwatchHex(color.hex_code);
+  const payload: Record<string, unknown> = {
+    color_id: color.color_id,
+    name: lib.name,
+    hex_code: hex,
+    sort_order: index,
+    is_active: color.is_active !== false,
+  };
+  if (color.image_url) {
+    payload.image_url = color.image_url;
+    payload.image_public_id = color.image_public_id || null;
+  }
+  if (opts.includePrimaryFlag) {
+    payload.is_primary = Boolean(
+      opts.primaryLibraryId && color.color_id === opts.primaryLibraryId
+    );
+  }
+  return payload;
+}
+
 export async function replaceProductVariants(
   supabase: SupabaseClient,
   productId: string,
   colors: ColorDraft[],
-  sizeNames: string[]
+  sizeNames: string[],
+  primaryLibraryId = ""
 ): Promise<{ ok: true; saved: SavedProductColor[] } | { ok: false; error: string }> {
-  const { data: existingColors } = await supabase
-    .from("product_colors")
-    .select("id")
-    .eq("product_id", productId);
+  const sizePromise = resolveSizeIds(supabase, sizeNames);
+  const libraryIds = [...new Set(colors.map((c) => c.color_id))];
+
+  const [{ data: existingColors, error: existingError }, libraryResult] =
+    await Promise.all([
+      supabase.from("product_colors").select("id").eq("product_id", productId),
+      libraryIds.length
+        ? supabase
+            .from("colors")
+            .select("id, name, hex_code")
+            .in("id", libraryIds)
+        : Promise.resolve({
+            data: [] as { id: string; name: unknown; hex_code: unknown }[],
+            error: null,
+          }),
+    ]);
+
+  if (existingError) {
+    return {
+      ok: false,
+      error: formatSupabaseError(
+        "loadProductColors",
+        existingError,
+        "Unable to update product colors."
+      ),
+    };
+  }
+  if (libraryResult.error) {
+    return {
+      ok: false,
+      error: formatSupabaseError(
+        "loadColorLibrary",
+        libraryResult.error,
+        "Unable to load the color library."
+      ),
+    };
+  }
+
+  const libraryById = new Map(
+    (libraryResult.data ?? []).map((row) => [row.id as string, row])
+  );
+
+  async function writeColors(includePrimaryFlag: boolean): Promise<
+    { ok: true } | { ok: false; error: string; missingPrimary?: boolean }
+  > {
+    const updates: PromiseLike<{ error: { code?: string; message?: string } | null }>[] =
+      [];
+    const inserts: Record<string, unknown>[] = [];
+
+    for (const [index, color] of colors.entries()) {
+      const lib = libraryById.get(color.color_id);
+      if (!lib) {
+        return {
+          ok: false,
+          error: "A selected color was not found in the library.",
+        };
+      }
+      const payload = colorWritePayload(color, index, lib, {
+        includePrimaryFlag,
+        primaryLibraryId,
+      });
+      if (color.id) {
+        updates.push(
+          supabase
+            .from("product_colors")
+            .update({ ...payload, product_id: productId })
+            .eq("id", color.id)
+            .eq("product_id", productId)
+        );
+      } else {
+        inserts.push({ ...payload, product_id: productId, image_url: color.image_url || null, image_public_id: color.image_public_id || null });
+      }
+    }
+
+    if (updates.length) {
+      const updated = await Promise.all(updates);
+      const failed = updated.find((row) => row.error);
+      if (failed?.error) {
+        if (includePrimaryFlag && isMissingColumnError(failed.error, "is_primary")) {
+          return { ok: false, error: failed.error.message || "", missingPrimary: true };
+        }
+        return {
+          ok: false,
+          error: formatSupabaseError(
+            "updateProductColors",
+            failed.error,
+            "Unable to update product colors."
+          ),
+        };
+      }
+    }
+    if (inserts.length) {
+      const { error } = await supabase.from("product_colors").insert(inserts);
+      if (error) {
+        if (includePrimaryFlag && isMissingColumnError(error, "is_primary")) {
+          return { ok: false, error: error.message, missingPrimary: true };
+        }
+        return {
+          ok: false,
+          error: formatSupabaseError(
+            "insertProductColors",
+            error,
+            "Unable to save product colors."
+          ),
+        };
+      }
+    }
+    return { ok: true };
+  }
+
+  let written = await writeColors(true);
+  if (!written.ok && written.missingPrimary) {
+    written = await writeColors(false);
+  }
+  if (!written.ok) {
+    return { ok: false, error: written.error };
+  }
+
   const keepIds = new Set(
     colors.map((c) => c.id).filter((id): id is string => Boolean(id))
   );
@@ -156,84 +327,18 @@ export async function replaceProductVariants(
       .eq("product_id", productId)
       .in("id", removeIds);
     if (error) {
-      return { ok: false, error: "Unable to update product colors." };
+      return {
+        ok: false,
+        error: formatSupabaseError(
+          "deleteProductColors",
+          error,
+          "Unable to update product colors."
+        ),
+      };
     }
   }
 
-  const libraryIds = [...new Set(colors.map((c) => c.color_id))];
-  const { data: libraryRows, error: libraryError } = libraryIds.length
-    ? await supabase
-        .from("colors")
-        .select("id, name, hex_code")
-        .in("id", libraryIds)
-    : { data: [], error: null };
-  if (libraryError) {
-    return { ok: false, error: "Unable to load the color library." };
-  }
-  const libraryById = new Map(
-    (libraryRows ?? []).map((row) => [row.id as string, row])
-  );
-
-  const updates: PromiseLike<{ error: unknown; data: { id: string }[] | null }>[] =
-    [];
-  const inserts: Record<string, unknown>[] = [];
-
-  for (const [index, color] of colors.entries()) {
-    const lib = libraryById.get(color.color_id);
-    if (!lib) {
-      return { ok: false, error: "A selected color was not found in the library." };
-    }
-    const hex =
-      resolvedSwatchHex(lib.hex_code as string | null) ||
-      resolvedSwatchHex(color.hex_code);
-    if (color.id) {
-      updates.push(
-        supabase
-          .from("product_colors")
-          .update({
-            product_id: productId,
-            color_id: color.color_id,
-            name: lib.name,
-            hex_code: hex,
-            sort_order: index,
-            is_active: color.is_active !== false,
-            ...(color.image_url
-              ? {
-                  image_url: color.image_url,
-                  image_public_id: color.image_public_id || null,
-                }
-              : {}),
-          })
-          .eq("id", color.id)
-          .eq("product_id", productId)
-          .select("id")
-      );
-    } else {
-      inserts.push({
-        product_id: productId,
-        color_id: color.color_id,
-        name: lib.name,
-        hex_code: hex,
-        image_url: color.image_url || null,
-        image_public_id: color.image_public_id || null,
-        sort_order: index,
-        is_active: color.is_active !== false,
-      });
-    }
-  }
-
-  if (updates.length) {
-    const updated = await Promise.all(updates);
-    if (updated.some((row) => row.error || !row.data?.length)) {
-      return { ok: false, error: "Unable to update product colors." };
-    }
-  }
-  if (inserts.length) {
-    const { error } = await supabase.from("product_colors").insert(inserts);
-    if (error) return { ok: false, error: "Unable to save product colors." };
-  }
-
-  const sizeIds = await resolveSizeIds(supabase, sizeNames);
+  const sizeIds = await sizePromise;
   if (!sizeIds.ok) return sizeIds;
 
   const { error: clearSizesError } = await supabase
@@ -241,7 +346,14 @@ export async function replaceProductVariants(
     .delete()
     .eq("product_id", productId);
   if (clearSizesError) {
-    return { ok: false, error: "Unable to update product sizes." };
+    return {
+      ok: false,
+      error: formatSupabaseError(
+        "clearProductSizes",
+        clearSizesError,
+        "Unable to update product sizes."
+      ),
+    };
   }
 
   if (sizeIds.ids.length) {
@@ -253,7 +365,16 @@ export async function replaceProductVariants(
         is_active: true,
       }))
     );
-    if (error) return { ok: false, error: "Unable to save product sizes." };
+    if (error) {
+      return {
+        ok: false,
+        error: formatSupabaseError(
+          "insertProductSizes",
+          error,
+          "Unable to save product sizes."
+        ),
+      };
+    }
   }
 
   const { data: savedRows, error: savedError } = await supabase
@@ -262,7 +383,14 @@ export async function replaceProductVariants(
     .eq("product_id", productId)
     .order("sort_order", { ascending: true });
   if (savedError) {
-    return { ok: false, error: "Unable to load saved product colors." };
+    return {
+      ok: false,
+      error: formatSupabaseError(
+        "loadSavedProductColors",
+        savedError,
+        "Unable to load saved product colors."
+      ),
+    };
   }
 
   return {

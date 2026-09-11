@@ -2,6 +2,7 @@
 export function slugify(input: string): string {
   return input
     .trim()
+    .replace(/^\/+|\/+$/g, "")
     .toLowerCase()
     .normalize("NFKD")
     .replace(/[\u0300-\u036f]/g, "")

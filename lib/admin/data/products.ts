@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import {
   PRODUCT_SELECT,
+  PRODUCT_SELECT_CORE,
   type ColorDefinition,
   type Product,
   type ProductColor,
@@ -8,6 +9,7 @@ import {
   type SizeDefinition,
 } from "@/lib/admin/types-catalog";
 import { resolvedSwatchHex } from "@/lib/catalog/color-display";
+import { isMissingColumnError } from "@/lib/admin/supabase-error";
 
 export async function listSizeLibrary(): Promise<SizeDefinition[]> {
   const supabase = await createClient();
@@ -112,11 +114,30 @@ export async function listProducts(
   }
 
   const { data, error } = await query;
-  if (error) {
-    console.error("[listProducts]", error.message);
-    return [];
+  if (!error) return (data as Product[]) ?? [];
+  console.error("[listProducts]", error.code, error.message);
+  if (
+    isMissingColumnError(error, "primary_color_id") ||
+    isMissingColumnError(error, "discount_type") ||
+    isMissingColumnError(error, "discount_value")
+  ) {
+    let fallback = supabase
+      .from("products")
+      .select(PRODUCT_SELECT_CORE)
+      .eq("company_id", companyId)
+      .order("sort_order", { ascending: true })
+      .order("name", { ascending: true });
+    if (opts?.search?.trim()) {
+      fallback = fallback.ilike("name", `%${opts.search.trim()}%`);
+    }
+    const retry = await fallback;
+    if (retry.error) {
+      console.error("[listProducts.core]", retry.error.code, retry.error.message);
+      return [];
+    }
+    return (retry.data as Product[]) ?? [];
   }
-  return (data as Product[]) ?? [];
+  return [];
 }
 
 export async function getProduct(
@@ -124,14 +145,40 @@ export async function getProduct(
   productId: string
 ): Promise<Product | null> {
   const supabase = await createClient();
-  const { data, error } = await supabase
+  const full = await supabase
     .from("products")
     .select(PRODUCT_SELECT)
     .eq("company_id", companyId)
     .eq("id", productId)
     .maybeSingle();
 
-  if (error || !data) return null;
+  let data: Product | null = (full.data as Product | null) ?? null;
+  if (full.error) {
+    console.error("[getProduct]", full.error.code, full.error.message);
+    if (
+      isMissingColumnError(full.error, "primary_color_id") ||
+      isMissingColumnError(full.error, "discount_type") ||
+      isMissingColumnError(full.error, "discount_value")
+    ) {
+      const core = await supabase
+        .from("products")
+        .select(PRODUCT_SELECT_CORE)
+        .eq("company_id", companyId)
+        .eq("id", productId)
+        .maybeSingle();
+      if (core.error || !core.data) return null;
+      data = {
+        ...(core.data as Product),
+        primary_color_id: null,
+        discount_type: "none",
+        discount_value: 0,
+      };
+    } else {
+      return null;
+    }
+  }
+
+  if (!data) return null;
   const variants = await loadProductVariants(productId);
   return { ...(data as Product), ...variants };
 }

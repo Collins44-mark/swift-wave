@@ -9,6 +9,7 @@ import {
   isProductCurrency,
 } from "@/lib/admin/product-currencies";
 import {
+  orderColorsForPrimary,
   parseColorDrafts,
   parseSizeNames,
   replaceProductVariants,
@@ -18,18 +19,23 @@ import {
 import { validateProductDiscount } from "@/lib/catalog/pricing";
 import type { ActionResult, BulkDeleteResult } from "@/lib/admin/types-catalog";
 import { MAX_BULK_DELETE, uniqueValidIds } from "@/lib/admin/ids";
+import {
+  formatSupabaseError,
+  isForeignKeyError,
+  isMissingColumnError,
+} from "@/lib/admin/supabase-error";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 function friendlyProductError(
   error: { code?: string; message?: string } | null,
-  fallback: string
+  fallback: string,
+  operation = "saveProduct"
 ): string {
   if (!error) return fallback;
   if (error.code === "23505") {
     return "A product with this URL slug already exists. Choose a different slug.";
   }
-  if (error.message) return error.message;
-  return fallback;
+  return formatSupabaseError(operation, error, fallback);
 }
 
 function str(formData: FormData, key: string): string {
@@ -47,6 +53,18 @@ function parsePrice(raw: string): number | null {
   if (!raw.trim()) return null;
   const n = Number(raw.replace(/,/g, ""));
   return Number.isFinite(n) ? n : null;
+}
+
+function logDbError(
+  operation: string,
+  error: { code?: string; message?: string } | null,
+  meta: Record<string, string | null | undefined>
+) {
+  console.error(`[${operation}]`, {
+    code: error?.code ?? null,
+    message: error?.message ?? null,
+    ...meta,
+  });
 }
 
 function resolvePrimaryColor(
@@ -85,23 +103,67 @@ async function persistPrimaryAppearance(
   const imagePublicId = opts.primary?.image_url
     ? opts.primary.image_public_id
     : opts.fallbackPublicId;
-  const { error, data } = await supabase
-    .from("products")
-    .update({
-      primary_color_id: opts.primary?.id ?? null,
-      image_url: imageUrl,
-      image_public_id: imagePublicId,
-    })
-    .eq("id", opts.productId)
-    .eq("company_id", opts.companyId)
-    .select("id");
-  if (error || !data?.length) {
+  const libraryColorId = opts.primary?.color_id ?? null;
+  const variantId = opts.primary?.id ?? null;
+
+  const basePatch: Record<string, unknown> = {
+    image_url: imageUrl,
+    image_public_id: imagePublicId,
+    status: "published",
+  };
+
+  async function apply(patch: Record<string, unknown>) {
+    return supabase
+      .from("products")
+      .update(patch)
+      .eq("id", opts.productId)
+      .eq("company_id", opts.companyId);
+  }
+
+  let patch: Record<string, unknown> = libraryColorId
+    ? { ...basePatch, primary_color_id: libraryColorId }
+    : { ...basePatch, primary_color_id: null };
+
+  let { error } = await apply(patch);
+
+  if (error && isForeignKeyError(error) && variantId) {
+    logDbError("persistPrimaryAppearance", error, {
+      productId: opts.productId,
+      companyId: opts.companyId,
+      note: "library_color_fk_failed_retry_variant_id",
+      variantId,
+      libraryColorId,
+    });
+    patch = { ...basePatch, primary_color_id: variantId };
+    ({ error } = await apply(patch));
+  }
+
+  if (error && isMissingColumnError(error, "primary_color_id")) {
+    logDbError("persistPrimaryAppearance", error, {
+      productId: opts.productId,
+      companyId: opts.companyId,
+      note: "primary_color_id_column_missing_retry_image_only",
+    });
+    ({ error } = await apply(basePatch));
+  }
+
+  if (error) {
+    logDbError("persistPrimaryAppearance", error, {
+      productId: opts.productId,
+      companyId: opts.companyId,
+      variantId,
+      libraryColorId,
+    });
     return {
       ok: false,
-      error:
-        "Product saved, but the primary color could not be stored. Please try again.",
+      error: friendlyProductError(
+        error,
+        "The primary color could not be stored.",
+        "persistPrimaryAppearance"
+      ),
     };
   }
+
   return { ok: true };
 }
 
@@ -109,14 +171,150 @@ function revalidateProductSurfaces(companySlug: string) {
   revalidatePublicLater([
     `/companies/${companySlug}`,
     `/api/public/catalog/${companySlug}`,
+    `/admin/companies/${companySlug}/products`,
   ]);
 }
 
-async function resolveChildCategory(opts: {
-  companyId: string;
-  parentCategoryId: string;
-  categoryId: string;
-}): Promise<
+async function rollbackCreatedProduct(
+  supabase: SupabaseClient,
+  productId: string,
+  companyId: string
+) {
+  const { error } = await supabase
+    .from("products")
+    .delete()
+    .eq("id", productId)
+    .eq("company_id", companyId);
+  if (error) {
+    logDbError("createProduct.rollback", error, { productId, companyId });
+  }
+}
+
+async function assertPublishedProduct(
+  supabase: SupabaseClient,
+  productId: string,
+  companyId: string
+): Promise<ActionResult> {
+  const { data, error } = await supabase
+    .from("products")
+    .select("id, status")
+    .eq("id", productId)
+    .eq("company_id", companyId)
+    .eq("status", "published")
+    .maybeSingle();
+  if (error || !data?.id) {
+    logDbError("assertPublishedProduct", error, { productId, companyId });
+    return {
+      ok: false,
+      error: friendlyProductError(
+        error,
+        "The product was saved but is not queryable as published.",
+        "assertPublishedProduct"
+      ),
+    };
+  }
+  return { ok: true };
+}
+
+async function insertProductRow(
+  supabase: SupabaseClient,
+  row: Record<string, unknown>
+): Promise<{ id: string } | { error: string }> {
+  const first = await supabase.from("products").insert(row).select("id").single();
+  if (!first.error && first.data?.id) return { id: first.data.id as string };
+
+  if (
+    first.error &&
+    (isMissingColumnError(first.error, "discount_type") ||
+      isMissingColumnError(first.error, "discount_value"))
+  ) {
+    const retryRow = { ...row };
+    delete retryRow.discount_type;
+    delete retryRow.discount_value;
+    const retry = await supabase.from("products").insert(retryRow).select("id").single();
+    if (!retry.error && retry.data?.id) return { id: retry.data.id as string };
+    logDbError("createProduct.insert", retry.error, {});
+    return {
+      error: friendlyProductError(
+        retry.error,
+        "Unable to create product. Please try again.",
+        "createProduct.insert"
+      ),
+    };
+  }
+
+  logDbError("createProduct.insert", first.error, {});
+  return {
+    error: friendlyProductError(
+      first.error,
+      "Unable to create product. Please try again.",
+      "createProduct.insert"
+    ),
+  };
+}
+
+async function updateProductRow(
+  supabase: SupabaseClient,
+  productId: string,
+  companyId: string,
+  row: Record<string, unknown>
+): Promise<ActionResult> {
+  const first = await supabase
+    .from("products")
+    .update(row)
+    .eq("id", productId)
+    .eq("company_id", companyId);
+  if (!first.error) return { ok: true };
+
+  if (
+    isMissingColumnError(first.error, "discount_type") ||
+    isMissingColumnError(first.error, "discount_value") ||
+    isMissingColumnError(first.error, "primary_color_id")
+  ) {
+    const retryRow = { ...row };
+    if (isMissingColumnError(first.error, "discount_type") || isMissingColumnError(first.error, "discount_value")) {
+      delete retryRow.discount_type;
+      delete retryRow.discount_value;
+    }
+    if (isMissingColumnError(first.error, "primary_color_id")) {
+      delete retryRow.primary_color_id;
+    }
+    const retry = await supabase
+      .from("products")
+      .update(retryRow)
+      .eq("id", productId)
+      .eq("company_id", companyId);
+    if (!retry.error) return { ok: true };
+    logDbError("updateProduct", retry.error, { productId, companyId });
+    return {
+      ok: false,
+      error: friendlyProductError(
+        retry.error,
+        "Unable to update product. Please try again.",
+        "updateProduct"
+      ),
+    };
+  }
+
+  logDbError("updateProduct", first.error, { productId, companyId });
+  return {
+    ok: false,
+    error: friendlyProductError(
+      first.error,
+      "Unable to update product. Please try again.",
+      "updateProduct"
+    ),
+  };
+}
+
+async function resolveChildCategory(
+  supabase: SupabaseClient,
+  opts: {
+    companyId: string;
+    parentCategoryId: string;
+    categoryId: string;
+  }
+): Promise<
   | { ok: true; categoryId: string; subcategory: string }
   | { ok: false; error: string }
 > {
@@ -128,7 +326,6 @@ async function resolveChildCategory(opts: {
     return { ok: false, error: "Category is required." };
   }
 
-  const supabase = await createClient();
   const { data: child, error } = await supabase
     .from("categories")
     .select("id, name, parent_id, company_id")
@@ -196,8 +393,8 @@ function readProductFields(
   );
   if (!discount.ok) return discount;
 
-  let slug = str(formData, "slug") || slugify(name);
-  if (!slug) slug = `product-${Date.now()}`;
+  const slug = slugify(str(formData, "slug") || name) || slugify(`product-${Date.now()}`);
+  if (!slug) return { ok: false, error: "A valid URL slug is required." };
 
   return {
     ok: true,
@@ -225,6 +422,7 @@ export async function createProduct(
   companySlug: string,
   formData: FormData
 ): Promise<ActionResult> {
+  const started = Date.now();
   const { admin, company } = await requireCompanyAccess(companySlug, "products");
   if (!canMutate(admin)) {
     return { ok: false, error: "Staff can view products but cannot create them." };
@@ -233,88 +431,86 @@ export async function createProduct(
   const fields = readProductFields(formData, company.slug);
   if (!fields.ok) return fields;
 
-  const category = await resolveChildCategory({
+  const supabase = await createClient();
+  const category = await resolveChildCategory(supabase, {
     companyId: company.id,
     parentCategoryId: fields.parentCategoryId,
     categoryId: fields.categoryId,
   });
   if (!category.ok) return category;
 
-  const supabase = await createClient();
   const colors = parseColorDrafts(str(formData, "colors_json"));
   if ("error" in colors) return { ok: false, error: colors.error };
   const sizeNames = parseSizeNames(str(formData, "sizes_json"));
   if ("error" in sizeNames) return { ok: false, error: sizeNames.error };
+  const primaryLibraryId = str(formData, "primary_color_id");
+  const orderedColors = orderColorsForPrimary(colors, primaryLibraryId);
 
-  const { data, error } = await supabase
-    .from("products")
-    .insert({
-      company_id: company.id,
-      name: fields.name,
-      slug: fields.slug,
-      description: fields.description,
-      price: fields.price,
-      price_label: fields.price_label,
-      currency: fields.currency,
-      category_id: category.categoryId,
-      subcategory: category.subcategory,
-      rating: fields.rating,
-      bullets: fields.bullets,
-      image_url: fields.image_url,
-      image_public_id: fields.image_public_id,
-      status: "published",
-      featured: fields.featured,
-      sort_order: fields.sort_order,
-      discount_type: fields.discount_type,
-      discount_value: fields.discount_value,
-    })
-    .select("id")
-    .single();
+  const inserted = await insertProductRow(supabase, {
+    company_id: company.id,
+    name: fields.name,
+    slug: fields.slug,
+    description: fields.description,
+    price: fields.price,
+    price_label: fields.price_label,
+    currency: fields.currency,
+    category_id: category.categoryId,
+    subcategory: category.subcategory,
+    rating: fields.rating,
+    bullets: fields.bullets,
+    image_url: fields.image_url,
+    image_public_id: fields.image_public_id,
+    status: "published",
+    featured: fields.featured,
+    sort_order: fields.sort_order,
+    discount_type: fields.discount_type,
+    discount_value: fields.discount_value,
+  });
+  if ("error" in inserted) return { ok: false, error: inserted.error };
 
-  if (error || !data?.id) {
-    return {
-      ok: false,
-      error: friendlyProductError(
-        error,
-        "Unable to create product. Please try again."
-      ),
-    };
-  }
-
+  const productId = inserted.id;
   const variants = await replaceProductVariants(
     supabase,
-    data.id,
-    colors,
-    sizeNames
+    productId,
+    orderedColors,
+    sizeNames,
+    primaryLibraryId
   );
   if (!variants.ok) {
-    await supabase.from("products").delete().eq("id", data.id);
+    await rollbackCreatedProduct(supabase, productId, company.id);
     return variants;
   }
 
-  const primary = resolvePrimaryColor(
-    colors,
-    variants.saved,
-    str(formData, "primary_color_id")
-  );
+  const primary = resolvePrimaryColor(orderedColors, variants.saved, primaryLibraryId);
   if (!primary.ok) {
-    await supabase.from("products").delete().eq("id", data.id);
+    await rollbackCreatedProduct(supabase, productId, company.id);
     return primary;
   }
   const appearance = await persistPrimaryAppearance(supabase, {
-    productId: data.id,
+    productId,
     companyId: company.id,
     primary: primary.primary,
     fallbackUrl: fields.image_url,
     fallbackPublicId: fields.image_public_id,
   });
   if (!appearance.ok) {
-    await supabase.from("products").delete().eq("id", data.id);
+    await rollbackCreatedProduct(supabase, productId, company.id);
     return appearance;
   }
 
+  const visible = await assertPublishedProduct(supabase, productId, company.id);
+  if (!visible.ok) {
+    await rollbackCreatedProduct(supabase, productId, company.id);
+    return visible;
+  }
+
+  console.info("[createProduct]", {
+    productId,
+    companyId: company.id,
+    ms: Date.now() - started,
+  });
   revalidateProductSurfaces(company.slug);
-  return { ok: true, id: data.id };
+  return { ok: true, id: productId };
 }
 
 export async function updateProduct(
@@ -330,14 +526,14 @@ export async function updateProduct(
   const fields = readProductFields(formData, company.slug);
   if (!fields.ok) return fields;
 
-  const category = await resolveChildCategory({
+  const supabase = await createClient();
+  const category = await resolveChildCategory(supabase, {
     companyId: company.id,
     parentCategoryId: fields.parentCategoryId,
     categoryId: fields.categoryId,
   });
   if (!category.ok) return category;
 
-  const supabase = await createClient();
   const { data: existing, error: existingError } = await supabase
     .from("products")
     .select("id")
@@ -349,60 +545,25 @@ export async function updateProduct(
     return { ok: false, error: "Product was not found for this company." };
   }
 
-  const { data, error } = await supabase
-    .from("products")
-    .update({
-      name: fields.name,
-      slug: fields.slug,
-      description: fields.description,
-      price: fields.price,
-      price_label: fields.price_label,
-      currency: fields.currency,
-      category_id: category.categoryId,
-      subcategory: category.subcategory,
-      rating: fields.rating,
-      bullets: fields.bullets,
-      image_url: fields.image_url,
-      image_public_id: fields.image_public_id,
-      status: "published",
-      featured: fields.featured,
-      sort_order: fields.sort_order,
-      discount_type: fields.discount_type,
-      discount_value: fields.discount_value,
-    })
-    .eq("id", productId)
-    .eq("company_id", company.id)
-    .select("id");
-
-  if (error || !data?.length) {
-    return {
-      ok: false,
-      error: friendlyProductError(
-        error,
-        "Unable to update product. Please try again."
-      ),
-    };
-  }
-
   const colors = parseColorDrafts(str(formData, "colors_json"));
   if ("error" in colors) return { ok: false, error: colors.error };
   const sizeNames = parseSizeNames(str(formData, "sizes_json"));
   if ("error" in sizeNames) return { ok: false, error: sizeNames.error };
+  const primaryLibraryId = str(formData, "primary_color_id");
+  const orderedColors = orderColorsForPrimary(colors, primaryLibraryId);
 
   const variants = await replaceProductVariants(
     supabase,
     productId,
-    colors,
-    sizeNames
+    orderedColors,
+    sizeNames,
+    primaryLibraryId
   );
   if (!variants.ok) return variants;
 
-  const primary = resolvePrimaryColor(
-    colors,
-    variants.saved,
-    str(formData, "primary_color_id")
-  );
+  const primary = resolvePrimaryColor(orderedColors, variants.saved, primaryLibraryId);
   if (!primary.ok) return primary;
+
   const appearance = await persistPrimaryAppearance(supabase, {
     productId,
     companyId: company.id,
@@ -411,6 +572,35 @@ export async function updateProduct(
     fallbackPublicId: fields.image_public_id,
   });
   if (!appearance.ok) return appearance;
+
+  const imageUrl = primary.primary?.image_url || fields.image_url;
+  const imagePublicId = primary.primary?.image_url
+    ? primary.primary.image_public_id
+    : fields.image_public_id;
+
+  const updated = await updateProductRow(supabase, productId, company.id, {
+    name: fields.name,
+    slug: fields.slug,
+    description: fields.description,
+    price: fields.price,
+    price_label: fields.price_label,
+    currency: fields.currency,
+    category_id: category.categoryId,
+    subcategory: category.subcategory,
+    rating: fields.rating,
+    bullets: fields.bullets,
+    image_url: imageUrl,
+    image_public_id: imagePublicId,
+    status: "published",
+    featured: fields.featured,
+    sort_order: fields.sort_order,
+    discount_type: fields.discount_type,
+    discount_value: fields.discount_value,
+  });
+  if (!updated.ok) return updated;
+
+  const visible = await assertPublishedProduct(supabase, productId, company.id);
+  if (!visible.ok) return visible;
 
   revalidateProductSurfaces(company.slug);
   return { ok: true };
@@ -498,15 +688,14 @@ export async function publishProduct(
   }
 
   const supabase = await createClient();
-  const { error, data } = await supabase
+  const { error } = await supabase
     .from("products")
     .update({ status: "published" })
     .eq("id", productId)
-    .eq("company_id", company.id)
-    .select("id");
+    .eq("company_id", company.id);
 
-  if (error || !data?.length) {
-    return { ok: false, error: error?.message || "Failed to update status." };
+  if (error) {
+    return { ok: false, error: error.message || "Failed to update status." };
   }
 
   revalidateProductSurfaces(company.slug);

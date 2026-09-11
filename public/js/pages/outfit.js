@@ -661,7 +661,16 @@
 
       fetch("/api/public/catalog/" + COMPANY_SLUG, { cache: "no-store" })
         .then(function (res) {
-          return res.ok ? res.json() : null;
+          if (!res.ok) {
+            return res.json().then(function (body) {
+              console.error("[Outfit catalog]", res.status, body);
+              return null;
+            }).catch(function () {
+              console.error("[Outfit catalog]", res.status);
+              return null;
+            });
+          }
+          return res.json();
         })
         .then(function (data) {
           if (data && data.company && data.company.whatsapp_number) {

@@ -30,6 +30,7 @@ import type {
   SizeDefinition,
 } from "@/lib/admin/types-catalog";
 import type { MediaAsset } from "@/lib/admin/types-media";
+import { slugify } from "@/lib/admin/slugify";
 
 function bulletsText(bullets: Product["bullets"] | undefined): string {
   if (!bullets) return "";
@@ -114,9 +115,15 @@ export function ProductForm({
       }))
   );
   const [primaryColorId, setPrimaryColorId] = useState(() => {
-    const match = product?.colors?.find((c) => c.id === product.primary_color_id);
+    const match = product?.colors?.find(
+      (c) =>
+        c.color_id === product.primary_color_id ||
+        c.id === product.primary_color_id
+    );
     return match?.color_id || product?.colors?.[0]?.color_id || "";
   });
+  const [slugDraft, setSlugDraft] = useState(() => product?.slug ?? "");
+  const [slugTouched, setSlugTouched] = useState(() => Boolean(product?.slug));
 
   const handleColorsChange = useCallback(
     (next: { color_id: string; name: string; hex_code: string }[]) => {
@@ -172,7 +179,7 @@ export function ProductForm({
               : await createProduct(companySlug, formData);
           if (!result.ok) {
             setError(result.error);
-            showError("Couldn't save changes. Please try again.");
+            showError(result.error);
             return;
           }
           showSuccess(
@@ -180,6 +187,7 @@ export function ProductForm({
               ? "Product updated successfully"
               : "Product created successfully"
           );
+          router.refresh();
           if (!isEdit) {
             router.push(`/admin/companies/${companySlug}/products`);
           }
@@ -198,6 +206,11 @@ export function ProductForm({
           name="name"
           required
           defaultValue={product?.name ?? ""}
+          onChange={(event) => {
+            if (!isEdit && !slugTouched) {
+              setSlugDraft(slugify(event.target.value));
+            }
+          }}
         />
       </div>
       <div className="sw-admin-field">
@@ -205,9 +218,16 @@ export function ProductForm({
         <input
           id="slug"
           name="slug"
-          defaultValue={product?.slug ?? ""}
-          placeholder="Auto if blank"
+          value={slugDraft}
+          placeholder="mini-signature-boston-bag"
+          onChange={(event) => {
+            setSlugTouched(true);
+            setSlugDraft(event.target.value);
+          }}
         />
+        <p className="sw-admin-muted-sm">
+          Lowercase letters, numbers, and hyphens only. Generated from the name if left blank.
+        </p>
       </div>
       <div className="sw-admin-field sw-admin-field-span">
         <label htmlFor="description">Description</label>
