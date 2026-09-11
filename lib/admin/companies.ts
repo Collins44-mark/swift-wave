@@ -4,6 +4,7 @@ import type { CurrentAdmin } from "@/lib/auth/types";
 import {
   adminHasCompanyAccess,
   getCurrentAdmin,
+  getCurrentAdminIdentity,
 } from "@/lib/auth/get-current-admin";
 import { normalizeCompanySlug } from "@/lib/admin/company-slug";
 import {
@@ -23,8 +24,32 @@ async function selectCompanies(query: {
   in?: [string, string[]];
   orderName?: boolean;
   limit?: number;
+  coreOnly?: boolean;
 }): Promise<{ data: CompanyRecord[]; error: string | null }> {
   const supabase = await createClient();
+
+  const runCore = async () => {
+    let coreQuery = supabase.from("companies").select(COMPANY_SELECT_CORE);
+    if (query.eq) coreQuery = coreQuery.eq(query.eq[0], query.eq[1]);
+    if (query.in) coreQuery = coreQuery.in(query.in[0], query.in[1]);
+    if (query.orderName) {
+      coreQuery = coreQuery.order("name", { ascending: true });
+    }
+    if (query.limit) coreQuery = coreQuery.limit(query.limit);
+    return coreQuery;
+  };
+
+  if (query.coreOnly) {
+    const core = await runCore();
+    if (core.error) {
+      console.error("[companies] core select failed:", core.error.message);
+      return { data: [], error: core.error.message };
+    }
+    return {
+      data: (core.data ?? []).map((row) => hydrateCompanyRecord(row)),
+      error: null,
+    };
+  }
 
   let fullQuery = supabase.from("companies").select(COMPANY_SELECT);
   if (query.eq) fullQuery = fullQuery.eq(query.eq[0], query.eq[1]);
@@ -45,15 +70,7 @@ async function selectCompanies(query: {
     full.error.message
   );
 
-  let coreQuery = supabase.from("companies").select(COMPANY_SELECT_CORE);
-  if (query.eq) coreQuery = coreQuery.eq(query.eq[0], query.eq[1]);
-  if (query.in) coreQuery = coreQuery.in(query.in[0], query.in[1]);
-  if (query.orderName) {
-    coreQuery = coreQuery.order("name", { ascending: true });
-  }
-  if (query.limit) coreQuery = coreQuery.limit(query.limit);
-
-  const core = await coreQuery;
+  const core = await runCore();
   if (core.error) {
     console.error("[companies] core select failed:", core.error.message);
     return { data: [], error: core.error.message };
@@ -140,11 +157,23 @@ async function fetchAccessibleCompanyBySlug(
     return { company, error: null };
   }
 
-  if (!adminHasCompanyAccess(admin, company.id)) {
-    return { company: null, error: "unauthorized" };
+  if (adminHasCompanyAccess(admin, company.id)) {
+    return { company, error: null };
   }
 
-  return { company, error: null };
+  const supabase = await createClient();
+  const { data: accessRow } = await supabase
+    .from("user_company_access")
+    .select("company_id")
+    .eq("user_id", admin.user.id)
+    .eq("company_id", company.id)
+    .maybeSingle();
+
+  if (accessRow || admin.profile.company_id === company.id) {
+    return { company, error: null };
+  }
+
+  return { company: null, error: "unauthorized" };
 }
 
 /** Cached per request — preferred for layout + page chains. */
@@ -158,12 +187,17 @@ export const loadAccessibleCompanies = cache(async () => {
 
 /** Cached per request by slug — preferred for company layout + pages. */
 export const loadAccessibleCompanyBySlug = cache(async (slug: string) => {
-  const access = await getCurrentAdmin();
+  const access = await getCurrentAdminIdentity();
   if (!access.ok) {
     return { company: null as CompanyRecord | null, error: "unauthorized" };
   }
   return fetchAccessibleCompanyBySlug(
-    access.admin,
+    {
+      user: access.user,
+      profile: access.profile,
+      company: null,
+      companies: [],
+    },
     normalizeCompanySlug(slug)
   );
 });

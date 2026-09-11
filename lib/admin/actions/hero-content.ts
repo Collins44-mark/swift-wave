@@ -15,7 +15,6 @@ function str(formData: FormData, key: string): string {
 }
 
 function revalidateHeroPaths(
-  companySlug: string,
   pageKey: string,
   isCorporate: boolean
 ): void {
@@ -29,12 +28,6 @@ function revalidateHeroPaths(
   } else {
     revalidatePath(`/companies/${pageKey}`);
   }
-  revalidatePath(`/admin/website-content/hero`);
-  revalidatePath(
-    isCorporate
-      ? `/admin/website-content/hero/${pageKey}`
-      : `/admin/companies/${companySlug}/website-content/hero`
-  );
 }
 
 /**
@@ -123,6 +116,6 @@ export async function updateHeroImage(
     }
   }
 
-  revalidateHeroPaths(companySlug, pageKey, heroDef.isCorporate);
+  revalidateHeroPaths(pageKey, heroDef.isCorporate);
   return { ok: true };
 }

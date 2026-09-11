@@ -25,13 +25,20 @@ export type GetCurrentAdminResult =
   | { ok: true; admin: CurrentAdmin }
   | { ok: false; error: AdminAccessError };
 
+export type AdminIdentityResult =
+  | {
+      ok: true;
+      user: CurrentAdmin["user"];
+      profile: AdminProfile;
+    }
+  | { ok: false; error: AdminAccessError };
+
 /**
- * Server-only helper: authenticated user + profile + role + company access.
- * Authorization is derived from public.profiles + user_company_access (and RLS).
- * Cached per request to avoid duplicate auth round trips in layout + pages.
+ * Authenticated user + profile only (no company list).
+ * Cached per request so mutations do not wait on listing every company.
  */
-export const getCurrentAdmin = cache(
-  async (): Promise<GetCurrentAdminResult> => {
+export const getCurrentAdminIdentity = cache(
+  async (): Promise<AdminIdentityResult> => {
     if (!isSupabaseConfigured()) {
       return { ok: false, error: "unauthenticated" };
     }
@@ -64,6 +71,36 @@ export const getCurrentAdmin = cache(
     if (!isAdminRole(profileRow.role)) {
       return { ok: false, error: "invalid_role" };
     }
+
+    return {
+      ok: true,
+      user: {
+        id: user.id,
+        email: user.email ?? null,
+      },
+      profile: {
+        id: profileRow.id,
+        full_name: profileRow.full_name,
+        role: profileRow.role,
+        company_id: profileRow.company_id,
+        is_active: profileRow.is_active,
+      },
+    };
+  }
+);
+
+/**
+ * Server-only helper: authenticated user + profile + role + company access.
+ * Authorization is derived from public.profiles + user_company_access (and RLS).
+ * Cached per request to avoid duplicate auth round trips in layout + pages.
+ */
+export const getCurrentAdmin = cache(
+  async (): Promise<GetCurrentAdminResult> => {
+    const identity = await getCurrentAdminIdentity();
+    if (!identity.ok) return identity;
+
+    const supabase = await createClient();
+    const { user, profile: profileRow } = identity;
 
     let companies: AdminCompany[] = [];
 
@@ -111,22 +148,11 @@ export const getCurrentAdmin = cache(
     const company =
       companies.find((c) => c.id === primaryId) ?? companies[0] ?? null;
 
-    const profile: AdminProfile = {
-      id: profileRow.id,
-      full_name: profileRow.full_name,
-      role: profileRow.role,
-      company_id: profileRow.company_id,
-      is_active: profileRow.is_active,
-    };
-
     return {
       ok: true,
       admin: {
-        user: {
-          id: user.id,
-          email: user.email ?? null,
-        },
-        profile,
+        user,
+        profile: profileRow,
         company,
         companies,
       },

@@ -1,8 +1,11 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { requireCompanyAccess, canOperate } from "@/lib/admin/require-company-access";
+import {
+  requireCompanyAccess,
+  canMutate,
+  canOperate,
+} from "@/lib/admin/require-company-access";
 import type { ActionResult, OrderStatus } from "@/lib/admin/types-catalog";
 
 const ORDER_STATUSES: OrderStatus[] = [
@@ -28,21 +31,58 @@ export async function updateOrderStatus(
   }
 
   const supabase = await createClient();
-  const { error } = await supabase
+  const { error, data } = await supabase
     .from("orders")
     .update({ status })
     .eq("id", orderId)
-    .eq("company_id", company.id);
+    .eq("company_id", company.id)
+    .select("id");
 
-  if (error) {
+  if (error || !data?.length) {
     return {
       ok: false,
       error: "Couldn't update the order status. Please try again.",
     };
   }
 
-  revalidatePath(`/admin/companies/${companySlug}/orders`);
-  revalidatePath(`/admin/companies/${companySlug}/orders/${orderId}`);
-  revalidatePath(`/admin/companies/${companySlug}`);
   return { ok: true, message: "Order status updated." };
+}
+
+export async function deleteOrder(
+  companySlug: string,
+  orderId: string
+): Promise<ActionResult> {
+  const { admin, company } = await requireCompanyAccess(companySlug, "orders");
+  if (!canMutate(admin)) {
+    return { ok: false, error: "You do not have permission to delete orders." };
+  }
+
+  const supabase = await createClient();
+  const { error: itemsError } = await supabase
+    .from("order_items")
+    .delete()
+    .eq("order_id", orderId);
+
+  if (itemsError) {
+    return {
+      ok: false,
+      error: itemsError.message || "Unable to delete order. Please try again.",
+    };
+  }
+
+  const { data, error } = await supabase
+    .from("orders")
+    .delete()
+    .eq("id", orderId)
+    .eq("company_id", company.id)
+    .select("id");
+
+  if (error || !data?.length) {
+    return {
+      ok: false,
+      error: error?.message || "Unable to delete order. Please try again.",
+    };
+  }
+
+  return { ok: true };
 }

@@ -78,7 +78,7 @@ export function OrderStatusForm({
         </select>
       </div>
       <button type="submit" className="sw-admin-btn" disabled={pending}>
-        {pending ? "Saving…" : "Save status"}
+        {pending ? "Saving..." : "Save status"}
       </button>
     </form>
   );

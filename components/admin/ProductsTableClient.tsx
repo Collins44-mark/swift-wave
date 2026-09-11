@@ -28,11 +28,17 @@ export function ProductsTableClient({
 
   function handleDeleted(productId: string) {
     setProducts((prev) => prev.filter((p) => p.id !== productId));
-    showSuccess("Product deleted.");
+    showSuccess("Product deleted successfully");
   }
+
+  const countLabel = `${products.length} product${products.length === 1 ? "" : "s"}`;
 
   if (!products.length) {
     return (
+      <>
+        <p style={{ margin: "0.25rem 0 0", color: "var(--admin-muted)" }}>
+          {countLabel}
+        </p>
       <div className="sw-admin-empty" style={{ marginTop: "1rem" }}>
         <p style={{ margin: "0 0 0.35rem", fontWeight: 600 }}>No products yet.</p>
         <p style={{ margin: "0 0 1rem", color: "var(--admin-muted)" }}>
@@ -45,10 +51,15 @@ export function ProductsTableClient({
           + Add product
         </Link>
       </div>
+    </>
     );
   }
 
   return (
+    <>
+      <p style={{ margin: "0.25rem 0 0", color: "var(--admin-muted)" }}>
+        {countLabel}
+      </p>
     <div className="sw-admin-table-wrap" style={{ marginTop: "1rem" }}>
       <table className="sw-admin-table">
         <thead>
@@ -94,5 +105,6 @@ export function ProductsTableClient({
         </tbody>
       </table>
     </div>
+    </>
   );
 }

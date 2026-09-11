@@ -3,6 +3,7 @@ import Link from "next/link";
 import {
   requireCompanyAccess,
   canOperate,
+  canMutate,
 } from "@/lib/admin/require-company-access";
 import { listOrders } from "@/lib/admin/data/orders";
 import { OrdersTableClient } from "@/components/admin/OrdersTableClient";
@@ -43,9 +44,6 @@ export default async function OrdersPage({
         <div className="sw-admin-toolbar">
           <div>
             <h2 style={{ margin: 0 }}>Orders</h2>
-            <p style={{ margin: "0.25rem 0 0", color: "var(--admin-muted)" }}>
-              {orders.length} order{orders.length === 1 ? "" : "s"}
-            </p>
           </div>
         </div>
 
@@ -72,6 +70,7 @@ export default async function OrdersPage({
           initialOrders={orders}
           filterStatus={filterStatus}
           canEditStatus={canOperate(admin)}
+          canDelete={canMutate(admin)}
         />
       </section>
     </>

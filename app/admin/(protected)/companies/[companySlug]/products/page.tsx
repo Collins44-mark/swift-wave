@@ -39,10 +39,6 @@ export default async function ProductsPage({
       <div className="sw-admin-toolbar">
         <div>
           <h2 style={{ margin: 0 }}>Products</h2>
-          <p style={{ margin: "0.25rem 0 0", color: "var(--admin-muted)" }}>
-            {products.length} product{products.length === 1 ? "" : "s"}
-            {q ? ` matching “${q}”` : ""}
-          </p>
         </div>
         <Link
           className="sw-admin-btn"

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import {
   requireCompanyAccess,
   canOperate,
+  canMutate,
 } from "@/lib/admin/require-company-access";
 import { getOrderWithItems } from "@/lib/admin/data/orders";
 import { OrderDetailView } from "@/components/admin/OrderDetailView";
@@ -49,6 +50,7 @@ export default async function OrderDetailPage({
         order={detail.order}
         items={detail.items}
         canEditStatus={canOperate(admin)}
+        canDelete={canMutate(admin)}
         listStatus={listStatus ?? null}
       />
     </section>

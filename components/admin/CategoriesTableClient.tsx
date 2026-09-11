@@ -19,7 +19,7 @@ export function CategoriesTableClient({
 
   function handleDeleted(categoryId: string) {
     setCategories((prev) => prev.filter((c) => c.id !== categoryId));
-    showSuccess("Category deleted.");
+    showSuccess("Category deleted successfully");
   }
 
   if (!categories.length) {

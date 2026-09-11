@@ -50,12 +50,6 @@ function revalidatePublicPaths(
   const isCorporate = scope?.isCorporate ?? companySlug === "corporate";
   const path = publicPathForPage(pageKey, isCorporate);
   revalidatePath(path);
-  revalidatePath("/");
-  revalidatePath("/about");
-  revalidatePath("/companies");
-  revalidatePath("/global");
-  revalidatePath("/contact");
-  revalidatePath(`/companies/${pageKey}`);
 }
 
 export async function upsertWebsiteSection(
@@ -136,10 +130,6 @@ export async function upsertWebsiteSection(
     revalidatePublicPaths(companySlug, pageKey);
   }
 
-  revalidatePath(`/admin/companies/${companySlug}/website-content`);
-  revalidatePath(
-    `/admin/website-content/corporate/${pageKey}`
-  );
   return { ok: true };
 }
 

@@ -102,7 +102,7 @@ export function WhatsappSettingsClient({
       </div>
       <div className="sw-admin-toolbar sw-admin-field-span">
         <button type="submit" className="sw-admin-btn" disabled={pending}>
-          {pending ? "Saving…" : "Save number"}
+          {pending ? "Saving..." : "Save number"}
         </button>
         <a
           className="sw-admin-btn sw-admin-btn-ghost"

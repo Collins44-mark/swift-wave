@@ -1,6 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { requireCompanyAccess, canMutate } from "@/lib/admin/require-company-access";
 
@@ -70,7 +69,6 @@ export async function createLibraryColor(
     return { ok: false, error: error?.message || "Unable to save color." };
   }
 
-  revalidatePath(`/admin/companies/${companySlug}/products`);
   return {
     ok: true,
     id: data.id as string,

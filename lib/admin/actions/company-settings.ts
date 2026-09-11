@@ -113,9 +113,6 @@ export async function updateWhatsappNumber(
     };
   }
 
-  revalidatePath("/admin/whatsapp");
-  revalidatePath(`/admin/companies/${companySlug}/whatsapp`);
-  revalidatePath(`/admin/companies/${companySlug}`);
   revalidatePath(`/companies/${companySlug}`);
   revalidatePath(`/api/public/catalog/${companySlug}`);
   revalidatePath(`/api/public/company/${companySlug}`);
@@ -155,10 +152,7 @@ export async function updateCompanyProfile(
     return { ok: false, error: error.message || "Failed to update company." };
   }
 
-  revalidatePath(`/admin/companies/${companySlug}/settings`);
-  revalidatePath(`/admin/companies/${companySlug}`);
-  revalidatePath("/admin/companies");
-  revalidatePath("/admin/dashboard");
+  revalidatePath(`/companies/${companySlug}`);
   revalidatePath("/companies");
   return { ok: true };
 }
@@ -244,8 +238,6 @@ export async function updateCorporateProfile(
     return { ok: false, error: error.message || "Failed to update corporate profile." };
   }
 
-  revalidatePath(`/admin/companies/${companySlug}/corporate-profile`);
-  revalidatePath(`/admin/companies/${companySlug}`);
   revalidatePath("/companies");
   return { ok: true };
 }

@@ -1,5 +1,5 @@
 import { notFound, redirect } from "next/navigation";
-import { getCurrentAdmin } from "@/lib/auth/get-current-admin";
+import { getCurrentAdminIdentity } from "@/lib/auth/get-current-admin";
 import { loadAccessibleCompanyBySlug } from "@/lib/admin/companies";
 import {
   companyHasModule,
@@ -29,7 +29,7 @@ export async function requireCompanyAccess(
   companySlug: string,
   module?: CompanyModuleKey
 ): Promise<CompanyAccess> {
-  const access = await getCurrentAdmin();
+  const access = await getCurrentAdminIdentity();
   if (!access.ok) redirect("/admin/login");
 
   const { company, error } = await loadAccessibleCompanyBySlug(companySlug);
@@ -46,14 +46,30 @@ export async function requireCompanyAccess(
     redirect(`/admin/companies/${company.slug}`);
   }
 
-  return { admin: access.admin, company };
+  return {
+    admin: {
+      user: access.user,
+      profile: access.profile,
+      company: {
+        id: company.id,
+        name: company.name,
+        slug: company.slug,
+        is_active: company.is_active,
+      },
+      companies: [],
+    },
+    company,
+  };
 }
 
 export function canMutate(admin: CurrentAdmin): boolean {
   return (
     adminCan(admin, "manage_products") ||
+    adminCan(admin, "manage_categories") ||
     adminCan(admin, "manage_orders") ||
-    adminCan(admin, "manage_website_content")
+    adminCan(admin, "manage_website_content") ||
+    adminCan(admin, "manage_company_settings") ||
+    adminCan(admin, "manage_whatsapp")
   );
 }
 

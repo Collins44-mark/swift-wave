@@ -1,25 +1,31 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { deleteProduct } from "@/lib/admin/actions/products";
+import { deleteOrder } from "@/lib/admin/actions/orders";
 import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
 
-export function ProductDeleteButton({
+export function OrderDeleteButton({
   companySlug,
-  productId,
-  productName,
+  orderId,
+  orderReference,
+  customerName,
+  totalLabel,
   onDeleted,
+  buttonLabel = "Delete",
 }: {
   companySlug: string;
-  productId: string;
-  productName: string;
+  orderId: string;
+  orderReference: string;
+  customerName: string;
+  totalLabel: string;
   onDeleted?: () => void;
+  buttonLabel?: string;
 }) {
   const { showError } = useAdminToastContext();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
-  const dialogId = `delete-product-${productId}`;
+  const dialogId = `delete-order-${orderId}`;
 
   function openConfirm() {
     setConfirmOpen(true);
@@ -34,10 +40,10 @@ export function ProductDeleteButton({
 
   function confirmDelete() {
     startTransition(async () => {
-      const result = await deleteProduct(companySlug, productId);
+      const result = await deleteOrder(companySlug, orderId);
       if (!result.ok) {
         setError(result.error);
-        showError("Unable to delete product. Please try again.");
+        showError("Unable to delete order. Please try again.");
         return;
       }
       setConfirmOpen(false);
@@ -53,7 +59,7 @@ export function ProductDeleteButton({
         className="sw-admin-btn sw-admin-btn-ghost sw-admin-btn-danger"
         onClick={openConfirm}
       >
-        Delete
+        {buttonLabel}
       </button>
 
       {confirmOpen ? (
@@ -65,11 +71,17 @@ export function ProductDeleteButton({
             aria-labelledby={`${dialogId}-title`}
           >
             <h3 id={`${dialogId}-title`} style={{ marginTop: 0 }}>
-              Delete product?
+              Delete order?
             </h3>
             <p style={{ color: "var(--admin-muted)", marginTop: 0 }}>
-              Are you sure you want to remove &ldquo;{productName}&rdquo;? This
-              action cannot be undone.
+              Order #{orderReference}
+              <br />
+              Customer: {customerName}
+              <br />
+              Total: {totalLabel}
+            </p>
+            <p style={{ color: "var(--admin-muted)" }}>
+              This action cannot be undone.
             </p>
             {error ? (
               <div className="sw-admin-alert is-error" role="alert">
@@ -91,7 +103,7 @@ export function ProductDeleteButton({
                 disabled={pending}
                 onClick={confirmDelete}
               >
-                {pending ? "Deleting..." : "Delete"}
+                {pending ? "Deleting..." : "Delete Order"}
               </button>
             </div>
           </div>

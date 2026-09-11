@@ -2,9 +2,12 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import type { Order, OrderItemEnriched, OrderStatus } from "@/lib/admin/types-catalog";
 import { OrderStatusBadge } from "@/components/admin/OrderStatusBadge";
 import { OrderStatusForm } from "@/components/admin/OrderStatusForm";
+import { OrderDeleteButton } from "@/components/admin/OrderDeleteButton";
+import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
 import {
   buildCustomerWhatsAppMessage,
   buildCustomerWhatsAppUrl,
@@ -20,6 +23,7 @@ export function OrderDetailView({
   order,
   items,
   canEditStatus,
+  canDelete,
   listStatus,
 }: {
   companySlug: string;
@@ -27,9 +31,12 @@ export function OrderDetailView({
   order: Order;
   items: OrderItemEnriched[];
   canEditStatus: boolean;
+  canDelete: boolean;
   listStatus?: string | null;
 }) {
   const [status, setStatus] = useState<OrderStatus>(order.status);
+  const router = useRouter();
+  const { showSuccess } = useAdminToastContext();
   const ordersListHref =
     listStatus && listStatus !== "all"
       ? `/admin/companies/${companySlug}/orders?status=${listStatus}`
@@ -68,6 +75,20 @@ export function OrderDetailView({
           </div>
           <OrderStatusBadge status={status} />
         </div>
+        {canDelete ? (
+          <OrderDeleteButton
+            companySlug={companySlug}
+            orderId={order.id}
+            orderReference={orderRef}
+            customerName={order.customer_name}
+            totalLabel={formatMoney(order.currency, Number(order.total))}
+            buttonLabel="Delete"
+            onDeleted={() => {
+              showSuccess("Order deleted successfully");
+              router.push(ordersListHref);
+            }}
+          />
+        ) : null}
       </div>
 
       <div className="sw-admin-order-detail-grid">

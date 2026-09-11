@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { OrderStatusBadge } from "@/components/admin/OrderStatusBadge";
+import { OrderDeleteButton } from "@/components/admin/OrderDeleteButton";
 import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
 import { updateOrderStatus } from "@/lib/admin/actions/orders";
 import {
@@ -58,7 +59,7 @@ function OrderRowStatus({
     >
       {ORDER_STATUSES.map((item) => (
         <option key={item} value={item}>
-          {pending && item === status ? "Updating…" : ORDER_STATUS_LABELS[item]}
+          {pending && item === status ? "Updating..." : ORDER_STATUS_LABELS[item]}
         </option>
       ))}
     </select>
@@ -70,13 +71,16 @@ export function OrdersTableClient({
   initialOrders,
   filterStatus,
   canEditStatus,
+  canDelete,
 }: {
   companySlug: string;
   initialOrders: Order[];
   filterStatus: OrderStatus | "all";
   canEditStatus: boolean;
+  canDelete: boolean;
 }) {
   const [orders, setOrders] = useState(initialOrders);
+  const { showSuccess } = useAdminToastContext();
 
   const statusQuery = filterStatus !== "all" ? `?status=${filterStatus}` : "";
 
@@ -92,15 +96,29 @@ export function OrdersTableClient({
     });
   }
 
+  function handleDeleted(orderId: string) {
+    setOrders((prev) => prev.filter((o) => o.id !== orderId));
+    showSuccess("Order deleted successfully");
+  }
+
   if (!orders.length) {
     return (
-      <div className="sw-admin-empty" style={{ marginTop: "1rem" }}>
-        No orders found.
-      </div>
+      <>
+        <p style={{ margin: "1rem 0 0", color: "var(--admin-muted)" }}>
+          0 orders
+        </p>
+        <div className="sw-admin-empty" style={{ marginTop: "1rem" }}>
+          No orders found.
+        </div>
+      </>
     );
   }
 
   return (
+    <>
+      <p style={{ margin: "1rem 0 0", color: "var(--admin-muted)" }}>
+        {orders.length} order{orders.length === 1 ? "" : "s"}
+      </p>
     <div className="sw-admin-table-wrap" style={{ marginTop: "1rem" }}>
       <table className="sw-admin-table">
         <thead>
@@ -134,17 +152,30 @@ export function OrdersTableClient({
               </td>
               <td>{new Date(o.created_at).toLocaleString()}</td>
               <td>
-                <Link
-                  className="sw-admin-btn sw-admin-btn-ghost"
-                  href={`/admin/companies/${companySlug}/orders/${o.id}${statusQuery}`}
-                >
-                  View
-                </Link>
+                <div className="sw-admin-row-actions">
+                  <Link
+                    className="sw-admin-btn sw-admin-btn-ghost"
+                    href={`/admin/companies/${companySlug}/orders/${o.id}${statusQuery}`}
+                  >
+                    View
+                  </Link>
+                  {canDelete ? (
+                    <OrderDeleteButton
+                      companySlug={companySlug}
+                      orderId={o.id}
+                      orderReference={formatOrderReference(o.id)}
+                      customerName={o.customer_name}
+                      totalLabel={formatMoney(o.currency, Number(o.total))}
+                      onDeleted={() => handleDeleted(o.id)}
+                    />
+                  ) : null}
+                </div>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
     </div>
+    </>
   );
 }

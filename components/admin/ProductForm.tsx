@@ -110,7 +110,6 @@ export function ProductForm({
     }
     if (!state?.success) return;
     showSuccess(state.success);
-    router.refresh();
     if (state.redirectTo) {
       router.push(state.redirectTo);
     }

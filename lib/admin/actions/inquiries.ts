@@ -1,6 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { requireCompanyAccess, canOperate } from "@/lib/admin/require-company-access";
 import type { ActionResult, InquiryStatus } from "@/lib/admin/types-catalog";
@@ -42,8 +41,5 @@ export async function updateInquiry(
     };
   }
 
-  revalidatePath(`/admin/companies/${companySlug}/inquiries`);
-  revalidatePath(`/admin/companies/${companySlug}/inquiries/${inquiryId}`);
-  revalidatePath(`/admin/companies/${companySlug}`);
   return { ok: true, message: "Status updated." };
 }

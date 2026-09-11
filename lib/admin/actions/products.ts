@@ -3,7 +3,6 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { requireCompanyAccess, canMutate } from "@/lib/admin/require-company-access";
-import { countOrderItemsForProduct } from "@/lib/admin/data/products";
 import { slugify } from "@/lib/admin/slugify";
 import {
   defaultProductCurrency,
@@ -45,16 +44,9 @@ function parsePrice(raw: string): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
-function revalidateProductSurfaces(companySlug: string, productId?: string) {
-  revalidatePath(`/admin/companies/${companySlug}/products`);
-  revalidatePath(`/admin/companies/${companySlug}`);
-  revalidatePath(`/companies/${companySlug}`, "layout");
+function revalidateProductSurfaces(companySlug: string) {
+  revalidatePath(`/companies/${companySlug}`);
   revalidatePath(`/api/public/catalog/${companySlug}`);
-  if (productId) {
-    revalidatePath(
-      `/admin/companies/${companySlug}/products/${productId}/edit`
-    );
-  }
 }
 
 async function resolveChildCategory(opts: {
@@ -241,7 +233,7 @@ export async function createProduct(
       .eq("company_id", company.id)
       .select("id");
     if (coverError || !coverRows?.length) {
-      revalidateProductSurfaces(company.slug, data.id);
+      revalidateProductSurfaces(company.slug);
       return {
         ok: false,
         error:
@@ -250,7 +242,7 @@ export async function createProduct(
     }
   }
 
-  revalidateProductSurfaces(company.slug, data.id);
+  revalidateProductSurfaces(company.slug);
   return { ok: true, id: data.id };
 }
 
@@ -351,7 +343,7 @@ export async function updateProduct(
     }
   }
 
-  revalidateProductSurfaces(company.slug, productId);
+  revalidateProductSurfaces(company.slug);
   return { ok: true };
 }
 
@@ -362,14 +354,6 @@ export async function deleteProduct(
   const { admin, company } = await requireCompanyAccess(companySlug, "products");
   if (!canMutate(admin)) {
     return { ok: false, error: "Staff can view products but cannot delete them." };
-  }
-
-  const orderItemCount = await countOrderItemsForProduct(company.id, productId);
-  if (orderItemCount > 0) {
-    return {
-      ok: false,
-      error: `This product appears in ${orderItemCount} past order${orderItemCount === 1 ? "" : "s"} and cannot be permanently deleted. Change its status to Archived to hide it from the shop while preserving order history.`,
-    };
   }
 
   const supabase = await createClient();
@@ -383,7 +367,7 @@ export async function deleteProduct(
   if (error || !data?.length) {
     return {
       ok: false,
-      error: "Unable to delete product. Please try again.",
+      error: error?.message || "Unable to delete product. Please try again.",
     };
   }
 

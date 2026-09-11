@@ -51,7 +51,7 @@ export function CategoryRowActions({
       const result = await deleteCategory(companySlug, categoryId);
       if (!result.ok) {
         setError(result.error);
-        showError("Couldn't delete this item.");
+        showError("Unable to delete category. Please try again.");
         return;
       }
       setConfirmOpen(false);
@@ -108,7 +108,8 @@ export function CategoryRowActions({
               Delete Category?
             </h3>
             <p style={{ color: "var(--admin-muted)", marginTop: 0 }}>
-              Delete &ldquo;{categoryName}&rdquo;? This action cannot be undone.
+              Delete &ldquo;{categoryName}&rdquo;? Products in this category
+              will become uncategorized. This action cannot be undone.
             </p>
             {error ? (
               <div className="sw-admin-alert is-error" role="alert">
@@ -133,7 +134,7 @@ export function CategoryRowActions({
                 disabled={pending}
                 onClick={confirmDelete}
               >
-                {pending ? "Deleting…" : "Delete"}
+                {pending ? "Deleting..." : "Delete"}
               </button>
             </div>
           </div>

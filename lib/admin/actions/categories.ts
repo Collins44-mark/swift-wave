@@ -6,12 +6,16 @@ import {
   requireCompanyAccess,
   canMutate,
 } from "@/lib/admin/require-company-access";
-import { countProductsInCategory } from "@/lib/admin/data/categories";
 import { slugify } from "@/lib/admin/slugify";
 import type { ActionResult } from "@/lib/admin/types-catalog";
 
 function str(formData: FormData, key: string): string {
   return String(formData.get(key) ?? "").trim();
+}
+
+function revalidateCategoryCatalog(companySlug: string) {
+  revalidatePath(`/companies/${companySlug}`);
+  revalidatePath(`/api/public/catalog/${companySlug}`);
 }
 
 async function categoryNameExists(
@@ -93,8 +97,7 @@ export async function createCategory(
     return { ok: false, error: error.message || "Failed to create category." };
   }
 
-  revalidatePath(`/admin/companies/${companySlug}/categories`);
-  revalidatePath(`/admin/companies/${companySlug}`);
+  revalidateCategoryCatalog(company.slug);
   return { ok: true, id: data.id };
 }
 
@@ -158,8 +161,7 @@ export async function updateCategory(
     return { ok: false, error: error.message || "Failed to update category." };
   }
 
-  revalidatePath(`/admin/companies/${companySlug}/categories`);
-  revalidatePath(`/admin/companies/${companySlug}/categories/${categoryId}/edit`);
+  revalidateCategoryCatalog(company.slug);
   return { ok: true };
 }
 
@@ -178,26 +180,21 @@ export async function deleteCategory(
     };
   }
 
-  const productCount = await countProductsInCategory(company.id, categoryId);
-  if (productCount > 0) {
-    return {
-      ok: false,
-      error: `This category is currently used by ${productCount} product${productCount === 1 ? "" : "s"} and cannot be deleted. Reassign those products or deactivate the category instead.`,
-    };
-  }
-
   const supabase = await createClient();
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("categories")
     .delete()
     .eq("id", categoryId)
-    .eq("company_id", company.id);
+    .eq("company_id", company.id)
+    .select("id");
 
-  if (error) {
-    return { ok: false, error: error.message || "Failed to delete category." };
+  if (error || !data?.length) {
+    return {
+      ok: false,
+      error: error?.message || "Unable to delete category. Please try again.",
+    };
   }
 
-  revalidatePath(`/admin/companies/${companySlug}/categories`);
-  revalidatePath(`/admin/companies/${companySlug}`);
+  revalidateCategoryCatalog(company.slug);
   return { ok: true };
 }
