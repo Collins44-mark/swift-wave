@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { requireCompanyAccess } from "@/lib/admin/require-company-access";
+import {
+  requireCompanyAccess,
+  canMutate,
+} from "@/lib/admin/require-company-access";
 import { listProducts } from "@/lib/admin/data/products";
 import { listCategories } from "@/lib/admin/data/categories";
 import { ProductsTableClient } from "@/components/admin/ProductsTableClient";
@@ -19,7 +22,7 @@ export default async function ProductsPage({
 }) {
   const { companySlug } = await params;
   const { q } = await searchParams;
-  const { company } = await requireCompanyAccess(companySlug, "products");
+  const { company, admin } = await requireCompanyAccess(companySlug, "products");
 
   const [products, categories] = await Promise.all([
     listProducts(company.id, { search: q }),
@@ -77,6 +80,7 @@ export default async function ProductsPage({
         companySlug={companySlug}
         initialProducts={products}
         categoryName={categoryName}
+        canDelete={canMutate(admin)}
       />
     </section>
   );

@@ -8,6 +8,7 @@ import {
   deleteAdminUser,
   setAdminActive,
 } from "@/lib/admin/actions/users";
+import { ConfirmationDialog } from "@/components/admin/ConfirmationDialog";
 import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
 
 export function UsersAdminTable({ users }: { users: ManagedUser[] }) {
@@ -172,75 +173,50 @@ export function UsersAdminTable({ users }: { users: ManagedUser[] }) {
         </div>
       )}
 
-      {deleteTarget ? (
-        <div
-          className="sw-admin-modal-backdrop"
-          role="presentation"
-          onClick={() => setDeleteTarget(null)}
-        >
-          <div
-            className="sw-admin-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="delete-admin-title"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 id="delete-admin-title">Delete Administrator?</h3>
-            <p>
-              This permanently removes the Auth account and profile. Business
-              records they created are preserved.
-            </p>
-            <dl>
-              <dt>Name</dt>
-              <dd>{deleteTarget.full_name || "—"}</dd>
-              <dt>Email</dt>
-              <dd>{deleteTarget.email || "—"}</dd>
-              <dt>Role</dt>
-              <dd>{roleLabel(deleteTarget.role)}</dd>
-              <dt>Assigned companies</dt>
-              <dd>
-                {deleteTarget.role === "super_admin"
-                  ? "All companies"
-                  : deleteTarget.companies.map((c) => c.name).join(", ") ||
-                    "None"}
-              </dd>
-            </dl>
-            <div className="sw-admin-toolbar">
-              <button
-                type="button"
-                className="sw-admin-btn sw-admin-btn-danger"
-                disabled={pending}
-                onClick={() => {
-                  setError(null);
-                  startTransition(async () => {
-                    const deletedId = deleteTarget.id;
-                    const res = await deleteAdminUser(deletedId);
-                    if (!res.ok) {
-                      setError(res.error);
-                      showError("Couldn't delete this administrator.");
-                      setDeleteTarget(null);
-                      return;
-                    }
-                    setItems((prev) => prev.filter((row) => row.id !== deletedId));
-                    setDeleteTarget(null);
-                    showSuccess("Administrator deleted.");
-                  });
-                }}
-              >
-                {pending ? "Deleting…" : "Confirm delete"}
-              </button>
-              <button
-                type="button"
-                className="sw-admin-btn sw-admin-btn-ghost"
-                disabled={pending}
-                onClick={() => setDeleteTarget(null)}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
+      <ConfirmationDialog
+        open={Boolean(deleteTarget)}
+        title="Delete Administrator?"
+        error={error}
+        pending={pending}
+        confirmLabel="Delete Administrator"
+        pendingLabel="Deleting..."
+        onCancel={() => {
+          if (pending) return;
+          setDeleteTarget(null);
+          setError(null);
+        }}
+        onConfirm={() => {
+          if (!deleteTarget) return;
+          const deletedId = deleteTarget.id;
+          setError(null);
+          startTransition(async () => {
+            const res = await deleteAdminUser(deletedId);
+            if (!res.ok) {
+              setError(res.error);
+              showError("Couldn't delete this administrator.");
+              return;
+            }
+            setItems((prev) => prev.filter((row) => row.id !== deletedId));
+            setDeleteTarget(null);
+            showSuccess("Administrator deleted.");
+          });
+        }}
+      >
+        <p>
+          This permanently removes the Auth account and profile. Business
+          records they created are preserved.
+        </p>
+        {deleteTarget ? (
+          <p>
+            {deleteTarget.full_name || "—"}
+            <br />
+            {deleteTarget.email || "—"}
+            <br />
+            {roleLabel(deleteTarget.role)}
+          </p>
+        ) : null}
+        <p>This action cannot be undone.</p>
+      </ConfirmationDialog>
     </div>
   );
 }

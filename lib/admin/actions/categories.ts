@@ -7,7 +7,8 @@ import {
   canMutate,
 } from "@/lib/admin/require-company-access";
 import { slugify } from "@/lib/admin/slugify";
-import type { ActionResult } from "@/lib/admin/types-catalog";
+import type { ActionResult, BulkDeleteResult } from "@/lib/admin/types-catalog";
+import { MAX_BULK_DELETE, uniqueValidIds } from "@/lib/admin/ids";
 
 function str(formData: FormData, key: string): string {
   return String(formData.get(key) ?? "").trim();
@@ -165,10 +166,10 @@ export async function updateCategory(
   return { ok: true };
 }
 
-export async function deleteCategory(
+export async function deleteCategories(
   companySlug: string,
-  categoryId: string
-): Promise<ActionResult> {
+  categoryIds: string[]
+): Promise<BulkDeleteResult> {
   const { admin, company } = await requireCompanyAccess(
     companySlug,
     "categories"
@@ -180,21 +181,66 @@ export async function deleteCategory(
     };
   }
 
+  const ids = uniqueValidIds(categoryIds);
+  if (!ids.length) {
+    return { ok: false, error: "No categories selected." };
+  }
+  if (ids.length > MAX_BULK_DELETE) {
+    return {
+      ok: false,
+      error: `You can delete up to ${MAX_BULK_DELETE} categories at a time.`,
+    };
+  }
+
   const supabase = await createClient();
+  const { data: owned, error: lookupError } = await supabase
+    .from("categories")
+    .select("id")
+    .eq("company_id", company.id)
+    .in("id", ids);
+
+  if (lookupError) {
+    return {
+      ok: false,
+      error:
+        lookupError.message || "Unable to delete categories. Please try again.",
+    };
+  }
+
+  const ownedIds = (owned ?? []).map((row) => row.id as string);
+  if (ownedIds.length !== ids.length) {
+    return {
+      ok: false,
+      error: "One or more selected categories could not be deleted.",
+    };
+  }
+
   const { data, error } = await supabase
     .from("categories")
     .delete()
-    .eq("id", categoryId)
     .eq("company_id", company.id)
+    .in("id", ownedIds)
     .select("id");
 
-  if (error || !data?.length) {
+  if (error || !data?.length || data.length !== ownedIds.length) {
     return {
       ok: false,
-      error: error?.message || "Unable to delete category. Please try again.",
+      error: error?.message || "Unable to delete categories. Please try again.",
     };
   }
 
   revalidateCategoryCatalog(company.slug);
+  return { ok: true, deletedIds: data.map((row) => row.id as string) };
+}
+
+export async function deleteCategory(
+  companySlug: string,
+  categoryId: string
+): Promise<ActionResult> {
+  const result = await deleteCategories(companySlug, [categoryId]);
+  if (!result.ok) return result;
+  if (!result.deletedIds.length) {
+    return { ok: false, error: "Unable to delete category. Please try again." };
+  }
   return { ok: true };
 }

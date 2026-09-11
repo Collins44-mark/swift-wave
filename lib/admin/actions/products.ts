@@ -13,7 +13,8 @@ import {
   parseSizeNames,
   replaceProductVariants,
 } from "@/lib/admin/actions/product-variants";
-import type { ActionResult } from "@/lib/admin/types-catalog";
+import type { ActionResult, BulkDeleteResult } from "@/lib/admin/types-catalog";
+import { MAX_BULK_DELETE, uniqueValidIds } from "@/lib/admin/ids";
 
 function friendlyProductError(
   error: { code?: string; message?: string } | null,
@@ -347,31 +348,75 @@ export async function updateProduct(
   return { ok: true };
 }
 
-export async function deleteProduct(
+export async function deleteProducts(
   companySlug: string,
-  productId: string
-): Promise<ActionResult> {
+  productIds: string[]
+): Promise<BulkDeleteResult> {
   const { admin, company } = await requireCompanyAccess(companySlug, "products");
   if (!canMutate(admin)) {
     return { ok: false, error: "Staff can view products but cannot delete them." };
   }
 
+  const ids = uniqueValidIds(productIds);
+  if (!ids.length) {
+    return { ok: false, error: "No products selected." };
+  }
+  if (ids.length > MAX_BULK_DELETE) {
+    return {
+      ok: false,
+      error: `You can delete up to ${MAX_BULK_DELETE} products at a time.`,
+    };
+  }
+
   const supabase = await createClient();
+  const { data: owned, error: lookupError } = await supabase
+    .from("products")
+    .select("id")
+    .eq("company_id", company.id)
+    .in("id", ids);
+
+  if (lookupError) {
+    return {
+      ok: false,
+      error: lookupError.message || "Unable to delete products. Please try again.",
+    };
+  }
+
+  const ownedIds = (owned ?? []).map((row) => row.id as string);
+  if (ownedIds.length !== ids.length) {
+    return {
+      ok: false,
+      error: "One or more selected products could not be deleted.",
+    };
+  }
+
   const { data, error } = await supabase
     .from("products")
     .delete()
-    .eq("id", productId)
     .eq("company_id", company.id)
+    .in("id", ownedIds)
     .select("id");
 
-  if (error || !data?.length) {
+  if (error || !data?.length || data.length !== ownedIds.length) {
     return {
       ok: false,
-      error: error?.message || "Unable to delete product. Please try again.",
+      error: error?.message || "Unable to delete products. Please try again.",
     };
   }
 
   revalidateProductSurfaces(company.slug);
+  return { ok: true, deletedIds: data.map((row) => row.id as string) };
+}
+
+export async function deleteProduct(
+  companySlug: string,
+  productId: string
+): Promise<ActionResult> {
+  const result = await deleteProducts(companySlug, [productId]);
+  if (!result.ok) return result;
+  if (!result.deletedIds.length) {
+    return { ok: false, error: "Unable to delete product. Please try again." };
+  }
   return { ok: true };
 }
 

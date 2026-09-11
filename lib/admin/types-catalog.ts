@@ -160,6 +160,10 @@ export type ActionResult =
   | { ok: true; message?: string; id?: string }
   | { ok: false; error: string };
 
+export type BulkDeleteResult =
+  | { ok: true; deletedIds: string[] }
+  | { ok: false; error: string };
+
 export const PRODUCT_SELECT =
   "id, company_id, category_id, name, slug, description, price, currency, image_url, image_public_id, status, featured, subcategory, bullets, rating, price_label, sort_order, created_at, updated_at" as const;
 

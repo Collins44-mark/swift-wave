@@ -4,17 +4,20 @@ import Link from "next/link";
 import { useEffect, useId, useRef, useState, useTransition } from "react";
 import { deleteCategory } from "@/lib/admin/actions/categories";
 import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
+import { ConfirmationDialog } from "@/components/admin/ConfirmationDialog";
 
 export function CategoryRowActions({
   companySlug,
   categoryId,
   categoryName,
   onDeleted,
+  canDelete = true,
 }: {
   companySlug: string;
   categoryId: string;
   categoryName: string;
   onDeleted?: () => void;
+  canDelete?: boolean;
 }) {
   const { showError } = useAdminToastContext();
   const [open, setOpen] = useState(false);
@@ -46,20 +49,6 @@ export function CategoryRowActions({
     setError(null);
   }
 
-  function confirmDelete() {
-    startTransition(async () => {
-      const result = await deleteCategory(companySlug, categoryId);
-      if (!result.ok) {
-        setError(result.error);
-        showError("Unable to delete category. Please try again.");
-        return;
-      }
-      setConfirmOpen(false);
-      setError(null);
-      onDeleted?.();
-    });
-  }
-
   return (
     <>
       <div className="sw-admin-row-menu" ref={rootRef}>
@@ -84,62 +73,49 @@ export function CategoryRowActions({
             >
               Edit
             </Link>
-            <button
-              type="button"
-              role="menuitem"
-              className="sw-admin-row-menu-item is-danger"
-              onClick={handleDelete}
-            >
-              Delete
-            </button>
+            {canDelete ? (
+              <button
+                type="button"
+                role="menuitem"
+                className="sw-admin-row-menu-item is-danger"
+                onClick={handleDelete}
+              >
+                Delete
+              </button>
+            ) : null}
           </div>
         ) : null}
       </div>
 
-      {confirmOpen ? (
-        <div className="sw-admin-modal-backdrop" role="presentation">
-          <div
-            className="sw-admin-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby={`${menuId}-delete-title`}
-          >
-            <h3 id={`${menuId}-delete-title`} style={{ marginTop: 0 }}>
-              Delete Category?
-            </h3>
-            <p style={{ color: "var(--admin-muted)", marginTop: 0 }}>
-              Delete &ldquo;{categoryName}&rdquo;? Products in this category
-              will become uncategorized. This action cannot be undone.
-            </p>
-            {error ? (
-              <div className="sw-admin-alert is-error" role="alert">
-                {error}
-              </div>
-            ) : null}
-            <div className="sw-admin-toolbar">
-              <button
-                type="button"
-                className="sw-admin-btn sw-admin-btn-ghost"
-                disabled={pending}
-                onClick={() => {
-                  setConfirmOpen(false);
-                  setError(null);
-                }}
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                className="sw-admin-btn sw-admin-btn-danger-solid"
-                disabled={pending}
-                onClick={confirmDelete}
-              >
-                {pending ? "Deleting..." : "Delete"}
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
+      <ConfirmationDialog
+        open={confirmOpen}
+        title="Delete Category?"
+        error={error}
+        pending={pending}
+        confirmLabel="Delete Category"
+        pendingLabel="Deleting..."
+        onCancel={() => {
+          if (pending) return;
+          setConfirmOpen(false);
+          setError(null);
+        }}
+        onConfirm={() => {
+          startTransition(async () => {
+            const result = await deleteCategory(companySlug, categoryId);
+            if (!result.ok) {
+              setError(result.error);
+              showError("Unable to delete category. Please try again.");
+              return;
+            }
+            setConfirmOpen(false);
+            setError(null);
+            onDeleted?.();
+          });
+        }}
+      >
+        <p>{categoryName}</p>
+        <p>This action cannot be undone.</p>
+      </ConfirmationDialog>
     </>
   );
 }

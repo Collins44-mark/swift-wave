@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { requireCompanyAccess } from "@/lib/admin/require-company-access";
+import {
+  requireCompanyAccess,
+  canMutate,
+} from "@/lib/admin/require-company-access";
 import { listCategories } from "@/lib/admin/data/categories";
 import { CategoriesTableClient } from "@/components/admin/CategoriesTableClient";
 
@@ -15,7 +18,7 @@ export default async function CategoriesPage({
   params: Promise<{ companySlug: string }>;
 }) {
   const { companySlug } = await params;
-  const { company } = await requireCompanyAccess(companySlug, "categories");
+  const { company, admin } = await requireCompanyAccess(companySlug, "categories");
   const categories = await listCategories(company.id);
 
   return (
@@ -38,6 +41,7 @@ export default async function CategoriesPage({
       <CategoriesTableClient
         companySlug={companySlug}
         initialCategories={categories}
+        canDelete={canMutate(admin)}
       />
     </section>
   );
