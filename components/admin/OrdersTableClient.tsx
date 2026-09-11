@@ -8,7 +8,7 @@ import { ConfirmationDialog } from "@/components/admin/ConfirmationDialog";
 import { BulkSelectionToolbar } from "@/components/admin/BulkSelectionToolbar";
 import { SelectAllCheckbox } from "@/components/admin/SelectAllCheckbox";
 import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
-import { updateOrderStatus, deleteOrders } from "@/lib/admin/actions/orders";
+import { updateOrderStatus, deleteOrders } from "@/lib/admin/client-actions";
 import { bulkDeleteCopy } from "@/lib/admin/delete-copy";
 import {
   ORDER_STATUSES,
@@ -41,14 +41,17 @@ function OrderRowStatus({
 
   function handleChange(next: OrderStatus) {
     if (next === status || pending) return;
+    const previous = status;
+    setStatus(next);
+    onUpdated(orderId, next);
     startTransition(async () => {
       const result = await updateOrderStatus(companySlug, orderId, next);
       if (!result.ok) {
+        setStatus(previous);
+        onUpdated(orderId, previous);
         showError("Couldn't update the order status.");
         return;
       }
-      setStatus(next);
-      onUpdated(orderId, next);
       showSuccess("Order status updated.");
     });
   }

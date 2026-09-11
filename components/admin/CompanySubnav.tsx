@@ -35,7 +35,12 @@ export function CompanySubnav({ companySlug }: { companySlug: string }) {
           <Link
             key={item.key}
             href={href}
-            prefetch
+            prefetch={
+              item.key === "products" ||
+              item.key === "categories" ||
+              item.key === "orders" ||
+              item.key === "website_content"
+            }
             className={active ? "is-active" : undefined}
             aria-current={active ? "page" : undefined}
           >

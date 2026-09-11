@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePublicLater } from "@/lib/admin/revalidate-public";
 import { createClient } from "@/lib/supabase/server";
 import {
   requireCompanyAccess,
@@ -18,16 +18,13 @@ function revalidateHeroPaths(
   pageKey: string,
   isCorporate: boolean
 ): void {
-  revalidatePath(publicPathForPage(pageKey, isCorporate));
+  const paths = [publicPathForPage(pageKey, isCorporate)];
   if (isCorporate) {
-    revalidatePath("/");
-    revalidatePath("/about");
-    revalidatePath("/companies");
-    revalidatePath("/global");
-    revalidatePath("/contact");
+    paths.push("/", "/about", "/companies", "/global", "/contact");
   } else {
-    revalidatePath(`/companies/${pageKey}`);
+    paths.push(`/companies/${pageKey}`);
   }
+  revalidatePublicLater(paths);
 }
 
 /**

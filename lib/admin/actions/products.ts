@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePublicLater } from "@/lib/admin/revalidate-public";
 import { createClient } from "@/lib/supabase/server";
 import { requireCompanyAccess, canMutate } from "@/lib/admin/require-company-access";
 import { slugify } from "@/lib/admin/slugify";
@@ -46,8 +46,10 @@ function parsePrice(raw: string): number | null {
 }
 
 function revalidateProductSurfaces(companySlug: string) {
-  revalidatePath(`/companies/${companySlug}`);
-  revalidatePath(`/api/public/catalog/${companySlug}`);
+  revalidatePublicLater([
+    `/companies/${companySlug}`,
+    `/api/public/catalog/${companySlug}`,
+  ]);
 }
 
 async function resolveChildCategory(opts: {
@@ -168,6 +170,11 @@ export async function createProduct(
   if (!category.ok) return category;
 
   const supabase = await createClient();
+  const colors = parseColorDrafts(str(formData, "colors_json"));
+  if ("error" in colors) return { ok: false, error: colors.error };
+  const sizeNames = parseSizeNames(str(formData, "sizes_json"));
+  if ("error" in sizeNames) return { ok: false, error: sizeNames.error };
+
   const { data, error } = await supabase
     .from("products")
     .insert({
@@ -199,17 +206,6 @@ export async function createProduct(
         "Unable to create product. Please try again."
       ),
     };
-  }
-
-  const colors = parseColorDrafts(str(formData, "colors_json"));
-  if ("error" in colors) {
-    await supabase.from("products").delete().eq("id", data.id);
-    return { ok: false, error: colors.error };
-  }
-  const sizeNames = parseSizeNames(str(formData, "sizes_json"));
-  if ("error" in sizeNames) {
-    await supabase.from("products").delete().eq("id", data.id);
-    return { ok: false, error: sizeNames.error };
   }
 
   const variants = await replaceProductVariants(

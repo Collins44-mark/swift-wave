@@ -10,7 +10,7 @@ import type { MediaAsset } from "@/lib/admin/types-media";
 import {
   publishWebsiteSection,
   saveWebsiteSectionDraft,
-} from "@/lib/admin/actions/website-content";
+} from "@/lib/admin/client-actions";
 import { getSeedSectionContent } from "@/lib/cms/seed-content";
 import {
   type LeadershipItem,

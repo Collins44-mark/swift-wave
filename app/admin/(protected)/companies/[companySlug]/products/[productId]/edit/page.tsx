@@ -7,7 +7,6 @@ import {
 import { listCategories } from "@/lib/admin/data/categories";
 import { listMediaAssets } from "@/lib/admin/data/media";
 import { getProduct, listColorLibrary, listSizeLibrary } from "@/lib/admin/data/products";
-import { updateProduct } from "@/lib/admin/actions/products";
 import { ProductForm } from "@/components/admin/ProductForm";
 
 export const metadata: Metadata = {
@@ -36,16 +35,6 @@ export default async function EditProductPage({
 
   if (!product) notFound();
 
-  async function action(
-    _prev: { error?: string } | null,
-    formData: FormData
-  ) {
-    "use server";
-    const result = await updateProduct(companySlug, productId, formData);
-    if (!result.ok) return { error: result.error };
-    return { success: "Product updated successfully" };
-  }
-
   return (
     <section className="sw-admin-panel">
       <h2 style={{ marginTop: 0 }}>Edit product</h2>
@@ -58,7 +47,6 @@ export default async function EditProductPage({
         sizeLibrary={sizeLibrary}
         colorLibrary={colorLibrary}
         canUpload={canMutate(admin)}
-        action={action}
       />
     </section>
   );

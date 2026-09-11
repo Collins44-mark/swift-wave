@@ -1,12 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useEffect, useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { SubmitButton } from "@/components/admin/SubmitButton";
 import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
 import { ImageFieldPicker } from "@/components/admin/ImageFieldPicker";
 import { ProductVariantEditor } from "@/components/admin/ProductVariantEditor";
+import {
+  createProduct,
+  updateProduct,
+} from "@/lib/admin/client-actions";
 import {
   PRODUCT_CURRENCIES,
   defaultProductCurrency,
@@ -26,12 +30,6 @@ function bulletsText(bullets: Product["bullets"] | undefined): string {
 }
 
 type CategoryOption = { id: string; name: string; parent_id: string | null };
-
-type FormState = {
-  error?: string;
-  success?: string;
-  redirectTo?: string;
-} | null;
 
 function initialParentId(
   product: Product | null | undefined,
@@ -61,7 +59,6 @@ export function ProductForm({
   sizeLibrary,
   colorLibrary,
   canUpload,
-  action,
 }: {
   companySlug: string;
   product?: Product | null;
@@ -70,13 +67,13 @@ export function ProductForm({
   sizeLibrary: SizeDefinition[];
   colorLibrary: ColorDefinition[];
   canUpload: boolean;
-  action: (prev: FormState, formData: FormData) => Promise<FormState>;
 }) {
-  const [state, formAction] = useActionState(action, null);
   const { showSuccess, showError } = useAdminToastContext();
   const router = useRouter();
   const isEdit = Boolean(product);
   const [uploadsInFlight, setUploadsInFlight] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+  const [pending, startTransition] = useTransition();
 
   function handleUploadBusy(busy: boolean) {
     setUploadsInFlight((count) => Math.max(0, count + (busy ? 1 : -1)));
@@ -103,32 +100,41 @@ export function ProductForm({
     [categories, parentId]
   );
 
-  useEffect(() => {
-    if (state?.error) {
-      showError(state.error);
-      return;
-    }
-    if (!state?.success) return;
-    showSuccess(state.success);
-    if (state.redirectTo) {
-      router.push(state.redirectTo);
-    }
-  }, [state, showSuccess, showError, router]);
-
   return (
     <form
-      action={formAction}
       className="sw-admin-form-grid"
       onSubmit={(event) => {
+        event.preventDefault();
         if (uploadsInFlight > 0) {
-          event.preventDefault();
           showError("Wait for the image upload to finish, then save.");
+          return;
         }
+        const formData = new FormData(event.currentTarget);
+        setError(null);
+        startTransition(async () => {
+          const result =
+            isEdit && product
+              ? await updateProduct(companySlug, product.id, formData)
+              : await createProduct(companySlug, formData);
+          if (!result.ok) {
+            setError(result.error);
+            showError("Couldn't save changes. Please try again.");
+            return;
+          }
+          showSuccess(
+            isEdit
+              ? "Product updated successfully"
+              : "Product created successfully"
+          );
+          if (!isEdit) {
+            router.push(`/admin/companies/${companySlug}/products`);
+          }
+        });
       }}
     >
-      {state?.error ? (
+      {error ? (
         <div className="sw-admin-alert is-error sw-admin-field-span" role="alert">
-          {state.error}
+          {error}
         </div>
       ) : null}
       <div className="sw-admin-field">
@@ -297,6 +303,7 @@ export function ProductForm({
 
       <div className="sw-admin-toolbar sw-admin-field-span">
         <SubmitButton
+          pending={pending}
           pendingLabel="Saving..."
           disabled={uploadsInFlight > 0}
         >

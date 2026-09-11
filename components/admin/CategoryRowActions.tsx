@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useId, useRef, useState, useTransition } from "react";
-import { deleteCategory } from "@/lib/admin/actions/categories";
+import { deleteCategory } from "@/lib/admin/client-actions";
 import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
 import { ConfirmationDialog } from "@/components/admin/ConfirmationDialog";
 

@@ -6,7 +6,7 @@ import {
   inquiryStatusesForCompany,
 } from "@/lib/admin/inquiry-utils";
 import type { InquiryStatus } from "@/lib/admin/types-catalog";
-import { updateInquiry } from "@/lib/admin/actions/inquiries";
+import { updateInquiry } from "@/lib/admin/client-actions";
 import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
 
 export function InquiryStatusForm({

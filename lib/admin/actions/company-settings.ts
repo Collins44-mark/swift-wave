@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePublicLater } from "@/lib/admin/revalidate-public";
 import { createClient } from "@/lib/supabase/server";
 import { validateWhatsAppNumber } from "@/lib/whatsapp/normalize";
 import {
@@ -113,9 +113,11 @@ export async function updateWhatsappNumber(
     };
   }
 
-  revalidatePath(`/companies/${companySlug}`);
-  revalidatePath(`/api/public/catalog/${companySlug}`);
-  revalidatePath(`/api/public/company/${companySlug}`);
+  revalidatePublicLater([
+    `/companies/${companySlug}`,
+    `/api/public/catalog/${companySlug}`,
+    `/api/public/company/${companySlug}`,
+  ]);
   return { ok: true };
 }
 
@@ -152,8 +154,7 @@ export async function updateCompanyProfile(
     return { ok: false, error: error.message || "Failed to update company." };
   }
 
-  revalidatePath(`/companies/${companySlug}`);
-  revalidatePath("/companies");
+  revalidatePublicLater([`/companies/${companySlug}`, "/companies"]);
   return { ok: true };
 }
 
@@ -238,7 +239,7 @@ export async function updateCorporateProfile(
     return { ok: false, error: error.message || "Failed to update corporate profile." };
   }
 
-  revalidatePath("/companies");
+  revalidatePublicLater(["/companies"]);
   return { ok: true };
 }
 
@@ -264,7 +265,6 @@ export async function updateScholarshipFormOptions(
   const result = await mergeSettings(company.id, { scholarship_form });
   if (!result.ok) return result;
 
-  revalidatePath(`/admin/companies/${companySlug}/form-options`);
   return { ok: true };
 }
 
@@ -303,6 +303,5 @@ export async function updateFreightRouteHubs(
   });
   if (!result.ok) return result;
 
-  revalidatePath(`/admin/companies/${companySlug}/route-hubs`);
   return { ok: true };
 }

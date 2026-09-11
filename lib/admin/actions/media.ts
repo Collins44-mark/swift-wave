@@ -1,6 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { requireCompanyAccess, canMutate } from "@/lib/admin/require-company-access";
 import { findMediaUsage, getMediaAsset } from "@/lib/admin/data/media";
@@ -83,7 +82,6 @@ export async function saveUploadedMedia(
     return { ok: false, error: "Could not save media reference." };
   }
 
-  revalidatePath(`/admin/companies/${companySlug}/media`);
   return { ok: true, id: data.id };
 }
 
@@ -105,7 +103,6 @@ export async function updateMediaAltText(
     .eq("company_id", company.id);
 
   if (error) return { ok: false, error: "Could not update alt text." };
-  revalidatePath(`/admin/companies/${companySlug}/media`);
   return { ok: true, id: mediaId };
 }
 
@@ -157,6 +154,5 @@ export async function deleteMediaAsset(
     };
   }
 
-  revalidatePath(`/admin/companies/${companySlug}/media`);
   return { ok: true };
 }

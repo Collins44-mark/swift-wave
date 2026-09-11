@@ -5,7 +5,6 @@ import {
   canMutate,
 } from "@/lib/admin/require-company-access";
 import { getCategory, listCategories } from "@/lib/admin/data/categories";
-import { updateCategory } from "@/lib/admin/actions/categories";
 import { CategoryForm } from "@/components/admin/CategoryForm";
 
 export const metadata: Metadata = {
@@ -39,16 +38,6 @@ export default async function EditCategoryPage({
     (c) => !c.parent_id && c.id !== category.id
   );
 
-  async function action(
-    _prev: { error?: string } | null,
-    formData: FormData
-  ) {
-    "use server";
-    const result = await updateCategory(companySlug, categoryId, formData);
-    if (!result.ok) return { error: result.error };
-    return { success: "Category updated." };
-  }
-
   return (
     <section className="sw-admin-panel">
       <h2 style={{ marginTop: 0 }}>Edit Category</h2>
@@ -60,7 +49,6 @@ export default async function EditCategoryPage({
         companyName={company.name}
         category={category}
         parentOptions={parentOptions}
-        action={action}
       />
     </section>
   );

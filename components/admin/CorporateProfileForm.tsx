@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { MediaUploadButton } from "@/components/admin/MediaUploadButton";
 import { SubmitButton } from "@/components/admin/SubmitButton";
+import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
+import { updateCorporateProfile } from "@/lib/admin/client-actions";
 import type { CompanyRecord } from "@/lib/admin/company-types";
 
 const ICON_OPTIONS = [
@@ -20,19 +22,33 @@ const ICON_OPTIONS = [
 type CorporateProfileFormProps = {
   company: CompanyRecord;
   isSuperAdmin: boolean;
-  action: (formData: FormData) => Promise<void>;
 };
 
 export function CorporateProfileForm({
   company,
   isSuperAdmin,
-  action,
 }: CorporateProfileFormProps) {
   const [imageUrl, setImageUrl] = useState(company.card_image_url ?? "");
   const [publicId, setPublicId] = useState(company.card_image_public_id ?? "");
+  const [pending, startTransition] = useTransition();
+  const { showSuccess, showError } = useAdminToastContext();
 
   return (
-    <form action={action} className="sw-admin-form-grid">
+    <form
+      className="sw-admin-form-grid"
+      onSubmit={(event) => {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+        startTransition(async () => {
+          const result = await updateCorporateProfile(company.slug, formData);
+          if (!result.ok) {
+            showError(result.error || "Couldn't save changes. Please try again.");
+            return;
+          }
+          showSuccess("Changes saved successfully");
+        });
+      }}
+    >
       <div className="sw-admin-field">
         <label htmlFor="name">Display name</label>
         <input
@@ -144,7 +160,7 @@ export function CorporateProfileForm({
         />
       </div>
       <div className="sw-admin-toolbar sw-admin-field-span">
-        <SubmitButton>Save corporate profile</SubmitButton>
+        <SubmitButton pending={pending}>Save corporate profile</SubmitButton>
       </div>
     </form>
   );

@@ -13,6 +13,7 @@ type NavItem = {
   label: string;
   icon: React.ReactNode;
   superOnly?: boolean;
+  prefetch?: boolean;
 };
 
 function Icon({ path }: { path: string }) {
@@ -63,11 +64,13 @@ const MAIN_NAV: NavItem[] = [
   {
     href: "/admin/whatsapp",
     label: "WhatsApp",
+    prefetch: false,
     icon: <Icon path="M8 10.5c1.2 2.4 3.1 4.3 5.5 5.5l1.8-1.8c.3-.3.8-.4 1.2-.2 1 .4 2.1.7 3.2.7.7 0 1.2.5 1.2 1.2V20c0 .7-.5 1.2-1.2 1.2C10.9 21.2 2.8 13.1 2.8 3.2 2.8 2.5 3.3 2 4 2h2.8c.7 0 1.2.5 1.2 1.2 0 1.1.3 2.2.7 3.2.1.4 0 .9-.2 1.2L8 10.5Z" />,
   },
   {
     href: "/admin/settings",
     label: "Settings",
+    prefetch: false,
     icon: <Icon path="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Zm8.5 3.5a8.4 8.4 0 0 1-.2 1.8l2 1.5-1.9 3.3-2.4-1a8.6 8.6 0 0 1-1.6.9l-.4 2.6H9l-.4-2.6a8.6 8.6 0 0 1-1.6-.9l-2.4 1-1.9-3.3 2-1.5a8.4 8.4 0 0 1-.2-1.8c0-.6.1-1.2.2-1.8l-2-1.5 1.9-3.3 2.4 1c.5-.4 1-.7 1.6-.9l.4-2.6h3.8l.4 2.6c.6.2 1.1.5 1.6.9l2.4-1 1.9 3.3-2 1.5c.1.6.2 1.2.2 1.8Z" />,
   },
 ];
@@ -76,6 +79,7 @@ const ADMIN_NAV: NavItem[] = [
   {
     href: "/admin/settings/users",
     label: "Administrators",
+    prefetch: false,
     icon: <Icon path="M16 11.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0ZM5 19.5a6 6 0 0 1 12 0" />,
     superOnly: true,
   },
@@ -111,7 +115,7 @@ function NavLink({
   return (
     <Link
       href={item.href}
-      prefetch
+      prefetch={item.prefetch !== false}
       className={active ? "is-active" : undefined}
       aria-current={active ? "page" : undefined}
       title={item.label}

@@ -7,7 +7,7 @@ import { ConfirmationDialog } from "@/components/admin/ConfirmationDialog";
 import { BulkSelectionToolbar } from "@/components/admin/BulkSelectionToolbar";
 import { SelectAllCheckbox } from "@/components/admin/SelectAllCheckbox";
 import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
-import { deleteProducts } from "@/lib/admin/actions/products";
+import { deleteProducts } from "@/lib/admin/client-actions";
 import { bulkDeleteCopy } from "@/lib/admin/delete-copy";
 import type { Product } from "@/lib/admin/types-catalog";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { deleteOrder } from "@/lib/admin/actions/orders";
+import { deleteOrder } from "@/lib/admin/client-actions";
 import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
 import { ConfirmationDialog } from "@/components/admin/ConfirmationDialog";
 

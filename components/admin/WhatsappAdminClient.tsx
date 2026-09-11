@@ -5,7 +5,7 @@ import {
   buildWhatsAppUrl,
   validateWhatsAppNumber,
 } from "@/lib/whatsapp/normalize";
-import { updateWhatsappNumber } from "@/lib/admin/actions/company-settings";
+import { updateWhatsappNumber } from "@/lib/admin/client-actions";
 import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
 
 export type WhatsappCompanyRow = {

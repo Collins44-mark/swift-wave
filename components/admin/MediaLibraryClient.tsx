@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import {
   deleteMediaAsset,
   updateMediaAltText,
-} from "@/lib/admin/actions/media";
+} from "@/lib/admin/client-actions";
 import type { MediaAsset } from "@/lib/admin/types-media";
 import { MediaUploadButton } from "@/components/admin/MediaUploadButton";
 import { useAdminToastContext } from "@/components/admin/AdminToastProvider";

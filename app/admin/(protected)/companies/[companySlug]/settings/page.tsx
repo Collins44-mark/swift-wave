@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { requireCompanyAccess } from "@/lib/admin/require-company-access";
-import { updateCompanyProfile } from "@/lib/admin/actions/company-settings";
-import { SubmitButton } from "@/components/admin/SubmitButton";
-import { redirect } from "next/navigation";
+import { ClientActionForm } from "@/components/admin/ClientActionForm";
 
 export const metadata: Metadata = {
   title: "Company Settings — Swift Wave Admin",
@@ -21,20 +19,18 @@ export default async function CompanySettingsPage({
   );
   const isSuper = admin.profile.role === "super_admin";
 
-  async function action(formData: FormData) {
-    "use server";
-    const result = await updateCompanyProfile(companySlug, formData);
-    if (!result.ok) throw new Error(result.error);
-    redirect(`/admin/companies/${companySlug}/settings`);
-  }
-
   return (
     <section className="sw-admin-panel">
       <h2 style={{ marginTop: 0 }}>Settings</h2>
       <p style={{ color: "var(--admin-muted)", marginTop: 0 }}>
         Company identity and activation.
       </p>
-      <form action={action} className="sw-admin-form-grid">
+      <ClientActionForm
+        actionName="updateCompanyProfile"
+        companySlug={companySlug}
+        successMessage="Changes saved successfully"
+        submitLabel="Save settings"
+      >
         <div className="sw-admin-field">
           <label>Slug</label>
           <input value={company.slug} readOnly disabled />
@@ -75,10 +71,7 @@ export default async function CompanySettingsPage({
             <strong>{company.is_active ? "Yes" : "No"}</strong>
           </div>
         )}
-        <div className="sw-admin-toolbar sw-admin-field-span">
-          <SubmitButton>Save settings</SubmitButton>
-        </div>
-      </form>
+      </ClientActionForm>
     </section>
   );
 }

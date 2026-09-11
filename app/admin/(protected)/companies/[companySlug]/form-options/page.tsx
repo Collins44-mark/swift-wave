@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { requireCompanyAccess } from "@/lib/admin/require-company-access";
 import { getCompanySettings } from "@/lib/admin/data/company-settings";
-import { updateScholarshipFormOptions } from "@/lib/admin/actions/company-settings";
-import { SubmitButton } from "@/components/admin/SubmitButton";
-import { redirect } from "next/navigation";
+import { ClientActionForm } from "@/components/admin/ClientActionForm";
 
 export const metadata: Metadata = {
   title: "Form Options — Swift Wave Admin",
@@ -26,20 +24,18 @@ export default async function FormOptionsPage({
   const form =
     (settings?.settings?.scholarship_form as Record<string, unknown>) ?? {};
 
-  async function action(formData: FormData) {
-    "use server";
-    const result = await updateScholarshipFormOptions(companySlug, formData);
-    if (!result.ok) throw new Error(result.error);
-    redirect(`/admin/companies/${companySlug}/form-options`);
-  }
-
   return (
     <section className="sw-admin-panel">
       <h2 style={{ marginTop: 0 }}>Form options</h2>
       <p style={{ color: "var(--admin-muted)", marginTop: 0 }}>
         One option per line. These power the scholarship application selects.
       </p>
-      <form action={action} className="sw-admin-form-grid">
+      <ClientActionForm
+        actionName="updateScholarshipFormOptions"
+        companySlug={companySlug}
+        successMessage="Changes saved successfully"
+        submitLabel="Save options"
+      >
         <div className="sw-admin-field sw-admin-field-span">
           <label htmlFor="nationalities">Nationalities</label>
           <textarea
@@ -76,10 +72,7 @@ export default async function FormOptionsPage({
             defaultValue={asLines(form.fields_of_study)}
           />
         </div>
-        <div className="sw-admin-toolbar sw-admin-field-span">
-          <SubmitButton>Save options</SubmitButton>
-        </div>
-      </form>
+      </ClientActionForm>
     </section>
   );
 }

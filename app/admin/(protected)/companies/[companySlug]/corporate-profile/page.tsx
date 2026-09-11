@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
 import { requireCompanyAccess } from "@/lib/admin/require-company-access";
-import { updateCorporateProfile } from "@/lib/admin/actions/company-settings";
 import { CorporateProfileForm } from "@/components/admin/CorporateProfileForm";
 
 export const metadata: Metadata = {
@@ -20,13 +18,6 @@ export default async function CorporateProfilePage({
     "corporate_profile"
   );
 
-  async function action(formData: FormData) {
-    "use server";
-    const result = await updateCorporateProfile(companySlug, formData);
-    if (!result.ok) throw new Error(result.error);
-    redirect(`/admin/companies/${companySlug}/corporate-profile`);
-  }
-
   return (
     <section className="sw-admin-panel">
       <h2 style={{ marginTop: 0 }}>Corporate Profile</h2>
@@ -36,7 +27,6 @@ export default async function CorporateProfilePage({
       <CorporateProfileForm
         company={company}
         isSuperAdmin={admin.profile.role === "super_admin"}
-        action={action}
       />
     </section>
   );

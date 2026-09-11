@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { requireCompanyAccess } from "@/lib/admin/require-company-access";
 import { getCompanySettings } from "@/lib/admin/data/company-settings";
-import { updateFreightRouteHubs } from "@/lib/admin/actions/company-settings";
-import { SubmitButton } from "@/components/admin/SubmitButton";
-import { redirect } from "next/navigation";
+import { ClientActionForm } from "@/components/admin/ClientActionForm";
 
 export const metadata: Metadata = {
   title: "Route Hubs — Swift Wave Admin",
@@ -41,13 +39,6 @@ export default async function RouteHubsPage({
   const hubs = settings?.settings?.freight_hubs;
   const destinations = settings?.settings?.freight_destinations;
 
-  async function action(formData: FormData) {
-    "use server";
-    const result = await updateFreightRouteHubs(companySlug, formData);
-    if (!result.ok) throw new Error(result.error);
-    redirect(`/admin/companies/${companySlug}/route-hubs`);
-  }
-
   return (
     <section className="sw-admin-panel">
       <h2 style={{ marginTop: 0 }}>Route hubs</h2>
@@ -56,7 +47,12 @@ export default async function RouteHubsPage({
         <code>Hub name: Mon,Thu</code> or{" "}
         <code>Hub name: 1,4</code> (0=Sun … 6=Sat). Destinations: one per line.
       </p>
-      <form action={action} className="sw-admin-form-grid">
+      <ClientActionForm
+        actionName="updateFreightRouteHubs"
+        companySlug={companySlug}
+        successMessage="Changes saved successfully"
+        submitLabel="Save hubs"
+      >
         <div className="sw-admin-field sw-admin-field-span">
           <label htmlFor="freight_hubs">Freight hubs</label>
           <textarea
@@ -75,10 +71,7 @@ export default async function RouteHubsPage({
             defaultValue={destToText(destinations)}
           />
         </div>
-        <div className="sw-admin-toolbar sw-admin-field-span">
-          <SubmitButton>Save hubs</SubmitButton>
-        </div>
-      </form>
+      </ClientActionForm>
     </section>
   );
 }

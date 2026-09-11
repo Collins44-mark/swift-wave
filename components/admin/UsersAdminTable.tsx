@@ -7,7 +7,7 @@ import { roleLabel } from "@/lib/admin/labels";
 import {
   deleteAdminUser,
   setAdminActive,
-} from "@/lib/admin/actions/users";
+} from "@/lib/admin/client-actions";
 import { ConfirmationDialog } from "@/components/admin/ConfirmationDialog";
 import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
 

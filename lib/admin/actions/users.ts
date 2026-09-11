@@ -1,6 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceRoleClient } from "@/lib/supabase/admin";
 import { getCurrentAdmin } from "@/lib/auth/get-current-admin";
@@ -144,8 +143,6 @@ export async function createAdminUser(
     }
   }
 
-  revalidatePath("/admin/settings");
-  revalidatePath("/admin/settings/users");
   return { ok: true, id: userId };
 }
 
@@ -241,8 +238,6 @@ export async function updateAdminUser(
     }
   }
 
-  revalidatePath("/admin/settings/users");
-  revalidatePath(`/admin/settings/users/${userId}`);
   return { ok: true, id: userId };
 }
 
@@ -294,7 +289,6 @@ export async function setAdminActive(
     }
   }
 
-  revalidatePath("/admin/settings/users");
   return { ok: true, id: userId };
 }
 
@@ -344,6 +338,5 @@ export async function deleteAdminUser(
     return { ok: false, error: error.message || "Could not delete user." };
   }
 
-  revalidatePath("/admin/settings/users");
   return { ok: true };
 }

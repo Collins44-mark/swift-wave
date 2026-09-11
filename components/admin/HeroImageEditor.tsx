@@ -6,7 +6,7 @@ import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
 import { MediaUploadButton } from "@/components/admin/MediaUploadButton";
 import type { HeroPageDef } from "@/lib/cms/hero-pages";
 import type { MediaAsset } from "@/lib/admin/types-media";
-import { updateHeroImage } from "@/lib/admin/actions/hero-content";
+import { updateHeroImage } from "@/lib/admin/client-actions";
 
 type HeroContent = {
   image_url?: string | null;

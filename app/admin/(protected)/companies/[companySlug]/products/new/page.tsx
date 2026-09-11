@@ -6,7 +6,6 @@ import {
 import { listCategories } from "@/lib/admin/data/categories";
 import { listMediaAssets } from "@/lib/admin/data/media";
 import { listColorLibrary, listSizeLibrary } from "@/lib/admin/data/products";
-import { createProduct } from "@/lib/admin/actions/products";
 import { ProductForm } from "@/components/admin/ProductForm";
 
 export const metadata: Metadata = {
@@ -31,19 +30,6 @@ export default async function NewProductPage({
     listColorLibrary(),
   ]);
 
-  async function action(
-    _prev: { error?: string } | null,
-    formData: FormData
-  ) {
-    "use server";
-    const result = await createProduct(companySlug, formData);
-    if (!result.ok) return { error: result.error };
-    return {
-      success: "Product created successfully",
-      redirectTo: `/admin/companies/${companySlug}/products`,
-    };
-  }
-
   return (
     <section className="sw-admin-panel">
       <h2 style={{ marginTop: 0 }}>Add product</h2>
@@ -54,7 +40,6 @@ export default async function NewProductPage({
         sizeLibrary={sizeLibrary}
         colorLibrary={colorLibrary}
         canUpload={canMutate(admin)}
-        action={action}
       />
     </section>
   );

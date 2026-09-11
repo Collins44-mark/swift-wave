@@ -1,11 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useTransition } from "react";
 import {
   buildWhatsAppUrl,
   validateWhatsAppNumber,
 } from "@/lib/whatsapp/normalize";
-import { updateWhatsappNumber } from "@/lib/admin/actions/company-settings";
+import { updateWhatsappNumber } from "@/lib/admin/client-actions";
 import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
 
 export function WhatsappSettingsClient({
@@ -104,12 +105,12 @@ export function WhatsappSettingsClient({
         <button type="submit" className="sw-admin-btn" disabled={pending}>
           {pending ? "Saving..." : "Save number"}
         </button>
-        <a
+        <Link
           className="sw-admin-btn sw-admin-btn-ghost"
           href={`/admin/companies/${companySlug}`}
         >
           Back
-        </a>
+        </Link>
       </div>
     </form>
   );

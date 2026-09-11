@@ -78,26 +78,62 @@ export function parseSizeNames(raw: string): string[] | { error: string } {
   return [...new Set(names)];
 }
 
-async function ensureSizeId(
+async function resolveSizeIds(
   supabase: SupabaseClient,
-  name: string,
-  sortOrder: number
-): Promise<string | null> {
-  const { data: existing } = await supabase
-    .from("sizes")
-    .select("id")
-    .ilike("name", name)
-    .limit(1)
-    .maybeSingle();
-  if (existing?.id) return existing.id as string;
+  sizeNames: string[]
+): Promise<{ ok: true; ids: string[] } | { ok: false; error: string }> {
+  if (!sizeNames.length) return { ok: true, ids: [] };
 
-  const { data: created, error } = await supabase
+  const { data: existing, error: existingError } = await supabase
     .from("sizes")
-    .insert({ name, sort_order: sortOrder, is_active: true })
-    .select("id")
-    .single();
-  if (error || !created) return null;
-  return created.id as string;
+    .select("id, name");
+  if (existingError) {
+    return { ok: false, error: "Unable to save product sizes." };
+  }
+
+  const byName = new Map(
+    (existing ?? []).map((row) => [
+      String(row.name).trim().toLowerCase(),
+      row.id as string,
+    ])
+  );
+
+  const ids: string[] = [];
+  const toCreate: { name: string; sort_order: number; is_active: boolean }[] =
+    [];
+
+  sizeNames.forEach((name, index) => {
+    const known = byName.get(name.toLowerCase());
+    if (known) {
+      ids[index] = known;
+    } else {
+      toCreate.push({ name, sort_order: 300 + index, is_active: true });
+    }
+  });
+
+  if (toCreate.length) {
+    const { data: created, error } = await supabase
+      .from("sizes")
+      .insert(toCreate)
+      .select("id, name");
+    if (error || !created?.length) {
+      return { ok: false, error: "Unable to save product sizes." };
+    }
+    for (const row of created) {
+      byName.set(String(row.name).trim().toLowerCase(), row.id as string);
+    }
+    sizeNames.forEach((name, index) => {
+      if (!ids[index]) {
+        const resolved = byName.get(name.toLowerCase());
+        if (resolved) ids[index] = resolved;
+      }
+    });
+  }
+
+  if (ids.length !== sizeNames.length || ids.some((id) => !id)) {
+    return { ok: false, error: "Unable to save product sizes." };
+  }
+  return { ok: true, ids };
 }
 
 export async function replaceProductVariants(
@@ -141,50 +177,64 @@ export async function replaceProductVariants(
     (libraryRows ?? []).map((row) => [row.id as string, row])
   );
 
+  const updates: PromiseLike<{ error: unknown; data: { id: string }[] | null }>[] =
+    [];
+  const inserts: Record<string, unknown>[] = [];
+
   for (const [index, color] of colors.entries()) {
     const lib = libraryById.get(color.color_id);
     if (!lib) {
       return { ok: false, error: "A selected color was not found in the library." };
     }
-    const payload = {
-      product_id: productId,
-      color_id: color.color_id,
-      name: lib.name,
-      hex_code: lib.hex_code || color.hex_code || null,
-      image_url: color.image_url || null,
-      image_public_id: color.image_public_id || null,
-      sort_order: index,
-      is_active: color.is_active !== false,
-    };
     if (color.id) {
-      const updatePayload = {
+      updates.push(
+        supabase
+          .from("product_colors")
+          .update({
+            product_id: productId,
+            color_id: color.color_id,
+            name: lib.name,
+            hex_code: lib.hex_code || color.hex_code || null,
+            sort_order: index,
+            is_active: color.is_active !== false,
+            ...(color.image_url
+              ? {
+                  image_url: color.image_url,
+                  image_public_id: color.image_public_id || null,
+                }
+              : {}),
+          })
+          .eq("id", color.id)
+          .eq("product_id", productId)
+          .select("id")
+      );
+    } else {
+      inserts.push({
         product_id: productId,
         color_id: color.color_id,
         name: lib.name,
         hex_code: lib.hex_code || color.hex_code || null,
+        image_url: color.image_url || null,
+        image_public_id: color.image_public_id || null,
         sort_order: index,
         is_active: color.is_active !== false,
-        ...(color.image_url
-          ? {
-              image_url: color.image_url,
-              image_public_id: color.image_public_id || null,
-            }
-          : {}),
-      };
-      const { data: updated, error } = await supabase
-        .from("product_colors")
-        .update(updatePayload)
-        .eq("id", color.id)
-        .eq("product_id", productId)
-        .select("id");
-      if (error || !updated?.length) {
-        return { ok: false, error: "Unable to update product colors." };
-      }
-    } else {
-      const { error } = await supabase.from("product_colors").insert(payload);
-      if (error) return { ok: false, error: "Unable to save product colors." };
+      });
     }
   }
+
+  if (updates.length) {
+    const updated = await Promise.all(updates);
+    if (updated.some((row) => row.error || !row.data?.length)) {
+      return { ok: false, error: "Unable to update product colors." };
+    }
+  }
+  if (inserts.length) {
+    const { error } = await supabase.from("product_colors").insert(inserts);
+    if (error) return { ok: false, error: "Unable to save product colors." };
+  }
+
+  const sizeIds = await resolveSizeIds(supabase, sizeNames);
+  if (!sizeIds.ok) return sizeIds;
 
   const { error: clearSizesError } = await supabase
     .from("product_sizes")
@@ -194,17 +244,15 @@ export async function replaceProductVariants(
     return { ok: false, error: "Unable to update product sizes." };
   }
 
-  for (const [index, name] of sizeNames.entries()) {
-    const sizeId = await ensureSizeId(supabase, name, 300 + index);
-    if (!sizeId) {
-      return { ok: false, error: "Unable to save product sizes." };
-    }
-    const { error } = await supabase.from("product_sizes").insert({
-      product_id: productId,
-      size_id: sizeId,
-      sort_order: index,
-      is_active: true,
-    });
+  if (sizeIds.ids.length) {
+    const { error } = await supabase.from("product_sizes").insert(
+      sizeIds.ids.map((sizeId, index) => ({
+        product_id: productId,
+        size_id: sizeId,
+        sort_order: index,
+        is_active: true,
+      }))
+    );
     if (error) return { ok: false, error: "Unable to save product sizes." };
   }
 

@@ -5,7 +5,7 @@ import {
   type CloudinaryUploadWidgetResults,
 } from "next-cloudinary";
 import { useMemo, useState } from "react";
-import { saveUploadedMedia } from "@/lib/admin/actions/media";
+import { saveUploadedMedia } from "@/lib/admin/client-actions";
 import type { CloudinaryUploadInfo } from "@/lib/admin/types-media";
 import { cloudinaryFolderForSlug } from "@/lib/cloudinary/folders";
 import { isCloudinaryConfigured } from "@/lib/cloudinary/client-config";
@@ -134,18 +134,20 @@ export function MediaUploadButton({
           void (async () => {
             try {
               const result = await saveUploadedMedia(companySlug, info);
-              setMessage("Image selected. Save the product to persist it.");
-              if (result.ok) {
-                onSaved?.({
-                  id: result.id,
-                  secure_url: info.secure_url,
-                  public_id: info.public_id,
-                });
+              if (!result.ok) {
+                setMessage(null);
+                setError(result.error || "Couldn't save the image. Please try again.");
+                return;
               }
+              setMessage("Image selected. Save the product to persist it.");
+              onSaved?.({
+                id: result.id,
+                secure_url: info.secure_url,
+                public_id: info.public_id,
+              });
             } catch {
-              setError(
-                "Image selected. If the product does not save, try uploading again."
-              );
+              setMessage(null);
+              setError("Couldn't save the image. Please try again.");
             } finally {
               setPending(false);
               onBusyChange?.(false);

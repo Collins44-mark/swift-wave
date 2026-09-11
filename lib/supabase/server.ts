@@ -1,10 +1,12 @@
+import { cache } from "react";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { getSupabaseServerConfig } from "@/lib/supabase/env";
 
 export { isSupabaseConfigured } from "@/lib/supabase/env";
 
-export async function createClient() {
+/** One Supabase client per request so mutations do not repeat auth cookie/JWT setup. */
+export const createClient = cache(async () => {
   const { url, key } = getSupabaseServerConfig();
 
   if (!url || !key) {
@@ -32,4 +34,4 @@ export async function createClient() {
       },
     },
   });
-}
+});

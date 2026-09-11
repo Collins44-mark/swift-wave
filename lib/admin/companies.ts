@@ -157,7 +157,10 @@ async function fetchAccessibleCompanyBySlug(
     return { company, error: null };
   }
 
-  if (adminHasCompanyAccess(admin, company.id)) {
+  if (
+    adminHasCompanyAccess(admin, company.id) ||
+    admin.profile.company_id === company.id
+  ) {
     return { company, error: null };
   }
 

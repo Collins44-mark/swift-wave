@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { createAdminUser, updateAdminUser } from "@/lib/admin/actions/users";
+import { createAdminUser, updateAdminUser } from "@/lib/admin/client-actions";
 import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
 import type { ManagedUser } from "@/lib/admin/data/users";
 import type { AdminRole } from "@/lib/auth/types";

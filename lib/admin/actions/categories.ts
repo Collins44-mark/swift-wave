@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePublicLater } from "@/lib/admin/revalidate-public";
 import { createClient } from "@/lib/supabase/server";
 import {
   requireCompanyAccess,
@@ -15,8 +15,10 @@ function str(formData: FormData, key: string): string {
 }
 
 function revalidateCategoryCatalog(companySlug: string) {
-  revalidatePath(`/companies/${companySlug}`);
-  revalidatePath(`/api/public/catalog/${companySlug}`);
+  revalidatePublicLater([
+    `/companies/${companySlug}`,
+    `/api/public/catalog/${companySlug}`,
+  ]);
 }
 
 async function categoryNameExists(

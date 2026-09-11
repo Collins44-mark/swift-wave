@@ -1,49 +1,63 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useEffect } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { SubmitButton } from "@/components/admin/SubmitButton";
 import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
+import {
+  createCategory,
+  updateCategory,
+} from "@/lib/admin/client-actions";
 import type { Category } from "@/lib/admin/types-catalog";
-
-type FormState = {
-  error?: string;
-  success?: string;
-  redirectTo?: string;
-} | null;
 
 export function CategoryForm({
   companySlug,
   companyName,
   category,
   parentOptions,
-  action,
 }: {
   companySlug: string;
   companyName: string;
   category?: Category | null;
   parentOptions: { id: string; name: string }[];
-  action: (prev: FormState, formData: FormData) => Promise<FormState>;
 }) {
-  const [state, formAction] = useActionState(action, null);
-  const { showSuccess } = useAdminToastContext();
+  const { showSuccess, showError } = useAdminToastContext();
   const router = useRouter();
   const isEdit = Boolean(category);
-
-  useEffect(() => {
-    if (!state?.success) return;
-    showSuccess(state.success);
-    if (state.redirectTo) {
-      router.push(state.redirectTo);
-    }
-  }, [state, showSuccess, router]);
+  const [error, setError] = useState<string | null>(null);
+  const [pending, startTransition] = useTransition();
 
   return (
-    <form action={formAction} className="sw-admin-form-grid">
-      {state?.error ? (
+    <form
+      className="sw-admin-form-grid"
+      onSubmit={(event) => {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+        setError(null);
+        startTransition(async () => {
+          const result = isEdit && category
+            ? await updateCategory(companySlug, category.id, formData)
+            : await createCategory(companySlug, formData);
+          if (!result.ok) {
+            setError(result.error);
+            showError("Couldn't save changes. Please try again.");
+            return;
+          }
+          showSuccess(
+            isEdit
+              ? "Category updated successfully"
+              : "Category created successfully"
+          );
+          if (!isEdit) {
+            router.push(`/admin/companies/${companySlug}/categories`);
+          }
+        });
+      }}
+    >
+      {error ? (
         <div className="sw-admin-alert is-error sw-admin-field-span" role="alert">
-          {state.error}
+          {error}
         </div>
       ) : null}
 
@@ -109,7 +123,10 @@ export function CategoryForm({
       </div>
 
       <div className="sw-admin-toolbar sw-admin-field-span">
-        <SubmitButton pendingLabel={isEdit ? "Saving…" : "Creating…"}>
+        <SubmitButton
+          pending={pending}
+          pendingLabel={isEdit ? "Saving..." : "Creating..."}
+        >
           {isEdit ? "Save Changes" : "Create Category"}
         </SubmitButton>
         <Link

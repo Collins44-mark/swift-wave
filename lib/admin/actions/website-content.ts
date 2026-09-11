@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePublicLater } from "@/lib/admin/revalidate-public";
 import { createClient } from "@/lib/supabase/server";
 import {
   requireCompanyAccess,
@@ -49,7 +49,7 @@ function revalidatePublicPaths(
   const scope = getCmsScope(companySlug);
   const isCorporate = scope?.isCorporate ?? companySlug === "corporate";
   const path = publicPathForPage(pageKey, isCorporate);
-  revalidatePath(path);
+  revalidatePublicLater([path]);
 }
 
 export async function upsertWebsiteSection(

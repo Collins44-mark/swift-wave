@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { MediaUploadButton } from "@/components/admin/MediaUploadButton";
 import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
-import { createLibraryColor } from "@/lib/admin/actions/colors";
+import { createLibraryColor } from "@/lib/admin/client-actions";
 import type {
   ColorDefinition,
   ProductColor,
