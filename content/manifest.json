@@ -91,7 +91,7 @@
     "bodyClass": "min-h-screen w-full overflow-x-hidden company-page company-page--no-hero",
     "bodyStyle": null,
     "bodyAttrs": { "data-company-mode": "ecommerce" },
-    "scripts": ["/js/whatsapp-utils.js", "/js/cart-storage.js", "/js/main.js", "/js/pages/outfit.js?v=3"],
+    "scripts": ["/js/whatsapp-utils.js", "/js/cart-storage.js?v=4", "/js/main.js", "/js/pages/outfit.js?v=4"],
     "robots": false,
     "refresh": null
   },
@@ -103,7 +103,7 @@
     "bodyClass": "min-h-screen w-full overflow-x-hidden company-page company-page--no-hero",
     "bodyStyle": null,
     "bodyAttrs": { "data-company-mode": "ecommerce" },
-    "scripts": ["/js/whatsapp-utils.js", "/js/cart-storage.js", "/js/main.js", "/js/pages/medical.js?v=2"],
+    "scripts": ["/js/whatsapp-utils.js", "/js/cart-storage.js?v=4", "/js/main.js", "/js/pages/medical.js?v=3"],
     "robots": false,
     "refresh": null
   },

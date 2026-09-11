@@ -12,11 +12,11 @@ declare global {
     lucide?: { createIcons: () => void };
     tailwind?: { refresh?: () => void };
     SwiftWaveGlobe?: { mount: () => void; remount: () => void };
+    __swiftWaveLegacyCleanup?: () => void;
   }
 }
 
 const loadedLibraries = new Set<string>();
-const siteScriptCache = new Map<string, string>();
 
 function loadLibraryOnce(src: string): Promise<void> {
   if (loadedLibraries.has(src)) return Promise.resolve();
@@ -51,13 +51,9 @@ function loadLibraryOnce(src: string): Promise<void> {
 }
 
 async function runSiteScript(src: string): Promise<void> {
-  let code = siteScriptCache.get(src);
-  if (!code) {
-    const response = await fetch(src, { cache: "force-cache" });
-    if (!response.ok) throw new Error(`Failed to fetch script: ${src}`);
-    code = await response.text();
-    siteScriptCache.set(src, code);
-  }
+  const response = await fetch(src, { cache: "no-store" });
+  if (!response.ok) throw new Error(`Failed to fetch script: ${src}`);
+  const code = await response.text();
   const script = document.createElement("script");
   script.text = code;
   document.body.appendChild(script);
@@ -135,6 +131,8 @@ export function HtmlIsland({
 
     async function boot() {
       try {
+        window.__swiftWaveLegacyCleanup?.();
+        window.__swiftWaveLegacyCleanup = undefined;
         await loadLibraryOnce(LUCIDE_SRC);
         if (cancelled) return;
 
@@ -160,6 +158,8 @@ export function HtmlIsland({
 
     return () => {
       cancelled = true;
+      window.__swiftWaveLegacyCleanup?.();
+      window.__swiftWaveLegacyCleanup = undefined;
       document.body.className = previousClass;
       if (previousStyle === null) document.body.removeAttribute("style");
       else document.body.setAttribute("style", previousStyle);

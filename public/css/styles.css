@@ -3062,9 +3062,9 @@ a:hover .icon,
 
 .med-cart-line {
   display: grid;
-  grid-template-columns: 3.25rem 1fr auto;
+  grid-template-columns: 3.25rem minmax(0, 1fr) auto;
   gap: 0.75rem;
-  align-items: center;
+  align-items: start;
   padding: 0.7rem 0;
   border-bottom: 1px solid var(--border);
 }
@@ -3098,12 +3098,14 @@ a:hover .icon,
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  margin-top: 0.35rem;
+  margin-top: 0.4rem;
+  flex-shrink: 0;
 }
 
 .med-cart-qty-btn {
-  width: 1.7rem;
-  height: 1.7rem;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex: 0 0 1.75rem;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: #fff;
@@ -3113,12 +3115,20 @@ a:hover .icon,
   cursor: pointer;
 }
 
+.med-cart-qty-btn:hover {
+  border-color: var(--primary, #0b2e6d);
+}
+
 .med-cart-qty-value {
-  min-width: 1.25rem;
+  min-width: 1.35rem;
   text-align: center;
-  font-size: 0.82rem;
+  font-size: 0.86rem;
   font-weight: 700;
   color: var(--text-heading);
+}
+
+.co-pdp-qty {
+  margin: 0.75rem 0 0.25rem;
 }
 
 .med-cart-clear {

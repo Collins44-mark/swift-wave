@@ -2,6 +2,10 @@
 (function(){
 
     (function () {
+      if (typeof window.__swiftWaveLegacyCleanup === "function") {
+        window.__swiftWaveLegacyCleanup();
+      }
+
       var WHATSAPP_NUMBER = null;
       var COMPANY_SLUG = "medical";
       var CATEGORIES = { All: [] };
@@ -32,14 +36,26 @@
         ? checkoutSubmitBtn.innerHTML
         : "";
 
-      function persistCart() {
-        cartStore.save(cart);
+      function setCart(nextCart) {
+        cart = cartStore.save(nextCart);
+        renderCart();
       }
 
       function clearCartState() {
-        cart = [];
-        persistCart();
-        renderCart();
+        setCart([]);
+      }
+
+      function changeQty(lineId, delta) {
+        var next = [];
+        cart.forEach(function (item) {
+          if (item.lineId !== lineId) {
+            next.push(item);
+            return;
+          }
+          var qty = item.qty + delta;
+          if (qty >= 1) next.push(Object.assign({}, item, { qty: qty }));
+        });
+        setCart(next);
       }
 
       function parsePrice(price) {
@@ -80,7 +96,7 @@
           empty.hidden = false;
           foot.hidden = true;
           updateCartBadge();
-          persistCart();
+          cartStore.save([]);
           return;
         }
 
@@ -95,27 +111,42 @@
             '<img src="' + item.image + '" alt="">' +
             '<div class="med-cart-line-info">' +
             "<strong>" + item.title + "</strong>" +
-            "<span>" + item.price + " · Qty " + item.qty + "</span>" +
+            "<span>" + formatTotal(item.priceNum) + "</span>" +
+            '<div class="med-cart-qty">' +
+            '<button type="button" class="med-cart-qty-btn" data-line="' + item.lineId + '" data-delta="-1" aria-label="Decrease quantity">−</button>' +
+            '<span class="med-cart-qty-value">' + item.qty + "</span>" +
+            '<button type="button" class="med-cart-qty-btn" data-line="' + item.lineId + '" data-delta="1" aria-label="Increase quantity">+</button>' +
             "</div>" +
-            '<button type="button" class="med-cart-remove" data-id="' + item.id + '" aria-label="Remove">×</button>';
+            "</div>" +
+            '<button type="button" class="med-cart-remove" data-line="' + item.lineId + '" aria-label="Remove">×</button>';
           wrap.insertBefore(row, empty);
         });
 
+        wrap.querySelectorAll(".med-cart-qty-btn").forEach(function (btn) {
+          btn.addEventListener("click", function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            changeQty(btn.getAttribute("data-line"), Number(btn.getAttribute("data-delta")));
+          });
+        });
         wrap.querySelectorAll(".med-cart-remove").forEach(function (btn) {
-          btn.addEventListener("click", function () {
-            cart = cart.filter(function (i) { return i.id !== btn.getAttribute("data-id"); });
-            renderCart();
+          btn.addEventListener("click", function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            setCart(cart.filter(function (i) { return i.lineId !== btn.getAttribute("data-line"); }));
           });
         });
         updateCartBadge();
-        persistCart();
       }
 
       function addToCart(product) {
-        var existing = cart.find(function (i) { return i.id === product.id; });
+        var lineId = String(product.dbId || product.id || "");
+        var next = cart.map(function (item) { return Object.assign({}, item); });
+        var existing = next.find(function (i) { return i.lineId === lineId || i.id === product.id; });
         if (existing) existing.qty += 1;
-        else cart.push({
+        else next.push({
           id: product.id,
+          lineId: lineId,
           dbId: product.dbId || null,
           title: product.title,
           price: product.price,
@@ -124,7 +155,7 @@
           image: product.image,
           qty: 1
         });
-        renderCart();
+        setCart(next);
       }
 
       function openCart() {
@@ -310,11 +341,16 @@
           showCatalog();
         }
       });
-      window.addEventListener("popstate", function () {
+      function onMedicalPopState() {
         var match = (location.hash || "").match(/^#product\/(.+)$/);
         if (match) openProduct(match[1], false);
         else showCatalog();
-      });
+      }
+      window.addEventListener("popstate", onMedicalPopState);
+      window.__swiftWaveLegacyCleanup = function () {
+        window.removeEventListener("popstate", onMedicalPopState);
+        window.__swiftWaveLegacyCleanup = undefined;
+      };
 
       document.getElementById("cart-toggle").addEventListener("click", openCart);
       var heroCartBtn = document.getElementById("hero-cart-btn");
