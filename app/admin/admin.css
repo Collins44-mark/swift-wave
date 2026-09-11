@@ -3435,6 +3435,12 @@ a.sw-admin-hub-card:has(.sw-link-pending) {
   );
 }
 
+.sw-admin-discount-preview {
+  margin: 0;
+  color: var(--admin-muted);
+  font-size: 0.88rem;
+}
+
 .sw-admin-primary-color {
   display: flex;
   align-items: center;

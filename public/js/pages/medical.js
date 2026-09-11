@@ -80,6 +80,7 @@
           empty.hidden = false;
           foot.hidden = true;
           updateCartBadge();
+          persistCart();
           return;
         }
 

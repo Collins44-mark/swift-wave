@@ -6,6 +6,8 @@ type OrderItemInput = {
   product_name: string;
   quantity: number;
   unit_price: number;
+  original_unit_price?: number;
+  discount_amount?: number;
   product_color_id?: string | null;
   selected_color?: string | null;
   selected_size?: string | null;
@@ -49,6 +51,8 @@ export async function POST(request: Request) {
       product_name: item.product_name,
       quantity: item.quantity,
       unit_price: item.unit_price,
+      original_unit_price: item.original_unit_price ?? item.unit_price,
+      discount_amount: item.discount_amount ?? 0,
       product_color_id: item.product_color_id || null,
       selected_color: item.selected_color || null,
       selected_size: item.selected_size || null,

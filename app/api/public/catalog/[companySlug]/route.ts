@@ -3,6 +3,11 @@ import { createClient } from "@/lib/supabase/server";
 import { normalizeWhatsAppNumber } from "@/lib/whatsapp/normalize";
 import { normalizeCompanySlug } from "@/lib/admin/company-slug";
 import { isLightHex, resolvedSwatchHex } from "@/lib/catalog/color-display";
+import {
+  applyProductDiscount,
+  discountLabel,
+  formatMoneyAmount,
+} from "@/lib/catalog/pricing";
 
 export const dynamic = "force-dynamic";
 
@@ -44,7 +49,7 @@ export async function GET(
     supabase
       .from("products")
       .select(
-        "id, name, slug, description, price, currency, image_url, subcategory, bullets, rating, price_label, sort_order, category_id, status, primary_color_id"
+        "id, name, slug, description, price, currency, image_url, subcategory, bullets, rating, price_label, sort_order, category_id, status, primary_color_id, discount_type, discount_value"
       )
       .eq("company_id", company.id)
       .eq("status", "published")
@@ -130,13 +135,19 @@ export async function GET(
     const categoryName = parent?.name ?? cat?.name ?? "All";
     const subName = parent ? cat?.name ?? "" : p.subcategory ?? "";
     const currency = (p.currency || "").trim() || "TZS";
-    const priceNum =
+    const originalPrice =
       p.price != null && Number(p.price) > 0 ? Number(p.price) : 0;
-    const priceLabel =
-      p.price_label ||
-      (priceNum > 0
-        ? `${currency} ${priceNum.toLocaleString("en-US")}`
-        : "Enquire");
+    const pricing = applyProductDiscount(
+      originalPrice,
+      (p as { discount_type?: string }).discount_type,
+      (p as { discount_value?: number }).discount_value
+    );
+    const salePrice = pricing.sale;
+    const offLabel = discountLabel(pricing, currency);
+    const priceLabel = offLabel
+      ? formatMoneyAmount(currency, salePrice)
+      : p.price_label ||
+        (salePrice > 0 ? formatMoneyAmount(currency, salePrice) : "Enquire");
     const colors = (colorsByProduct.get(p.id) ?? []).map((c) => {
       const hex = resolvedSwatchHex(c.hex_code);
       return {
@@ -165,7 +176,11 @@ export async function GET(
       sub: subName,
       currency,
       price: priceLabel,
-      priceNum,
+      priceNum: salePrice,
+      comparePriceNum: offLabel ? pricing.original : null,
+      comparePrice: offLabel ? formatMoneyAmount(currency, pricing.original) : null,
+      discountLabel: offLabel,
+      discountAmount: offLabel ? pricing.discountAmount : 0,
       rating: p.rating ?? "",
       image: cover,
       primaryColorId: primary?.id ?? p.primary_color_id ?? null,

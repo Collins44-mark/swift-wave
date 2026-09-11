@@ -1,3 +1,5 @@
+import type { DiscountType } from "@/lib/catalog/pricing";
+
 export type ProductStatus = "draft" | "published" | "archived";
 export type OrderStatus =
   | "new"
@@ -56,6 +58,8 @@ export type Product = {
   bullets: string[] | unknown;
   rating: string | null;
   price_label: string | null;
+  discount_type?: DiscountType;
+  discount_value?: number | null;
   sort_order: number;
   created_at?: string;
   updated_at?: string;
@@ -117,6 +121,8 @@ export type OrderItem = {
   product_color_id?: string | null;
   selected_color?: string | null;
   selected_size?: string | null;
+  original_unit_price?: number | null;
+  discount_amount?: number | null;
 };
 
 export type OrderItemEnriched = OrderItem & {
@@ -166,7 +172,7 @@ export type BulkDeleteResult =
   | { ok: false; error: string };
 
 export const PRODUCT_SELECT =
-  "id, company_id, category_id, name, slug, description, price, currency, image_url, image_public_id, primary_color_id, status, featured, subcategory, bullets, rating, price_label, sort_order, created_at, updated_at" as const;
+  "id, company_id, category_id, name, slug, description, price, currency, image_url, image_public_id, primary_color_id, status, featured, subcategory, bullets, rating, price_label, discount_type, discount_value, sort_order, created_at, updated_at" as const;
 
 export const CATEGORY_SELECT =
   "id, company_id, name, slug, description, parent_id, is_active, sort_order, created_at, updated_at" as const;

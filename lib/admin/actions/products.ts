@@ -15,6 +15,7 @@ import {
   type ColorDraft,
   type SavedProductColor,
 } from "@/lib/admin/actions/product-variants";
+import { validateProductDiscount } from "@/lib/catalog/pricing";
 import type { ActionResult, BulkDeleteResult } from "@/lib/admin/types-catalog";
 import { MAX_BULK_DELETE, uniqueValidIds } from "@/lib/admin/ids";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -169,6 +170,8 @@ function readProductFields(
       image_public_id: string | null;
       featured: boolean;
       sort_order: number;
+      discount_type: "none" | "percent" | "fixed";
+      discount_value: number;
     }
   | { ok: false; error: string } {
   const name = str(formData, "name");
@@ -185,6 +188,13 @@ function readProductFields(
   if (!isProductCurrency(currency)) {
     return { ok: false, error: "Select a valid currency." };
   }
+
+  const discount = validateProductDiscount(
+    price,
+    str(formData, "discount_type"),
+    str(formData, "discount_value")
+  );
+  if (!discount.ok) return discount;
 
   let slug = str(formData, "slug") || slugify(name);
   if (!slug) slug = `product-${Date.now()}`;
@@ -206,6 +216,8 @@ function readProductFields(
     featured:
       formData.get("featured") === "on" || formData.get("featured") === "true",
     sort_order: Number(str(formData, "sort_order") || "0") || 0,
+    discount_type: discount.discount.type,
+    discount_value: discount.discount.value,
   };
 }
 
@@ -253,6 +265,8 @@ export async function createProduct(
       status: "published",
       featured: fields.featured,
       sort_order: fields.sort_order,
+      discount_type: fields.discount_type,
+      discount_value: fields.discount_value,
     })
     .select("id")
     .single();
@@ -353,6 +367,8 @@ export async function updateProduct(
       status: "published",
       featured: fields.featured,
       sort_order: fields.sort_order,
+      discount_type: fields.discount_type,
+      discount_value: fields.discount_value,
     })
     .eq("id", productId)
     .eq("company_id", company.id)

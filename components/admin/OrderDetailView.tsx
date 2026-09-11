@@ -186,6 +186,17 @@ export function OrderDetailView({
                   ) : null}
                   <p className="sw-admin-order-item-qty">
                     Qty {item.quantity} ×{" "}
+                    {item.original_unit_price != null &&
+                    Number(item.original_unit_price) > Number(item.unit_price) ? (
+                      <>
+                        <s>
+                          {formatMoney(
+                            order.currency,
+                            Number(item.original_unit_price)
+                          )}
+                        </s>{" "}
+                      </>
+                    ) : null}
                     {formatMoney(order.currency, Number(item.unit_price))}
                   </p>
                   <p className="sw-admin-order-item-subtotal">

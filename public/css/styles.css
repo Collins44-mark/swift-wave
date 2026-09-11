@@ -2070,6 +2070,43 @@ a:hover .icon,
   letter-spacing: -0.03em;
 }
 
+.co-price-stack {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.55rem;
+}
+
+.co-price-was {
+  font-weight: 600;
+  color: var(--text-light);
+  text-decoration: line-through;
+  font-size: 0.78em;
+}
+
+.co-price-now {
+  font-weight: 800;
+}
+
+.co-price-off {
+  font-size: 0.62em;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #b45309;
+  background: rgba(251, 191, 36, 0.22);
+  border-radius: 999px;
+  padding: 0.12rem 0.45rem;
+}
+
+.co-product.co-product--cover .co-price-was {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.co-product.co-product--cover .co-price-off {
+  color: #fff7ed;
+  background: rgba(212, 175, 55, 0.35);
+}
+
 .co-pdp-desc {
   margin: 0.85rem 0 0;
   font-size: 0.92rem;
@@ -3055,6 +3092,46 @@ a:hover .icon,
 .med-cart-line-info span {
   font-size: 0.72rem;
   color: var(--text-light);
+}
+
+.med-cart-qty {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.35rem;
+}
+
+.med-cart-qty-btn {
+  width: 1.7rem;
+  height: 1.7rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--text-heading);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.med-cart-qty-value {
+  min-width: 1.25rem;
+  text-align: center;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-heading);
+}
+
+.med-cart-clear {
+  width: 100%;
+  margin: 0 0 0.55rem;
+  border: 0;
+  background: transparent;
+  color: var(--text-light);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
 }
 
 .med-cart-remove {

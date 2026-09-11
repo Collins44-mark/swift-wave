@@ -44,7 +44,7 @@ export async function getOrderWithItems(
   const { data: items } = await supabase
     .from("order_items")
     .select(
-      "id, order_id, product_id, product_name, quantity, unit_price, subtotal, product_color_id, selected_color, selected_size"
+      "id, order_id, product_id, product_name, quantity, unit_price, subtotal, product_color_id, selected_color, selected_size, original_unit_price, discount_amount"
     )
     .eq("order_id", orderId)
     .order("created_at", { ascending: true });

@@ -9,13 +9,26 @@ import { SelectAllCheckbox } from "@/components/admin/SelectAllCheckbox";
 import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
 import { deleteProducts } from "@/lib/admin/client-actions";
 import { bulkDeleteCopy } from "@/lib/admin/delete-copy";
+import {
+  applyProductDiscount,
+  discountLabel,
+  formatMoneyAmount,
+} from "@/lib/catalog/pricing";
 import type { Product } from "@/lib/admin/types-catalog";
 
 function priceDisplay(p: Product): string {
-  if (p.price_label) return p.price_label;
-  if (p.price != null) {
-    return `${p.currency} ${Number(p.price).toLocaleString("en-US")}`;
+  const original = p.price != null ? Number(p.price) : 0;
+  const pricing = applyProductDiscount(
+    original,
+    p.discount_type,
+    p.discount_value
+  );
+  const label = discountLabel(pricing, p.currency);
+  if (label) {
+    return `${formatMoneyAmount(p.currency, pricing.sale)} (${label})`;
   }
+  if (p.price_label) return p.price_label;
+  if (original > 0) return formatMoneyAmount(p.currency, original);
   return "—";
 }
 

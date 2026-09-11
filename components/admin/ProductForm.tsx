@@ -17,6 +17,13 @@ import {
   defaultProductCurrency,
   isProductCurrency,
 } from "@/lib/admin/product-currencies";
+import {
+  applyProductDiscount,
+  discountLabel,
+  formatMoneyAmount,
+  parseDiscountType,
+  type DiscountType,
+} from "@/lib/catalog/pricing";
 import type {
   ColorDefinition,
   Product,
@@ -121,6 +128,26 @@ export function ProductForm({
     },
     []
   );
+  const [discountType, setDiscountType] = useState<DiscountType>(
+    () => parseDiscountType(product?.discount_type)
+  );
+  const [discountValue, setDiscountValue] = useState(() =>
+    product?.discount_value != null && Number(product.discount_value) > 0
+      ? String(product.discount_value)
+      : ""
+  );
+  const [priceDraft, setPriceDraft] = useState(() =>
+    product?.price != null ? String(product.price) : ""
+  );
+  const discountPreview = applyProductDiscount(
+    Number(String(priceDraft).replace(/,/g, "")) || 0,
+    discountType,
+    discountValue
+  );
+  const previewLabel = discountLabel(
+    discountPreview,
+    isProductCurrency(currencyDefault) ? currencyDefault : "INR"
+  );
 
   const children = useMemo(
     () => categories.filter((c) => c.parent_id === parentId),
@@ -199,7 +226,8 @@ export function ProductForm({
           name="price"
           inputMode="decimal"
           required
-          defaultValue={product?.price != null ? String(product.price) : ""}
+          value={priceDraft}
+          onChange={(event) => setPriceDraft(event.target.value)}
           placeholder="85000"
         />
       </div>
@@ -227,6 +255,54 @@ export function ProductForm({
           ))}
         </select>
       </div>
+      <div className="sw-admin-field">
+        <label htmlFor="discount_type">Discount Type</label>
+        <select
+          id="discount_type"
+          name="discount_type"
+          value={discountType}
+          onChange={(event) =>
+            setDiscountType(parseDiscountType(event.target.value))
+          }
+        >
+          <option value="none">None</option>
+          <option value="percent">Percentage</option>
+          <option value="fixed">Fixed Amount</option>
+        </select>
+      </div>
+      {discountType !== "none" ? (
+        <div className="sw-admin-field">
+          <label htmlFor="discount_value">
+            {discountType === "percent" ? "Discount (%)" : "Discount amount"}
+          </label>
+          <input
+            id="discount_value"
+            name="discount_value"
+            inputMode="decimal"
+            value={discountValue}
+            onChange={(event) => setDiscountValue(event.target.value)}
+            placeholder={discountType === "percent" ? "20" : "500"}
+          />
+        </div>
+      ) : (
+        <input type="hidden" name="discount_value" value="0" />
+      )}
+      {previewLabel ? (
+        <p className="sw-admin-discount-preview sw-admin-field-span">
+          {formatMoneyAmount(
+            isProductCurrency(currencyDefault) ? currencyDefault : "INR",
+            discountPreview.original
+          )}{" "}
+          →{" "}
+          <strong>
+            {formatMoneyAmount(
+              isProductCurrency(currencyDefault) ? currencyDefault : "INR",
+              discountPreview.sale
+            )}
+          </strong>{" "}
+          ({previewLabel})
+        </p>
+      ) : null}
       <div className="sw-admin-field">
         <label htmlFor="parent_category_id">Parent category</label>
         <select
