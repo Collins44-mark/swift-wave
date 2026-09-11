@@ -253,52 +253,57 @@ export function ProductVariantEditor({
 
         {colors.length ? (
           <ul className="sw-admin-color-list">
-            {colors.map((color) => (
-              <li key={color.key} className="sw-admin-color-card">
-                <div className="sw-admin-color-card-head">
-                  <ColorSwatch hex={color.hex_code} name={color.name} />
-                  <span className="sw-admin-color-name">{color.name}</span>
-                </div>
-                <div className="sw-admin-color-card-preview">
-                  {color.image_url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={color.image_url} alt="" />
-                  ) : (
-                    <span>No image</span>
-                  )}
-                </div>
-                <div className="sw-admin-color-card-actions">
-                  {canUpload ? (
-                    <MediaUploadButton
-                      companySlug={companySlug}
-                      label="Upload Image"
-                      className="sw-admin-btn sw-admin-btn-ghost"
-                      onBusyChange={onBusyChange}
-                      onSaved={(asset) =>
-                        setColors((prev) =>
-                          prev.map((c) =>
-                            c.key === color.key
-                              ? {
-                                  ...c,
-                                  image_url: asset.secure_url,
-                                  image_public_id: asset.public_id,
-                                }
-                              : c
+            {colors.map((color) => {
+              const libraryHex = library.find((item) => item.id === color.color_id)
+                ?.hex_code;
+              const hex =
+                resolvedSwatchHex(color.hex_code) ||
+                resolvedSwatchHex(libraryHex);
+              return (
+                <li key={color.key} className="sw-admin-color-row">
+                  <div className="sw-admin-color-row-meta">
+                    <ColorSwatch hex={hex} name={color.name} />
+                    <span className="sw-admin-color-name">{color.name}</span>
+                  </div>
+                  <div className="sw-admin-color-row-actions">
+                    {color.image_url ? (
+                      <span className="sw-admin-color-thumb">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={color.image_url} alt="" />
+                      </span>
+                    ) : null}
+                    {canUpload ? (
+                      <MediaUploadButton
+                        companySlug={companySlug}
+                        label="Upload Image"
+                        className="sw-admin-btn sw-admin-btn-ghost"
+                        onBusyChange={onBusyChange}
+                        onSaved={(asset) =>
+                          setColors((prev) =>
+                            prev.map((c) =>
+                              c.key === color.key
+                                ? {
+                                    ...c,
+                                    image_url: asset.secure_url,
+                                    image_public_id: asset.public_id,
+                                  }
+                                : c
+                            )
                           )
-                        )
-                      }
-                    />
-                  ) : null}
-                  <button
-                    type="button"
-                    className="sw-admin-btn sw-admin-btn-ghost sw-admin-btn-danger"
-                    onClick={() => setPendingDelete(color.key)}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </li>
-            ))}
+                        }
+                      />
+                    ) : null}
+                    <button
+                      type="button"
+                      className="sw-admin-color-row-delete"
+                      onClick={() => setPendingDelete(color.key)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         ) : (
           <p className="sw-admin-muted-sm">No colors selected yet.</p>
