@@ -2134,6 +2134,21 @@ a:hover .icon,
   box-shadow: 0 0 0 2px #d4af37, 0 0 0 4px rgba(11, 46, 109, 0.35);
 }
 
+.co-swatch.is-light {
+  border-color: rgba(8, 31, 77, 0.35);
+  box-shadow: 0 0 0 1px rgba(8, 31, 77, 0.28);
+}
+
+.co-swatch.is-missing {
+  background-image: repeating-linear-gradient(
+    45deg,
+    #e2e8f0,
+    #e2e8f0 3px,
+    #f8fafc 3px,
+    #f8fafc 6px
+  );
+}
+
 .co-swatches--card {
   margin: 0.45rem 0 0.15rem;
 }

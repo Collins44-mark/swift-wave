@@ -12,9 +12,12 @@ import {
   parseColorDrafts,
   parseSizeNames,
   replaceProductVariants,
+  type ColorDraft,
+  type SavedProductColor,
 } from "@/lib/admin/actions/product-variants";
 import type { ActionResult, BulkDeleteResult } from "@/lib/admin/types-catalog";
 import { MAX_BULK_DELETE, uniqueValidIds } from "@/lib/admin/ids";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 function friendlyProductError(
   error: { code?: string; message?: string } | null,
@@ -43,6 +46,62 @@ function parsePrice(raw: string): number | null {
   if (!raw.trim()) return null;
   const n = Number(raw.replace(/,/g, ""));
   return Number.isFinite(n) ? n : null;
+}
+
+function resolvePrimaryColor(
+  colors: ColorDraft[],
+  saved: SavedProductColor[],
+  primaryLibraryId: string
+): { ok: true; primary: SavedProductColor | null } | { ok: false; error: string } {
+  if (!saved.length) {
+    if (primaryLibraryId) {
+      return { ok: false, error: "Primary color must be one of the product colors." };
+    }
+    return { ok: true, primary: null };
+  }
+  if (primaryLibraryId && !colors.some((c) => c.color_id === primaryLibraryId)) {
+    return {
+      ok: false,
+      error: "Primary color must be one of the product colors.",
+    };
+  }
+  const primary =
+    saved.find((row) => row.color_id === primaryLibraryId) ?? saved[0] ?? null;
+  return { ok: true, primary };
+}
+
+async function persistPrimaryAppearance(
+  supabase: SupabaseClient,
+  opts: {
+    productId: string;
+    companyId: string;
+    primary: SavedProductColor | null;
+    fallbackUrl: string | null;
+    fallbackPublicId: string | null;
+  }
+): Promise<ActionResult> {
+  const imageUrl = opts.primary?.image_url || opts.fallbackUrl;
+  const imagePublicId = opts.primary?.image_url
+    ? opts.primary.image_public_id
+    : opts.fallbackPublicId;
+  const { error, data } = await supabase
+    .from("products")
+    .update({
+      primary_color_id: opts.primary?.id ?? null,
+      image_url: imageUrl,
+      image_public_id: imagePublicId,
+    })
+    .eq("id", opts.productId)
+    .eq("company_id", opts.companyId)
+    .select("id");
+  if (error || !data?.length) {
+    return {
+      ok: false,
+      error:
+        "Product saved, but the primary color could not be stored. Please try again.",
+    };
+  }
+  return { ok: true };
 }
 
 function revalidateProductSurfaces(companySlug: string) {
@@ -219,24 +278,25 @@ export async function createProduct(
     return variants;
   }
 
-  if (variants.coverUrl && !fields.image_url) {
-    const { error: coverError, data: coverRows } = await supabase
-      .from("products")
-      .update({
-        image_url: variants.coverUrl,
-        image_public_id: variants.coverPublicId,
-      })
-      .eq("id", data.id)
-      .eq("company_id", company.id)
-      .select("id");
-    if (coverError || !coverRows?.length) {
-      revalidateProductSurfaces(company.slug);
-      return {
-        ok: false,
-        error:
-          "Image uploaded, but product changes could not be saved. Please try again.",
-      };
-    }
+  const primary = resolvePrimaryColor(
+    colors,
+    variants.saved,
+    str(formData, "primary_color_id")
+  );
+  if (!primary.ok) {
+    await supabase.from("products").delete().eq("id", data.id);
+    return primary;
+  }
+  const appearance = await persistPrimaryAppearance(supabase, {
+    productId: data.id,
+    companyId: company.id,
+    primary: primary.primary,
+    fallbackUrl: fields.image_url,
+    fallbackPublicId: fields.image_public_id,
+  });
+  if (!appearance.ok) {
+    await supabase.from("products").delete().eq("id", data.id);
+    return appearance;
   }
 
   revalidateProductSurfaces(company.slug);
@@ -321,24 +381,20 @@ export async function updateProduct(
   );
   if (!variants.ok) return variants;
 
-  if (variants.coverUrl && !fields.image_url) {
-    const { error: coverError, data: coverRows } = await supabase
-      .from("products")
-      .update({
-        image_url: variants.coverUrl,
-        image_public_id: variants.coverPublicId,
-      })
-      .eq("id", productId)
-      .eq("company_id", company.id)
-      .select("id");
-    if (coverError || !coverRows?.length) {
-      return {
-        ok: false,
-        error:
-          "Image uploaded, but product changes could not be saved. Please try again.",
-      };
-    }
-  }
+  const primary = resolvePrimaryColor(
+    colors,
+    variants.saved,
+    str(formData, "primary_color_id")
+  );
+  if (!primary.ok) return primary;
+  const appearance = await persistPrimaryAppearance(supabase, {
+    productId,
+    companyId: company.id,
+    primary: primary.primary,
+    fallbackUrl: fields.image_url,
+    fallbackPublicId: fields.image_public_id,
+  });
+  if (!appearance.ok) return appearance;
 
   revalidateProductSurfaces(company.slug);
   return { ok: true };

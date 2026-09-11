@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { normalizeWhatsAppNumber } from "@/lib/whatsapp/normalize";
 import { normalizeCompanySlug } from "@/lib/admin/company-slug";
+import { isLightHex, resolvedSwatchHex } from "@/lib/catalog/color-display";
 
 export const dynamic = "force-dynamic";
 
@@ -43,7 +44,7 @@ export async function GET(
     supabase
       .from("products")
       .select(
-        "id, name, slug, description, price, currency, image_url, subcategory, bullets, rating, price_label, sort_order, category_id, status"
+        "id, name, slug, description, price, currency, image_url, subcategory, bullets, rating, price_label, sort_order, category_id, status, primary_color_id"
       )
       .eq("company_id", company.id)
       .eq("status", "published")
@@ -136,17 +137,25 @@ export async function GET(
       (priceNum > 0
         ? `${currency} ${priceNum.toLocaleString("en-US")}`
         : "Enquire");
-    const colors = (colorsByProduct.get(p.id) ?? []).map((c) => ({
-      id: c.id,
-      name: c.name,
-      hex: c.hex_code || "#111111",
-      image: c.image_url || p.image_url || "",
-    }));
+    const colors = (colorsByProduct.get(p.id) ?? []).map((c) => {
+      const hex = resolvedSwatchHex(c.hex_code);
+      return {
+        id: c.id,
+        name: c.name,
+        hex,
+        light: isLightHex(hex),
+        image: c.image_url || "",
+      };
+    });
     const sizes = (sizesByProduct.get(p.id) ?? []).map((s) => ({
       id: s.id,
       name: s.name,
     }));
-    const cover = colors.find((c) => c.image)?.image || p.image_url || "";
+    const primary =
+      colors.find((c) => c.id === p.primary_color_id) ??
+      colors.find((c) => c.image) ??
+      null;
+    const cover = primary?.image || p.image_url || "";
 
     return {
       id: p.slug,
@@ -159,6 +168,7 @@ export async function GET(
       priceNum,
       rating: p.rating ?? "",
       image: cover,
+      primaryColorId: primary?.id ?? p.primary_color_id ?? null,
       desc: p.description ?? "",
       bullets: Array.isArray(p.bullets) ? p.bullets : [],
       colors,

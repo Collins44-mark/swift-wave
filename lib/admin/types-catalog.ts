@@ -49,6 +49,7 @@ export type Product = {
   currency: string;
   image_url: string | null;
   image_public_id: string | null;
+  primary_color_id: string | null;
   status: ProductStatus;
   featured: boolean;
   subcategory: string | null;
@@ -165,7 +166,7 @@ export type BulkDeleteResult =
   | { ok: false; error: string };
 
 export const PRODUCT_SELECT =
-  "id, company_id, category_id, name, slug, description, price, currency, image_url, image_public_id, status, featured, subcategory, bullets, rating, price_label, sort_order, created_at, updated_at" as const;
+  "id, company_id, category_id, name, slug, description, price, currency, image_url, image_public_id, primary_color_id, status, featured, subcategory, bullets, rating, price_label, sort_order, created_at, updated_at" as const;
 
 export const CATEGORY_SELECT =
   "id, company_id, name, slug, description, parent_id, is_active, sort_order, created_at, updated_at" as const;

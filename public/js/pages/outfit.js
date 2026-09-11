@@ -167,6 +167,50 @@
         checkoutModal.hidden = true;
       }
 
+      function paintSwatch(el, color) {
+        if (color && color.hex) {
+          el.style.backgroundColor = color.hex;
+          if (color.light) el.classList.add("is-light");
+        } else {
+          el.classList.add("is-missing");
+        }
+      }
+
+      function cardSwatches(p) {
+        const colors = Array.isArray(p.colors) ? p.colors : [];
+        if (!colors.length) return "";
+        return (
+          '<div class="co-swatches co-swatches--card" aria-hidden="true">' +
+          colors.map(function (color) {
+            const light = color.light ? " is-light" : "";
+            const missing = color.hex ? "" : " is-missing";
+            const bg = color.hex
+              ? ' style="background-color:' + color.hex + '"'
+              : "";
+            return (
+              '<span class="co-swatch' +
+              light +
+              missing +
+              '"' +
+              bg +
+              ' title="' +
+              color.name +
+              '"></span>'
+            );
+          }).join("") +
+          "</div>"
+        );
+      }
+
+      function primaryColor(product) {
+        const colors = Array.isArray(product.colors) ? product.colors : [];
+        if (!colors.length) return null;
+        return (
+          colors.find(function (c) { return c.id === product.primaryColorId; }) ||
+          colors[0]
+        );
+      }
+
       function productCard(p, opts) {
         opts = opts || {};
         const el = document.createElement(opts.asButton ? "button" : "article");
@@ -182,6 +226,7 @@
           '<div class="co-product-body">' +
           '<h3 class="co-product-title">' + p.title + "</h3>" +
           '<p class="co-product-meta">' + p.category + " · " + p.sub + "</p>" +
+          cardSwatches(p) +
           '<div class="co-product-row">' +
           '<span class="co-product-price">' + p.price + "</span>" +
           '<span class="co-product-cta">' + (opts.cta || "View") + "</span>" +
@@ -274,7 +319,7 @@
 
         const colors = Array.isArray(product.colors) ? product.colors : [];
         const sizes = Array.isArray(product.sizes) ? product.sizes : [];
-        let selectedColor = colors[0] || null;
+        let selectedColor = primaryColor(product);
         let selectedSize = null;
 
         catalogView.hidden = true;
@@ -307,11 +352,12 @@
         } else {
           colorWrap.hidden = false;
           swatchWrap.innerHTML = "";
-          colors.forEach(function (color, index) {
+          colors.forEach(function (color) {
             const swatch = document.createElement("button");
             swatch.type = "button";
-            swatch.className = "co-swatch" + (index === 0 ? " is-selected" : "");
-            swatch.style.background = color.hex || "#111";
+            swatch.className =
+              "co-swatch" + (selectedColor && selectedColor.id === color.id ? " is-selected" : "");
+            paintSwatch(swatch, color);
             swatch.setAttribute("aria-label", color.name);
             swatch.title = color.name;
             swatch.addEventListener("click", function () {

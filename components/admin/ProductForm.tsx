@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState, useTransition } from "react";
+import { useCallback, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { SubmitButton } from "@/components/admin/SubmitButton";
 import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
 import { ImageFieldPicker } from "@/components/admin/ImageFieldPicker";
+import { ColorSwatch } from "@/components/admin/ColorSwatch";
 import { ProductVariantEditor } from "@/components/admin/ProductVariantEditor";
 import {
   createProduct,
@@ -93,6 +94,32 @@ export function ProductForm({
   );
   const [categoryId, setCategoryId] = useState(() =>
     initialChildId(product, categories)
+  );
+  const [selectedColors, setSelectedColors] = useState<
+    { color_id: string; name: string; hex_code: string }[]
+  >(() =>
+    (product?.colors ?? [])
+      .filter((c) => c.color_id)
+      .map((c) => ({
+        color_id: c.color_id as string,
+        name: c.name,
+        hex_code: c.hex_code ?? "",
+      }))
+  );
+  const [primaryColorId, setPrimaryColorId] = useState(() => {
+    const match = product?.colors?.find((c) => c.id === product.primary_color_id);
+    return match?.color_id || product?.colors?.[0]?.color_id || "";
+  });
+
+  const handleColorsChange = useCallback(
+    (next: { color_id: string; name: string; hex_code: string }[]) => {
+      setSelectedColors(next);
+      setPrimaryColorId((current) => {
+        if (next.some((c) => c.color_id === current)) return current;
+        return next[0]?.color_id ?? "";
+      });
+    },
+    []
   );
 
   const children = useMemo(
@@ -241,6 +268,41 @@ export function ProductForm({
         </select>
       </div>
 
+      <div className="sw-admin-field">
+        <label htmlFor="primary_color_id">Primary Color</label>
+        <input type="hidden" name="primary_color_id" value={primaryColorId} />
+        <div className="sw-admin-primary-color">
+          {selectedColors.length ? (
+            <select
+              id="primary_color_id"
+              value={primaryColorId}
+              onChange={(event) => setPrimaryColorId(event.target.value)}
+            >
+              {selectedColors.map((color) => (
+                <option key={color.color_id} value={color.color_id}>
+                  {color.name}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <select id="primary_color_id" disabled>
+              <option>Select colors first</option>
+            </select>
+          )}
+          {selectedColors.find((c) => c.color_id === primaryColorId) ? (
+            <ColorSwatch
+              hex={
+                selectedColors.find((c) => c.color_id === primaryColorId)
+                  ?.hex_code
+              }
+              name={
+                selectedColors.find((c) => c.color_id === primaryColorId)?.name
+              }
+            />
+          ) : null}
+        </div>
+      </div>
+
       <ProductVariantEditor
         companySlug={companySlug}
         canUpload={canUpload}
@@ -249,6 +311,7 @@ export function ProductForm({
         sizeLibrary={sizeLibrary}
         colorLibrary={colorLibrary}
         onBusyChange={handleUploadBusy}
+        onColorsChange={handleColorsChange}
       />
 
       <div className="sw-admin-field">
@@ -297,7 +360,7 @@ export function ProductForm({
         canUpload={canUpload}
         initialUrl={product?.image_url}
         initialPublicId={product?.image_public_id}
-        label="Cover image (used if a color has no photo)"
+        label="Fallback image (used if the primary color has no photo)"
         onBusyChange={handleUploadBusy}
       />
 

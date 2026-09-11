@@ -7,6 +7,7 @@ import {
   type ProductSizeOption,
   type SizeDefinition,
 } from "@/lib/admin/types-catalog";
+import { resolvedSwatchHex } from "@/lib/catalog/color-display";
 
 export async function listSizeLibrary(): Promise<SizeDefinition[]> {
   const supabase = await createClient();
@@ -29,7 +30,10 @@ export async function listColorLibrary(): Promise<ColorDefinition[]> {
     .order("sort_order", { ascending: true })
     .order("name", { ascending: true });
   if (error) return [];
-  return (data as ColorDefinition[]) ?? [];
+  return ((data as ColorDefinition[]) ?? []).map((row) => ({
+    ...row,
+    hex_code: resolvedSwatchHex(row.hex_code),
+  }));
 }
 
 async function loadProductVariants(
@@ -81,7 +85,7 @@ async function loadProductVariants(
       ...pc,
       color_id: pc.color_id || lib?.id || null,
       name: lib?.name || pc.name,
-      hex_code: lib?.hex_code ?? pc.hex_code,
+      hex_code: resolvedSwatchHex(lib?.hex_code ?? pc.hex_code),
     });
   }
 

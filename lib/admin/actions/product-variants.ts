@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { normalizeHex, resolvedSwatchHex } from "@/lib/catalog/color-display";
 
 export type ColorDraft = {
   id?: string;
@@ -11,15 +12,12 @@ export type ColorDraft = {
   is_active?: boolean;
 };
 
-function normalizeHex(raw: string): string | null {
-  const value = raw.trim();
-  if (!value) return null;
-  const withHash = value.startsWith("#") ? value : `#${value}`;
-  if (!/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/.test(withHash)) {
-    return null;
-  }
-  return withHash.toLowerCase();
-}
+export type SavedProductColor = {
+  id: string;
+  color_id: string;
+  image_url: string | null;
+  image_public_id: string | null;
+};
 
 export function parseColorDrafts(raw: string): ColorDraft[] | { error: string } {
   if (!raw.trim()) return [];
@@ -48,12 +46,11 @@ export function parseColorDrafts(raw: string): ColorDraft[] | { error: string } 
     if (!name) {
       return { error: `Color ${index + 1} needs a name.` };
     }
-    const hex = normalizeHex(String(row.hex_code ?? ""));
     colors.push({
       id: row.id ? String(row.id) : undefined,
       color_id: colorId,
       name,
-      hex_code: hex ?? "#111111",
+      hex_code: normalizeHex(String(row.hex_code ?? "")) ?? "",
       image_url: String(row.image_url ?? "").trim(),
       image_public_id: String(row.image_public_id ?? "").trim(),
       sort_order: Number(row.sort_order) || index,
@@ -141,7 +138,7 @@ export async function replaceProductVariants(
   productId: string,
   colors: ColorDraft[],
   sizeNames: string[]
-): Promise<{ ok: true; coverUrl: string | null; coverPublicId: string | null } | { ok: false; error: string }> {
+): Promise<{ ok: true; saved: SavedProductColor[] } | { ok: false; error: string }> {
   const { data: existingColors } = await supabase
     .from("product_colors")
     .select("id")
@@ -186,6 +183,9 @@ export async function replaceProductVariants(
     if (!lib) {
       return { ok: false, error: "A selected color was not found in the library." };
     }
+    const hex =
+      resolvedSwatchHex(lib.hex_code as string | null) ||
+      resolvedSwatchHex(color.hex_code);
     if (color.id) {
       updates.push(
         supabase
@@ -194,7 +194,7 @@ export async function replaceProductVariants(
             product_id: productId,
             color_id: color.color_id,
             name: lib.name,
-            hex_code: lib.hex_code || color.hex_code || null,
+            hex_code: hex,
             sort_order: index,
             is_active: color.is_active !== false,
             ...(color.image_url
@@ -213,7 +213,7 @@ export async function replaceProductVariants(
         product_id: productId,
         color_id: color.color_id,
         name: lib.name,
-        hex_code: lib.hex_code || color.hex_code || null,
+        hex_code: hex,
         image_url: color.image_url || null,
         image_public_id: color.image_public_id || null,
         sort_order: index,
@@ -256,10 +256,22 @@ export async function replaceProductVariants(
     if (error) return { ok: false, error: "Unable to save product sizes." };
   }
 
-  const cover = colors.find((c) => c.image_url) ?? null;
+  const { data: savedRows, error: savedError } = await supabase
+    .from("product_colors")
+    .select("id, color_id, image_url, image_public_id")
+    .eq("product_id", productId)
+    .order("sort_order", { ascending: true });
+  if (savedError) {
+    return { ok: false, error: "Unable to load saved product colors." };
+  }
+
   return {
     ok: true,
-    coverUrl: cover?.image_url || null,
-    coverPublicId: cover?.image_public_id || null,
+    saved: (savedRows ?? []).map((row) => ({
+      id: row.id as string,
+      color_id: row.color_id as string,
+      image_url: (row.image_url as string | null) ?? null,
+      image_public_id: (row.image_public_id as string | null) ?? null,
+    })),
   };
 }

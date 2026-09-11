@@ -2,16 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { requireCompanyAccess, canMutate } from "@/lib/admin/require-company-access";
-
-function normalizeHex(raw: string): string | null {
-  const value = raw.trim();
-  if (!value) return null;
-  const withHash = value.startsWith("#") ? value : `#${value}`;
-  if (!/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/.test(withHash)) {
-    return null;
-  }
-  return withHash.toLowerCase();
-}
+import { normalizeHex, resolvedSwatchHex } from "@/lib/catalog/color-display";
 
 export async function createLibraryColor(
   companySlug: string,
@@ -29,6 +20,7 @@ export async function createLibraryColor(
   const trimmed = name.trim();
   if (!trimmed) return { ok: false, error: "Color name is required." };
   const hex = normalizeHex(hexCode);
+  if (!hex) return { ok: false, error: "Choose a color value for the swatch." };
 
   const supabase = await createClient();
   const { data: existing } = await supabase
@@ -39,11 +31,18 @@ export async function createLibraryColor(
     .maybeSingle();
 
   if (existing?.id) {
+    const existingHex = resolvedSwatchHex(existing.hex_code as string | null);
+    if (!existingHex) {
+      await supabase
+        .from("colors")
+        .update({ hex_code: hex })
+        .eq("id", existing.id);
+    }
     return {
       ok: true,
       id: existing.id as string,
       name: existing.name as string,
-      hex_code: (existing.hex_code as string | null) ?? hex,
+      hex_code: existingHex ?? hex,
     };
   }
 
@@ -73,6 +72,6 @@ export async function createLibraryColor(
     ok: true,
     id: data.id as string,
     name: data.name as string,
-    hex_code: (data.hex_code as string | null) ?? hex,
+    hex_code: normalizeHex(data.hex_code as string | null) ?? hex,
   };
 }

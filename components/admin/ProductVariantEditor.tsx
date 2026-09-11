@@ -2,8 +2,10 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { MediaUploadButton } from "@/components/admin/MediaUploadButton";
+import { ColorSwatch } from "@/components/admin/ColorSwatch";
 import { useAdminToastContext } from "@/components/admin/AdminToastProvider";
 import { createLibraryColor } from "@/lib/admin/client-actions";
+import { resolvedSwatchHex } from "@/lib/catalog/color-display";
 import type {
   ColorDefinition,
   ProductColor,
@@ -29,6 +31,7 @@ export function ProductVariantEditor({
   sizeLibrary,
   colorLibrary: initialColorLibrary,
   onBusyChange,
+  onColorsChange,
 }: {
   companySlug: string;
   canUpload: boolean;
@@ -37,6 +40,9 @@ export function ProductVariantEditor({
   sizeLibrary: SizeDefinition[];
   colorLibrary: ColorDefinition[];
   onBusyChange?: (busy: boolean) => void;
+  onColorsChange?: (
+    colors: { color_id: string; name: string; hex_code: string }[]
+  ) => void;
 }) {
   const { showSuccess, showError } = useAdminToastContext();
   const [library, setLibrary] = useState<ColorDefinition[]>(
@@ -50,7 +56,7 @@ export function ProductVariantEditor({
         id: c.id,
         color_id: c.color_id || "",
         name: c.name,
-        hex_code: c.hex_code || "#111111",
+        hex_code: resolvedSwatchHex(c.hex_code) ?? "",
         image_url: c.image_url || "",
         image_public_id: c.image_public_id || "",
       }))
@@ -61,7 +67,7 @@ export function ProductVariantEditor({
   );
   const [extraSizeNames, setExtraSizeNames] = useState<string[]>([]);
   const [newColorName, setNewColorName] = useState("");
-  const [newColorHex, setNewColorHex] = useState("#111111");
+  const [newColorHex, setNewColorHex] = useState("#808080");
   const [addingLibraryColor, setAddingLibraryColor] = useState(false);
   const [savingLibraryColor, setSavingLibraryColor] = useState(false);
   const [selectorOpen, setSelectorOpen] = useState(false);
@@ -98,6 +104,16 @@ export function ProductVariantEditor({
   }, [sizeLibrary, extraSizeNames, sizeNames]);
 
   useEffect(() => {
+    onColorsChange?.(
+      colors.map((c) => ({
+        color_id: c.color_id,
+        name: c.name,
+        hex_code: c.hex_code,
+      }))
+    );
+  }, [colors, onColorsChange]);
+
+  useEffect(() => {
     if (!selectorOpen) return;
     function onPointerDown(event: MouseEvent) {
       if (!selectorRef.current?.contains(event.target as Node)) {
@@ -128,7 +144,7 @@ export function ProductVariantEditor({
         key: `new-${color.id}`,
         color_id: color.id,
         name: color.name,
-        hex_code: color.hex_code || "#111111",
+        hex_code: resolvedSwatchHex(color.hex_code) ?? "",
         image_url: "",
         image_public_id: "",
       },
@@ -161,7 +177,7 @@ export function ProductVariantEditor({
     );
     selectLibraryColor(next);
     setNewColorName("");
-    setNewColorHex("#111111");
+    setNewColorHex("#808080");
     setAddingLibraryColor(false);
     showSuccess("Color added successfully");
   }
@@ -219,11 +235,7 @@ export function ProductVariantEditor({
                       type="button"
                       onClick={() => selectLibraryColor(color)}
                     >
-                      <span
-                        className="sw-admin-color-dot"
-                        style={{ background: color.hex_code || "#111111" }}
-                        aria-hidden="true"
-                      />
+                      <ColorSwatch hex={color.hex_code} name={color.name} />
                       {color.name}
                     </button>
                   </li>
@@ -242,20 +254,20 @@ export function ProductVariantEditor({
         {colors.length ? (
           <ul className="sw-admin-color-list">
             {colors.map((color) => (
-              <li key={color.key} className="sw-admin-color-row">
-                <span
-                  className="sw-admin-color-dot"
-                  style={{ background: color.hex_code }}
-                  aria-hidden="true"
-                />
-                <span className="sw-admin-color-name">{color.name}</span>
-                <div className="sw-admin-color-image">
+              <li key={color.key} className="sw-admin-color-card">
+                <div className="sw-admin-color-card-head">
+                  <ColorSwatch hex={color.hex_code} name={color.name} />
+                  <span className="sw-admin-color-name">{color.name}</span>
+                </div>
+                <div className="sw-admin-color-card-preview">
                   {color.image_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={color.image_url} alt="" />
                   ) : (
                     <span>No image</span>
                   )}
+                </div>
+                <div className="sw-admin-color-card-actions">
                   {canUpload ? (
                     <MediaUploadButton
                       companySlug={companySlug}
@@ -277,14 +289,14 @@ export function ProductVariantEditor({
                       }
                     />
                   ) : null}
+                  <button
+                    type="button"
+                    className="sw-admin-btn sw-admin-btn-ghost sw-admin-btn-danger"
+                    onClick={() => setPendingDelete(color.key)}
+                  >
+                    Delete
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  className="sw-admin-btn sw-admin-btn-ghost sw-admin-btn-danger"
-                  onClick={() => setPendingDelete(color.key)}
-                >
-                  Delete
-                </button>
               </li>
             ))}
           </ul>
@@ -310,7 +322,7 @@ export function ProductVariantEditor({
                   value={
                     /^#([0-9A-Fa-f]{6})$/.test(newColorHex)
                       ? newColorHex
-                      : "#111111"
+                      : "#808080"
                   }
                   onChange={(e) => setNewColorHex(e.target.value)}
                 />
